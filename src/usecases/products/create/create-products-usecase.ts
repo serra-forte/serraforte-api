@@ -17,6 +17,7 @@ export interface IRequestCreateProducts {
     height: number
     width: number
     length: number
+    boxesIds: string[]
 }
 
 export class CreateProductsUseCase {
@@ -38,6 +39,7 @@ export class CreateProductsUseCase {
         height,
         width,
         length,
+        boxesIds,
         shopKeeperId: userId
      }: IRequestCreateProducts): Promise<Product> {
         // buscar categoria pelo id
@@ -92,6 +94,13 @@ export class CreateProductsUseCase {
                 connect: {
                     id: findCategoryExists.id
                 }
+            },
+            boxes:{
+                connect: boxesIds.map(boxId => {
+                    return {
+                        id: boxId
+                    }
+                })
             }
         })
 

@@ -17,6 +17,7 @@ export async function CreateProduct(request: FastifyRequest, reply:FastifyReply)
                 height: z.number().nonnegative(),
                 width: z.number().nonnegative(),
                 length: z.number().nonnegative(),
+                boxesIds: z.array(z.string().uuid())
             })
 
             const { 
@@ -31,7 +32,8 @@ export async function CreateProduct(request: FastifyRequest, reply:FastifyReply)
                 active,
                 height,
                 width,
-                length
+                length,
+                boxesIds
             } = productSchema.parse(request.body)
 
             const createProductUseCase = await makeCreateProduct()
@@ -48,7 +50,8 @@ export async function CreateProduct(request: FastifyRequest, reply:FastifyReply)
                 active,
                 height,
                 width,
-                length
+                length,
+                boxesIds
             })
             return reply.status(200).send(product)
             

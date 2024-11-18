@@ -116,6 +116,7 @@ model Product {
   cartItem CartItem[]
   Item     Item[]
   reviews  Review[]
+  boxes    Box[]
 
   @@index([name], name: "id_index")
   @@map("products")
@@ -412,6 +413,9 @@ model Box {
   length      Decimal
   amount      Decimal
   weight      Decimal
+
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId String?
 
   @@map("boxes")
 }

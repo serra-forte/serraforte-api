@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+       body{
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+        }
+        .container{
+            font-family: Arial, Helvetica, sans-serif; 
+        }
+        #content{
+            width: 25rem;
+            color: black;
+        }
+        img{
+            display: block;
+        }
+        span{
+            margin: 1rem 0px;
+            display: block;
+        }
+        p{
+            text-align: justify;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 376px) {
+            #content{
+            width: 20rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="align-image">
+            <img src="https://i.imgur.com/tRPRz3k.png" alt="logo ferramentas">
+        </span>
+
+        <div id="content">
+            <span>Olá {{name}},</span>
+
+            <span>
+                <p>
+                    Recebemos seu pedido e aguardamos o pagamento que deverá ocorrer em até (data e hora completa de 24 horas) para confirmar o seu pedido. Após esse prazo, sem a confirmação do pagamento, o seu pedido será cancelada automaticamente.
+                </p>
+            </span>
+
+            <span>
+                <p>
+                    Estamos ansiosos esperando você. Abaixo, mais detalhes do seu pedido.
+                </p>
+            </span>
+
+            <span>
+               <p>Detalhes do seu pedido:</p>
+            </span>
+
+            {{!-- Detalhes pedidos  --}}
+            {{!-- <span>
+                <p>
+                    • Camping: {{variables.booking.camping.name}}
+                </p>
+                <p>
+                    • Data de Check-in: {{variables.checkIn}}
+                </p>
+                <p>
+                    • Data de Check-out: {{variables.checkOut}}
+                </p>
+                <p>
+                    • Telefone: {{variables.booking.camping.phone}}
+                </p>
+                <p>
+                    • Endereço: {{variables.booking.camping.address.street}}, {{variables.booking.camping.address.num}} - {{variables.booking.camping.address.district}} - {{variables.booking.camping.address.city}} - {{variables.booking.camping.address.state}}
+                </p>
+                <p>
+                    • Pessoas: {{variables.booking.guestAmount}}
+                </p>
+                <p>
+                    • Box: {{variables.boxFormatted.name}}
+                </p>
+                    
+                    • Veículos:
+                {{#each variables.booking.vehicles}}
+                        <p style="padding-left: 1rem;">• {{this.vehicle.plate}}</p>
+                {{/each}}
+
+                    • Acompanhantes:
+                {{#each variables.booking.companions}}
+                    <p style="padding-left: 1rem;">• {{this.name}}</p>
+                {{/each}}
+
+                <p>
+                    • Pagamento: Pix
+                </p>
+                <p>
+                    • Cobrança por: {{variables.text}}
+                </p>
+                <p>
+                    • Fatura: <a href="{{link}}">{{link}}</a>
+                </p>
+                <p>
+                    • Preço: R$ {{variables.booking.price}}
+                </p>
+            </span> --}}
+
+            <span></span>
+
+            <span>
+                Obrigado por escolher a Ferramentas Ecommerce!
+            </span>
+
+            <span>
+                comercial@ferramentas.com.br
+            </span>
+        </div>
+    </div>
+</body>
+</html>

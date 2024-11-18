@@ -1,0 +1,417 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  DELIVERYMAN
+  SHOPKEEPER
+  GUEST
+  SUPER
+}
+
+model User {
+  id                 String    @id @unique @default(uuid())
+  asaasCustomerId    String?   @map("asaas_customer_id")
+  asaasWalletId      String?   @map("asaas_wallet_id")
+  paymentFee         Decimal?  @map("payment_fee")
+  paymentType        String?
+  incomeValue        Decimal?  @map("income_value")
+  name               String
+  email              String    @unique
+  password           String?
+  phone              String?   @unique
+  dateBirth          DateTime? @map("date_birth") @db.Timestamptz()
+  cpf                String?   @unique
+  emailActive        Boolean   @default(false)
+  role               Role      @default(GUEST)
+  createdAt          DateTime  @default(now())
+  refundCredit       Decimal?  @default(0) @map("refund_credit")
+  expireRefundCredit DateTime? @map("expire_refund_credit")
+  avatarUrl          String?
+  hasDeliveryMan     Boolean?
+  softDelete         Boolean?  @default(false)
+
+  tokens               Token[]
+  images               Image[]
+  shoppingCart         ShoppingCart?
+  order                Order[]
+  payment              Payment[]
+  address              Address?
+  products             Product[]
+  cartItems            CartItem[]
+  items                Item[]
+  deliverys            Delivery[]
+  cancellations        Cancellation[]
+  cancellationMessages CancellationMessage[]
+  discountCoupons      DiscountCoupon[]
+  reviews              Review[]
+  storeHours           StoreHours[]
+
+  @@map("users")
+}
+
+model Token {
+  id            String   @id @unique @default(uuid())
+  token         String?  @unique
+  tokenGoogle   String?
+  tokenFacebook String?
+  expireDate    DateTime
+  createdAt     DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@index([token], name: "token_index")
+  @@map("tokens")
+}
+
+model Category {
+  id          String    @id @unique @default(uuid())
+  name        String    @unique
+  description String?
+  color       String?
+  image       String?
+  products    Product[]
+  createdAt   DateTime? @default(now()) @db.Timestamptz()
+
+  @@index([name], name: "type_index") // Definindo um índice no campo 'type'
+  @@map("categories")
+}
+
+model Product {
+  id         String    @id @unique @default(uuid())
+  code       Int       @default(autoincrement())
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String?
+
+  name          String   @unique
+  description   String?
+  mainImage     String   @map("main_image")
+  price         Decimal
+  sales         Int?     @default(0)
+  averageRating Decimal? @default(0)
+  active        Boolean? @default(false)
+  quantity      Int
+  width         Decimal?
+  height        Decimal?
+  length        Decimal?
+  weight        Decimal?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  cartItem CartItem[]
+  Item     Item[]
+  reviews  Review[]
+
+  @@index([name], name: "id_index")
+  @@map("products")
+}
+
+model Image {
+  id       String  @id @unique @default(uuid())
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  name     String
+  hashName String? @unique
+  url      String
+
+  @@index([id])
+  @@index([userId], name: "userId_index")
+  @@map("images")
+}
+
+model ShoppingCart {
+  id         String     @id @unique @default(uuid())
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String     @unique @map("user_id")
+  total      Decimal    @default(0)
+  expireDate DateTime   @map("expire_date") @db.Timestamptz()
+  cartItem   CartItem[]
+  Order      Order[]
+
+  @@map("shopping_carts")
+}
+
+model CartItem {
+  id       String @id @unique @default(uuid())
+  quantity Int    @default(1)
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String  @map("product_id")
+
+  shopping       ShoppingCart @relation(fields: [shoppingCartId], references: [id], onDelete: Cascade)
+  shoppingCartId String       @map("shopping_cart_id")
+
+  @@map("cart_items")
+}
+
+model Order {
+  id             String       @id @unique @default(uuid())
+  code           String?      @unique
+  shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id])
+  shoppingCartId String       @map("shopping_cart_id")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  total             Decimal
+  status            Status         @default(CREATED)
+  items             Item[]
+  createdAt         DateTime?      @map("created_at") @db.Timestamptz()
+  payment           Payment?
+  delivery          Delivery?
+  description       String?
+  // discountCoupon: string;
+  cancellations     Cancellation[]
+  withdrawStore     Boolean?
+  withdrawStoreDate DateTime?
+
+  cartLabelId String? @map("cart_label_id")
+  labelId     String? @map("label_id")
+  labelUrl    String? @map("label_url")
+
+  @@map("orders")
+}
+
+model Item {
+  id String @id @unique @default(uuid())
+
+  users  User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @map("user_id")
+
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId String @map("order_id")
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String  @map("product_id")
+
+  name      String?
+  quantity  Decimal
+  price     Decimal
+  mainImage String?
+
+  @@map("Items")
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  BOLETO
+  PIX
+}
+
+enum Status {
+  REPROVED
+  APPROVED
+  PENDING
+  CANCELED
+  ANALYSIS
+  ANALYSE_REPROVED
+  CREATED
+  DONE
+  SENT
+  PROCESSED
+  REFUNDED
+  CHANGED
+  EXPIRED
+  AWAITING_LABEL
+  AWAITING_LABEL_PAYMENT_PROCESS
+  AWAITING_LABEL_GENERATE
+  LABEL_GENERATED
+}
+
+model Payment {
+  id             String  @id @unique @default(uuid())
+  asaasPaymentId String?
+
+  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  orders  Order  @relation(fields: [orderId], references: [id])
+  orderId String @unique
+
+  invoiceUrl       String?
+  installmentCount Decimal?      @map("installment_count")
+  installmentValue Decimal?      @map("installment_value")
+  paymentMethod    PaymentMethod @map("payment_method")
+  paymentStatus    String?       @default("PENDING") @map("payment_status")
+  dateCanceled     DateTime?     @map("date_canceled") @db.Timestamptz()
+  value            Decimal
+  discount         Decimal?
+  datePayment      DateTime?     @map("date_payment") @db.Timestamptz()
+  createdAt        DateTime      @default(now()) @map("created_at")
+
+  @@map("payments")
+}
+
+model Address {
+  id     String  @id @unique @default(uuid())
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @unique
+
+  delivery   Delivery? @relation(fields: [deliveryId], references: [id])
+  deliveryId String?   @unique
+
+  street       String
+  num          Decimal?
+  city         String
+  state        String
+  neighborhood String?
+  country      String
+  zipCode      String?
+  complement   String?
+  reference    String?
+
+  @@map("addresses")
+}
+
+model Delivery {
+  id String @id @unique @default(uuid())
+
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId String @unique @map("order_id")
+
+  deliveryMan User?   @relation(fields: [userId], references: [id])
+  userId      String?
+
+  shippingDate     DateTime? @map("shipping_date") @db.Timestamptz()
+  deliveryDate     DateTime? @map("delivery_date") @db.Timestamptz()
+  longitude        Decimal?
+  latitude         Decimal?
+  price            Decimal?
+  receiverDocument String?
+  receiverName     String?
+  address          Address?
+  createdAt        DateTime  @default(now()) @db.Timestamptz()
+
+  @@map("deliverys")
+}
+
+model Cancellation {
+  id String @id @unique @default(uuid())
+
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  shopkeeperId   String?
+  shopkeeperName String?
+
+  reason String?
+
+  cancellationMessages CancellationMessage[]
+
+  status       Status        @default(PENDING)
+  createdAt    DateTime      @default(now()) @db.Timestamptz()
+  updatedAt    DateTime      @default(now()) @db.Timestamptz()
+  notification Notification?
+
+  @@map("cancellations")
+}
+
+model CancellationMessage {
+  id String @id @unique @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  cancellation   Cancellation @relation(fields: [cancellationId], references: [id])
+  cancellationId String
+
+  message   String?
+  imageUrl  String?
+  createdAt DateTime @default(now()) @db.Timestamptz()
+
+  @@map("cancellation_messages")
+}
+
+model DiscountCoupon {
+  id String @id @unique @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  name       String
+  code       String   @unique
+  quantity   Int?
+  discount   Decimal
+  minValue   Decimal? @map("min_value")
+  startDate  DateTime @db.Timestamptz()
+  expireDate DateTime @db.Timestamptz()
+  active     Boolean
+  type       String
+
+  @@index([id])
+  @@map("discount_coupons")
+}
+
+model Notification {
+  id             String       @id @unique @default(uuid())
+  cancellation   Cancellation @relation(fields: [cancellationId], references: [id])
+  cancellationId String       @unique @map("cancellation_id")
+  isRead         Boolean      @default(true) @map("is_read")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz()
+
+  @@map("notifications")
+}
+
+model Review {
+  id String @id @unique @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+
+  comment   String?
+  rating    Int
+  active    Boolean?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("reviews")
+}
+
+model StoreHours {
+  id        String @id @default(uuid())
+  dayOfWeek String @map("day_of_week")
+  openTime  String @map("open_time")
+  closeTime String @map("close_time")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@unique([userId, dayOfWeek])
+  @@map("store_hours")
+}
+
+model Box {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  height      Decimal
+  width       Decimal
+  length      Decimal
+  amount      Decimal
+  weight      Decimal
+
+  @@map("boxes")
+}

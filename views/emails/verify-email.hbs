@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<head>
+    <style>
+    body{
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+        }
+
+        .container{
+            font-family: Arial, Helvetica, sans-serif; 
+        }
+        #content{
+            width: 25rem;
+            color: black;
+        }
+        img{
+            display: block;
+        }
+        span{
+            margin: 1.5rem 0px;
+            display: block;
+        }
+        p{
+            text-align: justify;
+            line-height: 1.6;
+        }
+
+        #btn-ok{
+            background-color: #036938;
+            padding: 1.2rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: #ffff;
+            font-weight: bold;
+            margin: 1.3rem 0;
+            display: block;
+            width: 7rem;
+            text-align: center;
+
+        }
+        #btn-ok:hover{
+            background-color: #035e32;
+        }
+
+        @media (max-width: 576px) {
+            #content{
+            width: 25rem;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="align-image">
+            <img src="https://i.imgur.com/tRPRz3k.png" alt="logo ferramentas">
+        </span>
+
+        
+         <div id="content">
+            <p>
+                <span>Olá <strong>{{name}}</strong>,</span>
+    
+                <span>Obrigado por registrar em nosso ecommerce de ferramentas!</span>
+                <span>Precisamos de mais algumas informações para concluir seu registro, incluindo uma confirmação do seu endereço de e-mail.</span>
+                <span>Clique no botão abaixo para confirmar seu endereço de e-mail:</span>
+            
+                <a id="btn-ok" href="{{link}}">Confirmar</a>
+                
+                <span>
+                Atenciosamente, <strong>Ferra Inova Simples</strong>
+                </span>
+            </p>
+        </div>
+        
+    </div>
+</body>
+</html>

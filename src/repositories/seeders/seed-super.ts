@@ -27,6 +27,16 @@ async function seedSuper(){
         }
     })
 
+    await prisma.shoppingCart.create({
+        data:{
+            user:{
+                connect: {
+                    id: '7b606dce-5419-4f79-8540-6ed63deea125'
+                }
+            }
+        } as any
+    })
+
     console.log(admin)
     
     await prisma.$disconnect()

@@ -1,6 +1,7 @@
 import { $Enums, Prisma, Role, User } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { IUsersRepository } from '../interfaces/interface-users-repository';
+import { IUserRelations } from "@/dtos/user-relations.dto";
 
 export class PrismaUsersRepository implements IUsersRepository{
     async activeSoftDelete(id: string): Promise<void> {
@@ -395,17 +396,17 @@ export class PrismaUsersRepository implements IUsersRepository{
     }
     async findById(id: string){
         const user = await prisma.user.findUnique({
-            where: {id: id},
+            where: { id },
             select: {
                 id: true,
                 asaasCustomerId: true,
-                shoppingCart:{
-                    select:{
+                shoppingCart: {
+                    select: {
                         id: true
                     }
                 },
                 asaasWalletId: true,
-                paymentFee:true,
+                paymentFee: true,
                 paymentType: true,
                 name: true,
                 avatarUrl: true,
@@ -425,7 +426,7 @@ export class PrismaUsersRepository implements IUsersRepository{
                         createdAt: 'desc',
                     }
                 },
-                address : true
+                address: true
             }
         }) as unknown as User
 

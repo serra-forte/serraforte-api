@@ -14,6 +14,7 @@ import { IOrderRelationsDTO } from '@/dtos/order-relations.dto';
 import { IUserRelations } from '@/dtos/user-relations.dto';
 import { IProductRelationsDTO } from '@/dtos/product-relations.dto';
 import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-discount-coupons-repository';
+import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementations/provider-melhor-envio';
 
 export interface IRequestCreateOrderWithCreditCard {
     userId: string
@@ -63,7 +64,8 @@ export class CreateOrderWithCreditCardUsecase {
         private dateProvider: IDateProvider,
         private asaasProvider: IAsaasProvider,
         private mailProvider: IMailProvider,
-        private discountCoupon: IDiscountCouponsRepository
+        private discountCoupon: IDiscountCouponsRepository,
+        private melhorEnvioProvider: MelhorEnvioProvider
     ) {}
 
     async execute({
@@ -74,7 +76,8 @@ export class CreateOrderWithCreditCardUsecase {
         installmentCount,
         address,
         withdrawStore,
-        coupons
+        coupons,
+        freight:freightName
     }: IRequestCreateOrderWithCreditCard): Promise<IOrderRelationsDTO> {
         // buscar usuario pelo id
         const findUserExist = await this.userRepository.findById(userId) as unknown as IUserRelations
@@ -137,12 +140,12 @@ export class CreateOrderWithCreditCardUsecase {
         }
 
         // Converte o objeto em um array de arrays
-        let arrayItemsShopKeeperArray: Item[][] = Object.values(objItemsShopKeeper)
+        let arrayItemsShopKeeperArray: IProductRelationsDTO[][] = Object.values(objItemsShopKeeper)
 
         // For para calcular o total de cada lojista
         for(let arrayShopKeeper of arrayItemsShopKeeperArray) {
             // buscar lojista pelo id
-            const findShopKeeperExist = await this.userRepository.findById(arrayShopKeeper[0].userId as string)
+            const findShopKeeperExist = await this.userRepository.findById(arrayShopKeeper[0].user.id as string)  as unknown as IUserRelations
 
             // validar se o lojista existe
             if(!findShopKeeperExist) {
@@ -227,6 +230,41 @@ export class CreateOrderWithCreditCardUsecase {
                 walletId: findShopKeeperExist.asaasWalletId,
                 fixedValue: totalShopKeeper
             })
+
+              // chamar melhor envio e enviar as dimentonses do produto para calcular o frete
+              const response = await this.melhorEnvioProvider.shipmentCalculate({
+                to: {
+                    postal_code: findUserExist.address.zipCode as string
+                },
+                from:{
+                    postal_code: findShopKeeperExist.address.zipCode as string
+                },
+                products: arrayShopKeeper.map(item => {
+                    return {
+                        height: Number(item.height),
+                        width: Number(item.width),
+                        length: Number(item.length),
+                        weight: Number(item.weight),
+                        quantity: Number(item.quantity),
+                        id: item.id,
+                        insurance_value: 0,
+                    }
+                })
+            })
+            
+            // buscar frete pelo nome dentro do response da melhor envio
+            const freightService = response.find(freightService => freightService.name === freightName)
+            
+            // validar se o frete foi encontrado
+            if(!freightService) {
+                throw new AppError("Frete não encontrado", 404)
+            }
+
+            // converter o valor do frete para number
+            const freightValue = Number(freightService.price)
+
+            // adicionar o valor do frete ao total do pedido
+            total += freightValue
 
         }
 
@@ -314,7 +352,7 @@ export class CreateOrderWithCreditCardUsecase {
          const dateNow = this.dateProvider.addDays(0)
 
         // Função para criar pedidos recursivamente
-        async function recursiveCreateOrders(arrayShopKeeper: Item[][], orderRepository: IOrderRepository, index = 0,) {
+        async function recursiveCreateOrders(arrayShopKeeper: IProductRelationsDTO[][], orderRepository: IOrderRepository, index = 0,) {
             if (index >= arrayShopKeeper.length) {
                 return; // Termina a recursão quando todos os pedidos forem criados
             }
@@ -358,20 +396,20 @@ export class CreateOrderWithCreditCardUsecase {
                            }
                        }
                    },
-                   items: {
-                       createMany: {
-                           data: itemsShopKeeper.map(item => {
-                               return {
-                                   userId: item.userId,
-                                   productId: item.productId,
-                                   quantity: item.quantity,
-                                   name: item.name,
-                                   price: Number(item.price),
-                                   mainImage: item.mainImage,
-                               } as unknown as Item;
-                           })
-                       }
-                   },
+                    items: {
+                        createMany: {
+                            data: itemsShopKeeper.map(product => {
+                                return {
+                                    productId: product.id,
+                                    userId: product.user.id as string,
+                                    quantity: product.quantity,
+                                    name: product.name,
+                                    price: Number(product.price),
+                                    mainImage: product.mainImage,
+                                } as unknown as Item;
+                            })
+                        }
+                    },
                    payment: {
                        create: {
                            asaasPaymentId: paymentAsaas.id,

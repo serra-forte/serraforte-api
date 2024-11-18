@@ -17,4 +17,8 @@ export interface IProductRelationsDTO {
     reviewCount?: number
     cartItem: CartItem[]
     reviews: Review[]
+    weight: number
+    width: number
+    height: number
+    length: number
 }

@@ -14,6 +14,7 @@ import { IUserRelations } from '@/dtos/user-relations.dto';
 import { IProductRelationsDTO } from '@/dtos/product-relations.dto';
 import { IOrderRelationsDTO } from '@/dtos/order-relations.dto';
 import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-discount-coupons-repository';
+import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementations/provider-melhor-envio';
 
 export interface IRequestCreateOrderWithBoleto {
     userId: string
@@ -46,7 +47,8 @@ export class CreateOrderWithBoletoUsecase {
         private dateProvider: IDateProvider,
         private asaasProvider: IAsaasProvider,
         private mailProvider: IMailProvider,
-        private discountCoupon: IDiscountCouponsRepository
+        private discountCoupon: IDiscountCouponsRepository,
+        private melhorEnvioProvider: MelhorEnvioProvider
     ) {}
 
     async execute({
@@ -54,7 +56,8 @@ export class CreateOrderWithBoletoUsecase {
         remoteIp,
         address,
         coupons,
-        withdrawStore
+        withdrawStore,
+        freight: freightName
     }: IRequestCreateOrderWithBoleto): Promise<IOrderRelationsDTO> {
         // buscar usuario pelo id
         const findUserExist = await this.userRepository.findById(userId) as unknown as IUserRelations
@@ -117,7 +120,7 @@ export class CreateOrderWithBoletoUsecase {
         }
 
         // Converte o objeto em um array de arrays
-        let arrayItemsShopKeeperArray: Item[][] = Object.values(objItemsShopKeeper);
+        let arrayItemsShopKeeperArray: IProductRelationsDTO[][] = Object.values(objItemsShopKeeper);
 
          // buscar entregador existente
          const listDeliveryMan = await this.userRepository.listByDeliveryMan(1, 1)
@@ -155,7 +158,7 @@ export class CreateOrderWithBoletoUsecase {
         // For para calcular o total de cada lojista
         for(let arrayShopKeeper of arrayItemsShopKeeperArray) {
             // buscar lojista pelo id
-            const findShopKeeperExist = await this.userRepository.findById(arrayShopKeeper[0].userId as string)
+            const findShopKeeperExist = await this.userRepository.findById(arrayShopKeeper[0].user.id as string) as unknown as IUserRelations
 
             // validar se o lojista existe
             if(!findShopKeeperExist) {
@@ -241,6 +244,41 @@ export class CreateOrderWithBoletoUsecase {
                 fixedValue: totalShopKeeper
             })
 
+            // chamar melhor envio e enviar as dimentonses do produto para calcular o frete
+            const response = await this.melhorEnvioProvider.shipmentCalculate({
+                to: {
+                    postal_code: findShopKeeperExist.address.zipCode as string
+                },
+                from:{
+                    postal_code: findShopKeeperExist.address.zipCode as string
+                },
+                products: arrayShopKeeper.map(product => {
+                    return {
+                        height: Number(product.height),
+                        width: Number(product.width),
+                        length: Number(product.length),
+                        weight: Number(product.weight),
+                        quantity: Number(product.quantity),
+                        id: product.id,
+                        insurance_value: 0,
+                    }
+                })
+            })
+            
+            // buscar frete pelo nome dentro do response da melhor envio
+            const freightService = response.find(freightService => freightService.name === freightName)
+            
+            // validar se o frete foi encontrado
+            if(!freightService) {
+                throw new AppError("Frete não encontrado", 404)
+            }
+
+            // converter o valor do frete para number
+            const freightValue = Number(freightService.price)
+
+            // adicionar o valor do frete ao total do pedido
+            total += freightValue
+
         }
 
         // criar pagamento na asaas
@@ -293,7 +331,7 @@ export class CreateOrderWithBoletoUsecase {
         // criar data para o pedido
         const dateNow = this.dateProvider.addDays(0)
 
-        async function recursiveCreateOrders(arrayShopKeeper: Item[][], orderRepository: IOrderRepository, index = 0,) {
+        async function recursiveCreateOrders(arrayShopKeeper: IProductRelationsDTO[][], orderRepository: IOrderRepository, index = 0,) {
             if (index >= arrayShopKeeper.length) {
                 return; // Termina a recursão quando todos os pedidos forem criados
             }
@@ -339,14 +377,14 @@ export class CreateOrderWithBoletoUsecase {
                     },
                     items: {
                         createMany: {
-                            data: itemsShopKeeper.map(item => {
+                            data: itemsShopKeeper.map(product => {
                                 return {
-                                    userId: item.userId,
-                                    productId: item.productId,
-                                    quantity: item.quantity,
-                                    name: item.name,
-                                    price: Number(item.price),
-                                    mainImage: item.mainImage,
+                                    productId: product.id,
+                                    userId: product.user.id as string,
+                                    quantity: product.quantity,
+                                    name: product.name,
+                                    price: Number(product.price),
+                                    mainImage: product.mainImage,
                                 } as unknown as Item;
                             })
                         }

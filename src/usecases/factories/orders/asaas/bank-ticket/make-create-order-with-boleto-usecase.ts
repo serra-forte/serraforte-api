@@ -1,6 +1,8 @@
 import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
+import { MelhorEnvioProvider } from "@/providers/DeliveryProvider/implementations/provider-melhor-envio";
 import { MailProvider } from "@/providers/MailProvider/implementations/provider-sendgrid";
 import { AsaasProvider } from "@/providers/PaymentProvider/implementations/provider-asaas-payment";
+import { RailwayProvider } from "@/providers/RailwayProvider/implementations/provider-railway";
 import { PrismaCartItemRepository } from "@/repositories/prisma/prisma-cart-item-repository";
 import { PrismaDiscountCounpons } from "@/repositories/prisma/prisma-discount-counpons-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
@@ -19,6 +21,8 @@ export async function makeCreateOrderWithBoletoUsecase(): Promise<CreateOrderWit
         const asaasProvider = new AsaasProvider()
         const sendGridProvider = new MailProvider()
         const discountCouponRepository = new PrismaDiscountCounpons()
+        const railwayProvider = new RailwayProvider()
+        const melhorEnvioProvider = new MelhorEnvioProvider(railwayProvider)
 
         const createOrderWithBoletoUsecase = new CreateOrderWithBoletoUsecase(
             orderRepository,
@@ -29,7 +33,8 @@ export async function makeCreateOrderWithBoletoUsecase(): Promise<CreateOrderWit
             dayjsProvider,
             asaasProvider,
             sendGridProvider,
-            discountCouponRepository
+            discountCouponRepository,
+            melhorEnvioProvider
         )
         return createOrderWithBoletoUsecase
 }

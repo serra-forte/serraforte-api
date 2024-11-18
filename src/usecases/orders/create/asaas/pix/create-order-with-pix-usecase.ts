@@ -14,6 +14,7 @@ import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider'
 import { IOrderRelationsDTO } from '@/dtos/order-relations.dto';
 import { IUserRelations } from '@/dtos/user-relations.dto';
 import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-discount-coupons-repository';
+import { IProductRelationsDTO } from '@/dtos/product-relations.dto';
 
 export interface IRequestCreateOrderWithPix {
     userId: string
@@ -57,20 +58,21 @@ export class CreateOrderWithPixUsecase {
         remoteIp,
         address,
         withdrawStore,
-        coupons
+        coupons,
+        freight:freightName
     }: IRequestCreateOrderWithPix): Promise<IOrderRelationsDTO> {
-        console.log(userId)
         // buscar usuario pelo id
-        const findUserExist = await this.userRepository.getUserSecurity(userId) as unknown as IUserRelations
+        const findUserExist = await this.userRepository.findById(userId) as unknown as IUserRelations
+        
         
         // validar ser o usuario existe
         if(!findUserExist) {
             throw new AppError("Usuário não encontrado", 404)
         }
-
+        
         // buscar carrinho pelo id 
         const findShoppingCartExist = await this.shoppingCartRepository.findById(findUserExist.shoppingCart.id) as unknown as IShoppingCartRelationsDTO
-
+        
         // validar se o carrinho existe
         if(!findShoppingCartExist) {
             throw new AppError("Carrinho não encontrado", 404)
@@ -120,7 +122,7 @@ export class CreateOrderWithPixUsecase {
         }
 
         // Converte o objeto em um array de arrays
-        let arrayItemsShopKeeperArray: Product[][] = Object.values(objItemsShopKeeper);
+        let arrayItemsShopKeeperArray: IProductRelationsDTO[][] = Object.values(objItemsShopKeeper);
 
         // inicialize o valor de desconto
         let discountCoupomValue = 0
@@ -130,12 +132,10 @@ export class CreateOrderWithPixUsecase {
 
         // validar se o entregador existe
         const uniqueDeliveryMan = listDeliveryMan.users[0] as User
-
         // For para calcular o total de cada lojista
         for(let arrayShopKeeper of arrayItemsShopKeeperArray) {
             // buscar lojista pelo id
-            const findShopKeeperExist = await this.userRepository.findById(arrayShopKeeper[0].userId as string) as unknown as IUserRelations
-
+            const findShopKeeperExist = await this.userRepository.findById(arrayShopKeeper[0].user.id as string) as unknown as IUserRelations
             // validar se o lojista existe
             if(!findShopKeeperExist) {
                 throw new AppError("Lojista não encontrado", 404)
@@ -147,12 +147,12 @@ export class CreateOrderWithPixUsecase {
             }, 0);
             
             totalShopKeeper = totalShopKeeper * Number(findShopKeeperExist.paymentFee) / 100;
-            
             // validar se o lojista tem um asaasWalletId
             if(!findShopKeeperExist.asaasWalletId) {
                 throw new AppError("Lojista não possui carteira de pagamento Asaas", 404)
             }
 
+            // calcular cupom de desconto
             if(coupons && coupons.length > 0) {
                     // filtrar cupom de desconto pelo id do lojista no array de cupons
                     for(let coupom of coupons) {
@@ -203,7 +203,7 @@ export class CreateOrderWithPixUsecase {
                     }
                 
             }
-
+            
             // aplicar calculo de desconto no total menos o desconto para cada lojista
             totalShopKeeper = totalShopKeeper - paymentFeeDicount
 
@@ -215,35 +215,41 @@ export class CreateOrderWithPixUsecase {
             })
 
             // chamar melhor envio e enviar as dimentonses do produto para calcular o frete
-            const freight = await this.melhorEnvioProvider.shipmentCalculate({
+            const response = await this.melhorEnvioProvider.shipmentCalculate({
                 to: {
-                    postal_code: findUserExist.address.zipCode as string
+                    postal_code: findShopKeeperExist.address.zipCode as string
                 },
                 from:{
                     postal_code: findShopKeeperExist.address.zipCode as string
                 },
-                products: arrayShopKeeper.map(item => {
+                products: arrayShopKeeper.map(product => {
                     return {
-                        height: Number(item.height),
-                        width: Number(item.width),
-                        length: Number(item.length),
-                        weight: Number(item.weight),
-                        quantity: Number(item.quantity),
-                        id: item.id,
+                        height: Number(product.height),
+                        width: Number(product.width),
+                        length: Number(product.length),
+                        weight: Number(product.weight),
+                        quantity: Number(product.quantity),
+                        id: product.id,
                         insurance_value: 0,
                     }
                 })
             })
+            
+            // buscar frete pelo nome dentro do response da melhor envio
+            const freightService = response.find(freightService => freightService.name === freightName)
+            
+            // validar se o frete foi encontrado
+            if(!freightService) {
+                throw new AppError("Frete não encontrado", 404)
+            }
 
-            console.log(freight);
+            // converter o valor do frete para number
+            const freightValue = Number(freightService.price)
 
             // adicionar o valor do frete ao total do pedido
+            total += freightValue
         }
 
-        
-        // adicionar valor do frete ao valor do pagamento
-
-        // calcular cupom de desconto
         // criar pagamento na asaas
         let newCustomer = findUserExist.asaasCustomerId
 
@@ -299,7 +305,7 @@ export class CreateOrderWithPixUsecase {
 
         // Função para criar pedidos recursivamente para cada lojista
         // Poque é preciso criar um pedido para cada lojista separadamente
-        async function recursiveCreateOrders(arrayShopKeeper: Product[][], orderRepository: IOrderRepository, index = 0,) {
+        async function recursiveCreateOrders(arrayShopKeeper: IProductRelationsDTO[][], orderRepository: IOrderRepository, index = 0,) {
             if (index >= arrayShopKeeper.length) {
                 return; // Termina a recursão quando todos os pedidos forem criados
             }
@@ -308,7 +314,6 @@ export class CreateOrderWithPixUsecase {
             let countBooking = await orderRepository.countOrders()
             let code = `#${countBooking + 1}`
             let stopVerifyCode = false
-
             try {
                 // fazer laço para buscar reserva através do code para ve se existe
                 // enquanto existir alterar o valor do code e pesquisar novamente
@@ -331,7 +336,7 @@ export class CreateOrderWithPixUsecase {
 
             // criar pedido passando lista de itens para criar juntos
             const order = await orderRepository.create({
-                userId: findUserExist.id,
+                userId: findUserExist?.id as string,
                 code,
                 shoppingCartId: findShoppingCartExist.id,
                 total,
@@ -353,14 +358,14 @@ export class CreateOrderWithPixUsecase {
                 },
                 items: {
                     createMany: {
-                        data: itemsShopKeeper.map(item => {
+                        data: itemsShopKeeper.map(product => {
                             return {
-                                productId: item.id,
-                                userId: item.userId as string,
-                                quantity: item.quantity,
-                                name: item.name,
-                                price: Number(item.price),
-                                mainImage: item.mainImage,
+                                productId: product.id,
+                                userId: product.user.id as string,
+                                quantity: product.quantity,
+                                name: product.name,
+                                price: Number(product.price),
+                                mainImage: product.mainImage,
                             } as unknown as Item;
                         })
                     }
@@ -368,7 +373,7 @@ export class CreateOrderWithPixUsecase {
                 payment: {
                     create: {
                         asaasPaymentId: paymentAsaas.id,
-                        userId: findUserExist.id,
+                        userId: findUserExist?.id as string,
                         paymentMethod: "PIX",
                         invoiceUrl: paymentAsaas.invoiceUrl,
                         value: total,

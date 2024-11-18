@@ -1,3 +1,4 @@
+import { IUserRelations } from "@/dtos/user-relations.dto"
 import { Prisma, User } from "@prisma/client"
 
 export interface IExpiredRefundCredit{

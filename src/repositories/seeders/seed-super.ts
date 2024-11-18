@@ -24,17 +24,12 @@ async function seedSuper(){
             role: 'SUPER',
             emailActive: true,
             createdAt: new Date(),
-        }
-    })
-
-    await prisma.shoppingCart.create({
-        data:{
-            user:{
-                connect: {
-                    id: '7b606dce-5419-4f79-8540-6ed63deea125'
+            shoppingCart:{
+                create: {
+                    expireDate: new Date()
                 }
             }
-        } as any
+        }
     })
 
     console.log(admin)

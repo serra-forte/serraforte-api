@@ -32,7 +32,8 @@ async function seedSuper(){
         }
     })
 
-    console.log(admin)
+    console.log(admin) // log
+    
     
     await prisma.$disconnect()
    } catch (error) {

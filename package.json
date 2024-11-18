@@ -9,7 +9,7 @@
   "scripts": {
     "start:dev": "tsx watch ./src/server.ts",
     "build": "tsup src --out-dir build --ignore-watch views ",
-    "postbuild": "cp -r ./views ./build  && cp -r ./src/tmp ./build && cp -r ./src/public ./build",
+    "postbuild": "cp -r ./views ./build  && cp -r ./src/tmp ./build",
     "start:prod": "node ./build/server.js",
     "migrate": "prisma migrate dev",
     "test:create-prisma-environment": "npm link ./prisma/vitest-environment-prisma",

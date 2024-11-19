@@ -42,6 +42,7 @@ export class CreateProductsUseCase {
         boxesIds,
         shopKeeperId: userId
      }: IRequestCreateProducts): Promise<Product> {
+        console.log(boxesIds)
         // buscar categoria pelo id
         const findCategoryExists = await this.categoriesRepository.findById(categoryId as string)
 

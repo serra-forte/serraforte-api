@@ -7,22 +7,22 @@ import { DeleteBox } from "./delete/delete-boxes-controller";
 import { ListBoxes } from "./list/list-boxes-controller";
 import { FindByIdBox } from "./find-by-id/find-by-id-boxes-controller";
 
-export async function boxesRoutes(fastify: FastifyInstance){
-    fastify.addHook('onRequest', verifyTokenJWT)
-    fastify.addHook('onRequest', verifyUserRole('SHOPKEEPER','ADMIN', 'SUPER'))
+export async function boxesRoutes(fastifyApp: FastifyInstance){
+    fastifyApp.addHook('onRequest', verifyTokenJWT)
+    fastifyApp.addHook('onRequest', verifyUserRole('SHOPKEEPER','ADMIN', 'SUPER'))
 
     // criar box
-    fastify.post('/', CreateBox),
+    fastifyApp.post('/', CreateBox),
     
     // update box
-    fastify.post('/', UpdateBox)
+    fastifyApp.post('/', UpdateBox)
 
     // delete box
-    fastify.delete('/:id', DeleteBox)
+    fastifyApp.delete('/:id', DeleteBox)
 
     // list box
-    fastify.get('/', ListBoxes)
+    fastifyApp.get('/', ListBoxes)
 
     // find box by id
-    fastify.get('/:id', FindByIdBox)
+    fastifyApp.get('/:id', FindByIdBox)
 }

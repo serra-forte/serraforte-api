@@ -18,7 +18,7 @@ export async function boxesRoutes(fastify: FastifyInstance){
     fastify.post('/', UpdateBox)
 
     // delete box
-    fastify.delete('/', DeleteBox)
+    fastify.delete('/:id', DeleteBox)
 
     // list box
     fastify.get('/', ListBoxes)

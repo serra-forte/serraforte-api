@@ -6,13 +6,13 @@ export async function ShipmentCalculate(request: FastifyRequest, reply:FastifyRe
     try {
         const querySchema = z.object({
             to: z.string(),
-            shopkeeperId: z.string().uuid(),
+            shopkeeperIds: z.array(z.string().uuid()),
             productsId: z.array(z.string().uuid())
         })
 
         const { 
             to,
-            shopkeeperId,
+            shopkeeperIds,
             productsId
          } = querySchema.parse(request.query)
 
@@ -20,7 +20,7 @@ export async function ShipmentCalculate(request: FastifyRequest, reply:FastifyRe
         
         const authenticateURL = await authenticateMelhorEnvioUseCase.execute({
             to,
-            shopkeeperId,
+            shopkeeperIds,
             productsId
         })
         

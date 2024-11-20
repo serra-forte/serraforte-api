@@ -103,7 +103,6 @@ export class CreateOrderWithPixUsecase {
                 product
             } = response
 
-
             if (product) {
                 if (product.quantity < item.quantity) {
                     throw new AppError("Estoque insuficiente", 400);
@@ -206,6 +205,8 @@ export class CreateOrderWithPixUsecase {
             
             // aplicar calculo de desconto no total menos o desconto para cada lojista
             totalShopKeeper = totalShopKeeper - paymentFeeDicount
+
+            console.log(totalShopKeeper)
 
             // adicionar total de cada lojista no arrayPaymentWalletToShopKeeper
             arrayToSplitToMembers.push({

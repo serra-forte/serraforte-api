@@ -133,6 +133,7 @@ export class CreateOrderWithPixUsecase {
         const uniqueDeliveryMan = listDeliveryMan.users[0] as User
         // For para calcular o total de cada lojista
         for(let arrayShopKeeper of arrayItemsShopKeeperArray) {
+            console.log(arrayShopKeeper)
             // buscar lojista pelo id
             const findShopKeeperExist = await this.userRepository.findById(arrayShopKeeper[0].user.id as string) as unknown as IUserRelations
             // validar se o lojista existe

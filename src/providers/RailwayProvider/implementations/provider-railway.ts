@@ -12,6 +12,7 @@ export interface variableUpsert{
 export class RailwayProvider implements IRailwayProvider {
     async variablesUpsert(variables: Variables[]) {
         try {
+            // Rota graphql para atualizar variáveis de ambiente servidor do Railway
             const query = `
             mutation variableUpsert($input: VariableUpsertInput!) {
                 variableUpsert(input: $input)

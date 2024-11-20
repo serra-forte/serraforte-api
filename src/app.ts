@@ -20,6 +20,7 @@ import { shoppingCartRoutes } from "./http/controllers/shopping-carts/routes";
 import { ordersRoutes } from "./http/controllers/orders/routes";
 import { deliveriesRoutes } from "./http/controllers/deliveries/routes";
 import { boxesRoutes } from "./http/controllers/boxes/routes";
+import { envRoutes } from "./http/controllers/envs/routes";
 
 export const fastifyApp = fastify()
 
@@ -93,6 +94,10 @@ fastifyApp.register(deliveriesRoutes, {
 
 fastifyApp.register(boxesRoutes, {
   prefix: 'boxes',
+})
+
+fastifyApp.register(envRoutes, {
+  prefix: 'envs',
 })
 
 

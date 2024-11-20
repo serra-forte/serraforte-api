@@ -246,6 +246,8 @@ export class CreateOrderWithPixUsecase {
             // converter o valor do frete para number
             const freightValue = Number(freightService.price)
 
+            console.log(freightValue)
+
             // adicionar o valor do frete ao total do pedido
             total += freightValue
         }

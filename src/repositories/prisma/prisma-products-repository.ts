@@ -155,6 +155,9 @@ export class PrismaProductsRepository  implements IProductsRepository{
             select: {
                 id: true,
                 code: true,
+                width: true,
+                height: true,
+                length: true,
                 name: true,
                 description: true,
                 price: true,
@@ -165,6 +168,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
                 weight: true,
                 createdAt: true,
                 averageRating:true,
+                boxes: true,
                 category: true,
                 user: {
                     select: {
@@ -413,6 +417,9 @@ export class PrismaProductsRepository  implements IProductsRepository{
             select: {
                 id: true,
                 code: true,
+                width: true,
+                height: true,
+                length: true,
                 name: true,
                 description: true,
                 price: true,
@@ -423,6 +430,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
                 weight: true,
                 createdAt: true,
                 averageRating:true,
+                boxes: true,
                 reviews: {
                     select: {
                         id: true,
@@ -496,6 +504,9 @@ export class PrismaProductsRepository  implements IProductsRepository{
             select: {
                 id: true,
                 code: true,
+                width: true,
+                height: true,
+                length: true,
                 name: true,
                 description: true,
                 price: true,
@@ -506,6 +517,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
                 weight: true,
                 createdAt: true,
                 averageRating:true,
+                boxes: true,
                 reviews: {
                     select: {
                         id: true,
@@ -636,6 +648,9 @@ export class PrismaProductsRepository  implements IProductsRepository{
             select: {
                 id: true,
                 code: true,
+                width: true,
+                height: true,
+                length: true,
                 quantity: true,
                 weight: true,
                 price: true,
@@ -646,6 +661,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
                 createdAt: true,
                 sales: true,
                 averageRating: true,
+                boxes: true,
                 user: {
                     select: {
                         id: true,

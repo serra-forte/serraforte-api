@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { IRailwayProvider, Variables } from "../interface-railway-provider";
+import { IRailwayProvider, ResponseUpsertVariables, Variables } from "../interface-railway-provider";
 import axios from "axios";
 
 export interface variableUpsert{
@@ -10,48 +10,63 @@ export interface variableUpsert{
     value: string;
 }
 export class RailwayProvider implements IRailwayProvider {
-    async variablesUpsert(variables: Variables[]) {
+    async variablesUpsert(variables: Variables[]): Promise<ResponseUpsertVariables> {
+        const result: ResponseUpsertVariables = { variableUpsert: [] };
+
         try {
-            // Rota graphql para atualizar variáveis de ambiente servidor do Railway
             const query = `
             mutation variableUpsert($input: VariableUpsertInput!) {
                 variableUpsert(input: $input)
             }
             `;
 
-            // Loop para enviar uma requisição por variável
             for (const variable of variables) {
                 const variableToUpsert = {
                     projectId: env.RAILWAY_PROJECT_ID,
                     environmentId: env.RAILWAY_ENVIRONMENT_ID,
                     serviceId: env.RAILWAY_SERVICE_ID,
                     name: variable.name,
-                    value: variable.value
+                    value: variable.value,
                 };
 
-                const response = await axios.post(env.RAILWAY_API_URL,
-                    {
-                        query,
-                        variables: {
-                            input: variableToUpsert
+                try {
+                    const response = await axios.post(
+                        env.RAILWAY_API_URL,
+                        {
+                            query,
+                            variables: {
+                                input: variableToUpsert,
+                            },
                         },
-                    },
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${env.RAILWAY_TOKEN}`
+                        {
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${env.RAILWAY_TOKEN}`,
+                            }
                         }
-                    }
-                );
+                    );
 
-                if (response.data.errors) {
-                    console.error('Erro ao atualizar a variável:', response.data.errors.message);
-                } else {
-                    console.log('Variável de ambiente atualizada com sucesso:', response.data.data);
+                    if (response.data.errors) {
+                        const errorMessage = response.data.errors.map((err: any) => err.message).join(", ");
+                        console.error('Erro ao atualizar a variável:', errorMessage);
+                        result.variableUpsert.push(false); // Indique que a operação falhou
+                    } else if (response.data.data?.variableUpsert) {
+                        console.log('Variável de ambiente atualizada com sucesso:', variable.name);
+                        result.variableUpsert.push(true); // Sucesso
+                    } else {
+                        console.error('Resposta inesperada do servidor:', response.data);
+                        result.variableUpsert.push(false); // Falha
+                    }
+                } catch (error) {
+                    console.error(`Erro ao processar a variável ${variable.name}:`, error);
+                    result.variableUpsert.push(false); // Falha devido a erro na requisição
                 }
             }
         } catch (error) {
-            console.error('Erro na requisição:', error);
+            console.error('Erro geral na execução:', error);
         }
+
+        return result; // Sempre retorna o resultado
     }
 }
+

@@ -217,7 +217,7 @@ export class CreateOrderWithPixUsecase {
             // chamar melhor envio e enviar as dimentonses do produto para calcular o frete
             const response = await this.melhorEnvioProvider.shipmentCalculate({
                 to: {
-                    postal_code: findShopKeeperExist.address.zipCode as string
+                    postal_code: address?.zipCode as string
                 },
                 from:{
                     postal_code: findShopKeeperExist.address.zipCode as string
@@ -276,6 +276,8 @@ export class CreateOrderWithPixUsecase {
 
         // verificar se o usuario tem um idCostumerPayment se não tiver retorna o new customer criado anteriormente
         const idCostumerPayment = String(newCustomer)
+
+        console.log(total)
 
         // criar cobrança do tipo pix no asaas
         const paymentAsaas = await this.asaasProvider.createPayment({

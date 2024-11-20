@@ -139,12 +139,12 @@ export class CreateOrderWithPixUsecase {
             if(!findShopKeeperExist) {
                 throw new AppError("Lojista não encontrado", 404)
             }
-
+            console.log(total)
             let totalShopKeeper = arrayShopKeeper.reduce((acc, item) => {
                 let total = acc + Number(item.price) * Number(item.quantity);
                 return total;
             }, 0);
-            
+            console.log(totalShopKeeper)
             totalShopKeeper = totalShopKeeper * Number(findShopKeeperExist.paymentFee) / 100;
             // validar se o lojista tem um asaasWalletId
             if(!findShopKeeperExist.asaasWalletId) {

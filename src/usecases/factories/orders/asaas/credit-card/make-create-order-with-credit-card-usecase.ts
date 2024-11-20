@@ -23,7 +23,8 @@ export async function makeCreateOrderWithCreditCardUsecase(): Promise<CreateOrde
         const sendGridProvider = new MailProvider()
         const discountCouponRepository = new PrismaDiscountCounpons()
         const railwayProvider = new RailwayProvider()
-        const melhorEnvioProvider = new MelhorEnvioProvider(railwayProvider)
+        const mailProvider = new MailProvider()
+        const melhorEnvioProvider = new MelhorEnvioProvider(railwayProvider, mailProvider, userRepository)
 
         const createOrderWithCreditCardUsecase = new CreateOrderWithCreditCardUsecase(
             orderRepository,

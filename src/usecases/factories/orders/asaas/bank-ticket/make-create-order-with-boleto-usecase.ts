@@ -22,7 +22,8 @@ export async function makeCreateOrderWithBoletoUsecase(): Promise<CreateOrderWit
         const sendGridProvider = new MailProvider()
         const discountCouponRepository = new PrismaDiscountCounpons()
         const railwayProvider = new RailwayProvider()
-        const melhorEnvioProvider = new MelhorEnvioProvider(railwayProvider)
+        const mailProvider = new MailProvider()
+        const melhorEnvioProvider = new MelhorEnvioProvider(railwayProvider, mailProvider, userRepository)
 
         const createOrderWithBoletoUsecase = new CreateOrderWithBoletoUsecase(
             orderRepository,

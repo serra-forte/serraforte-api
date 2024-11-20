@@ -22,7 +22,8 @@ export async function makeCreateOrderWithPixUsecase(): Promise<CreateOrderWithPi
         const sendGridProvider = new MailProvider()
         const discountCouponRepository = new PrismaDiscountCounpons()
         const railwayProvider = new RailwayProvider()
-        const melhorEnvioProvider = new MelhorEnvioProvider(railwayProvider)
+        const mailProvider = new MailProvider()
+        const melhorEnvioProvider = new MelhorEnvioProvider(railwayProvider, mailProvider, userRepository)
 
         const createOrderWithPixUsecase = new CreateOrderWithPixUsecase(
             orderRepository,

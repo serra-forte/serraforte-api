@@ -3,9 +3,15 @@ import axios, { AxiosError } from 'axios';
 import { IMelhorEnvioProvider, IRequestCalculateShipping, IResponseAuth, IResponseCalculateShipping } from './../interface-melhor-envio-provider';
 import { IRailwayProvider } from '@/providers/RailwayProvider/interface-railway-provider';
 import "dotenv/config"
+import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider';
+import { IUsersRepository } from '@/repositories/interfaces/interface-users-repository';
 
 export class MelhorEnvioProvider implements IMelhorEnvioProvider {
-  constructor(private railwayProvider: IRailwayProvider) {}
+  constructor(
+    private railwayProvider: IRailwayProvider, 
+    private mailProvider: IMailProvider,
+    private usersRepository: IUsersRepository
+  ) {}
 
   async refreshToken(): Promise<IResponseAuth> {
     try {
@@ -33,6 +39,32 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       
         return response.data;
       } else {
+        const admins = await this.usersRepository.listAdmins();
+
+        // formatar do painel admin no frontend
+        const link =
+        env.NODE_ENV === 'development'
+          ? `${env.APP_URL_FRONTEND_DEVELOPMENT}/admin-panel/melhor-envio/refresh-token`
+          : `${env.APP_URL_FRONTEND_PRODUCTION}/admin-panel/melhor-envio/refresh-token`
+
+        // pegar template de email
+        const pathTemplate =
+        env.NODE_ENV === 'development'
+          ? './views/emails/authenticate-melhor-envio.hbs'
+          : './build/views/emails/authenticate-melhor-envio.hbs'
+
+        
+        for (const admin of admins) {
+          // dispara e-mail avisando o admin que o token expirou
+          await this.mailProvider.sendEmail(
+            admin.email,
+            admin.name,
+            'Token de Acesso Expirado - Melhor Envio',
+            link,
+            pathTemplate,
+            null
+          )
+        }
         throw new Error('Failed to get access token');
       }
     } catch (error) {

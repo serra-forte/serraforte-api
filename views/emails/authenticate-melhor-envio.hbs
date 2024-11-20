@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+       body{
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+        }
+        .container{
+            font-family: Arial, Helvetica, sans-serif; 
+        }
+        #content{
+            width: 25rem;
+            color: black;
+        }
+        img{
+            display: block;
+        }
+        span{
+            margin: 1rem 0px;
+            display: block;
+        }
+        p{
+            text-align: justify;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 376px) {
+            #content{
+            width: 20rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="align-image">
+            <img src="https://i.imgur.com/tRPRz3k.png" alt="logo serraforte">
+        </span>
+
+        <div id="content">
+            <span>Olá {{name}},</span>
+
+            <span>
+                <p>
+                    Informamos que o token de acesso ao aplicativo da Melhor Envio expirou. Para garantir o funcionamento contínuo das integrações e operações relacionadas ao serviço, é necessário renovar o token o mais breve possível.
+                </p>
+                <p>
+                    Por favor, realize a atualização do token através do painel administrativo na seguinte URL: {{link}}
+                </p>
+            </span>
+
+            <span>
+                Caso precise de assistência, estamos à disposição.
+            </span>
+
+            <span>
+                <strong>
+                    Atenciosamente,
+                </strong>
+            </span>
+
+            <span>
+                Equipe de Suporte Técnico
+            </span>
+        </div>
+    </div>
+</body>
+</html>

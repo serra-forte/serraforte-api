@@ -35,6 +35,11 @@ export class PrismaShoppingCartRepository implements IShoppingCartRepository{
                                 id: true,
                                 name: true,
                                 price: true,
+                                height: true,
+                                width: true,
+                                length: true,
+                                weight: true,
+                                quantity: true,
                                 mainImage: true
                             }
                         }
@@ -71,7 +76,12 @@ export class PrismaShoppingCartRepository implements IShoppingCartRepository{
                                 id: true,
                                 name: true,
                                 price: true,
-                                mainImage: true
+                                mainImage: true,
+                                height: true,
+                                width: true,
+                                length: true,
+                                weight: true,
+                                quantity: true
                             }
                         },
                         userId: true,
@@ -124,7 +134,12 @@ export class PrismaShoppingCartRepository implements IShoppingCartRepository{
                                 id: true,
                                 name: true,
                                 price: true,
-                                mainImage: true
+                                mainImage: true,
+                                height: true,
+                                width: true,
+                                length: true,
+                                weight: true,
+                                quantity: true,
                             }
                         },
                         quantity: true

@@ -7,4 +7,8 @@ export interface ICartItemRelationsDTO {
     user: User
     quantity: number
     price: number
+    height: number,
+    weight: number,
+    width: number,
+    length: number,
 }

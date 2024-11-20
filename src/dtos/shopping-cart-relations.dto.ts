@@ -9,8 +9,12 @@ export interface IShoppingCartRelationsDTO {
         productId: string
         userId: string
         name: string
-        quantity: number
         price: number
         mainImage: string
-    }[]
+        height: number,
+        width: number,
+        length: number,
+        weight: number,
+        quantity: number,
+}[]
 }

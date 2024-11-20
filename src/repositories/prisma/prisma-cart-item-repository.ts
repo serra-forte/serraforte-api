@@ -50,7 +50,11 @@ export class PrismaCartItemRepository implements ICartItemRepository{
                 product: true,
                 user: true,
                 quantity: true,
-                shopping: true
+                height: true,
+                weight: true,
+                width: true,
+                length: true,
+                shopping: true,
             }
         }) as unknown as ICartItemRelationsDTO
 
@@ -64,6 +68,10 @@ export class PrismaCartItemRepository implements ICartItemRepository{
             name: cartItem.product.name,
             price: cartItem.product.price,
             quantity: cartItem.quantity,
+            height: cartItem.height,
+            weight: cartItem.weight,
+            width: cartItem.width,
+            length: cartItem.length,
             mainImage: cartItem.product.mainImage
         } as unknown as CartItem
     }

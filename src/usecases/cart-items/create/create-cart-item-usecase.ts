@@ -78,6 +78,12 @@ export class CreateCartItemUseCase {
                 shoppingCartId,
                 userId: product.user.id,
                 quantity: item.quantity,
+                height: product.height,
+                length: product.length,
+                width: product.width,
+                weight: product.weight,
+                price: product.price,
+                mainImage: product.mainImage
             })
             total += Number(product.price) * Number(item.quantity) + Number(shoppingCart.total)
 

@@ -4,9 +4,9 @@ import { connectionNodeCron } from "./config/node-cron-connection";
 import { producer } from "./usecases/deliveries/kafka";
 
 connectionNodeCron();
-// producer.connect().then(() => {
-//     console.log("Kafka producer connected");
-// })
+producer.connect().then(() => {
+    console.log("Kafka producer connected");
+})
 
 fastifyApp.listen({
     host: env.HOST,

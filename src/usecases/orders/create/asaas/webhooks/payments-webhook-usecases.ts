@@ -73,12 +73,6 @@ export class PaymentWebHookUseCases {
       // [x] buscar todos os usuarios administradores
       const listUsersAdmin = await this.userRepository.listAdmins()
 
-       // buscar entregador existente
-       const listDeliveryMan = await this.userRepository.listByDeliveryMan(1, 1)
-
-       // validar se o entregador existe
-       const uniqueDeliveryMan = listDeliveryMan.users[0] as User
-
        const orders = await this.orderRepository.listByAsaasPaymentId(paymenAsaasId)
 
        const endOrder: IOrderRelationsDTO = {
@@ -91,13 +85,12 @@ export class PaymentWebHookUseCases {
         items: [] // Inicializa items como array vazio
       } as unknown as IOrderRelationsDTO;
 
-      let existDeliveryMan = false
       let listShopkeeper = []
 
       
       for (let order of orders) {
           let total = Number(order.total);  // Certifica que 'total' é um número
-          endOrder.total += total;          // Acumula o total
+          endOrder.total += total;         // Acumula o total
           endOrder.items.push(...order.items); // spreed no array de items para acumular os items anteriores e os novos
 
           // pegar shopkeepers pelo item do pedido
@@ -107,16 +100,7 @@ export class PaymentWebHookUseCases {
           if(findShopkeeper){
             listShopkeeper.push(findShopkeeper)
           }
-
-          if(!order.withdrawStore){
-            existDeliveryMan = true
-          }
       }
-
-      if(existDeliveryMan){
-          endOrder.total += Number(uniqueDeliveryMan.paymentFee)
-      }
-
 
       // [x] criar variavel com caminho do templeate de email de pagamento reprovado
       const templatePathUserReproved =
@@ -197,11 +181,11 @@ export class PaymentWebHookUseCases {
           new Date(this.dayjsProvider.addDays(0)),
         )
 
-		// [x] atualizar status de pedido para "AWAITING_LABEL" no banco de dados
-		await this.orderRepository.updateStatus(
-			findOrderExist.id,
-			Status.AWAITING_LABEL
-		)
+        // [x] atualizar status de pedido para "AWAITING_LABEL" no banco de dados
+        await this.orderRepository.updateStatus(
+          findOrderExist.id,
+          Status.AWAITING_LABEL
+        )
 
         // atualizar mais vendidos do produto com a quantidade de vendas no pedido
         for(let product of findOrderExist.items) {

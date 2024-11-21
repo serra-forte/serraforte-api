@@ -1,5 +1,5 @@
-import { env } from "@/env";
 import { Kafka } from "kafkajs";
+import { env } from "process";
 
 export const kafka =  new Kafka({
     clientId: "serraforte",

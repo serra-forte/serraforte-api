@@ -21,6 +21,7 @@ import { ordersRoutes } from "./http/controllers/orders/routes";
 import { deliveriesRoutes } from "./http/controllers/deliveries/routes";
 import { boxesRoutes } from "./http/controllers/boxes/routes";
 import { envRoutes } from "./http/controllers/envs/routes";
+import handlebars from "handlebars";
 
 export const fastifyApp = fastify()
 
@@ -99,6 +100,30 @@ fastifyApp.register(boxesRoutes, {
 fastifyApp.register(envRoutes, {
   prefix: 'envs',
 })
+
+// Registrar o helper equals sem usar 'this'
+handlebars.registerHelper('isEqual', function (a, b) {
+  return a === b;
+});
+
+handlebars.registerHelper('isNotNull', function(link) {
+  return link && link !== "null";
+});
+
+// Registrar o helper formatNumber
+handlebars.registerHelper('formatNumber', function (number) {
+  return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+  }).format(Number(number));
+});
+
+// Registrar o helper formatCurrencyy
+handlebars.registerHelper('formatCurrency', function (number, currencySymbol = '$') {
+  // Verifica se o valor é um número e formata com duas casas decimais
+  return `${currencySymbol} ${Number(number).toFixed(2)}`;
+});
+
 
 
 fastifyApp.setErrorHandler((error:FastifyError,request:FastifyRequest, reply: FastifyReply)=>{

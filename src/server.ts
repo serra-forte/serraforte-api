@@ -5,7 +5,6 @@ import { producer } from "./usecases/deliveries/kafka";
 
 connectionNodeCron();
 producer.connect().then(() => {
-    
     console.log("Kafka producer connected");
 })
 

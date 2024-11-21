@@ -39,6 +39,7 @@ export class PaymentWebHookUseCases {
   ) {}
 
   async execute({ event, payment:paymenAsaas }: IRequestReceiveEvent): Promise<void> {
+    console.log('passou aqui 1')
     let paymenAsaasId = String(paymenAsaas.id)
 
     // [x] buscar pagamento pelo id
@@ -56,7 +57,7 @@ export class PaymentWebHookUseCases {
       if (!findPaymentExist) {
         throw new AppError('Pagamento não encontrado', 404)
       }
-
+      console.log('passou aqui 2')
       // [x] validar se o pagamento já foi aprovado
       if (payment.paymentStatus === Status.APPROVED) {
         throw new AppError('Pagamento já foi feito', 400)
@@ -69,7 +70,7 @@ export class PaymentWebHookUseCases {
       if (!findOrderExist) {
         throw new AppError('Pedido não encontrado', 404)
       }
-
+      console.log('passou aqui 3')
       // [x] buscar todos os usuarios administradores
       const listUsersAdmin = await this.userRepository.listAdmins()
 
@@ -101,19 +102,19 @@ export class PaymentWebHookUseCases {
             listShopkeeper.push(findShopkeeper)
           }
       }
-
+      console.log('passou aqui 4')
       // [x] criar variavel com caminho do templeate de email de pagamento reprovado
       const templatePathUserReproved =
       './views/emails/admin-payment-reproved.hbs'
 
       if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') {  // [x] criar validação para caso o evento seja "REPROVED"
+        console.log('passou aqui 5')
         // [x] atualizar payment no banco de dados com os dados recebidos e status REPROVED
          await this.paymentsRepository.updateById(
           payment.id,
           Status.REPROVED,
           new Date(this.dayjsProvider.addDays(0)),
         )
-          
 
           // [x] disparar envio de email de pagamento recebido do usuário com nota fiscal(invoice)
           await this.mailProvider.sendEmail(
@@ -126,7 +127,6 @@ export class PaymentWebHookUseCases {
               order: endOrder,
             },
           )
-        
           // [x] criar variavel com caminho do templeate de email de pagamento reprovado
           const templatePathAdminPaymentReproved =
           './views/emails/admin-payment-reproved.hbs'
@@ -174,6 +174,8 @@ export class PaymentWebHookUseCases {
         (event === 'PAYMENT_CONFIRMED' && paymenAsaas.billingType === 'BOLETO') ||
         (event === 'PAYMENT_CONFIRMED' && paymenAsaas.billingType === 'CREDIT_CARD'))
 		{ 
+      console.log('passou aqui 6')
+
         // [x] atualizar status de pagamento para "APPROVED" no banco de dados
         await this.paymentsRepository.updateById(
           payment.id,

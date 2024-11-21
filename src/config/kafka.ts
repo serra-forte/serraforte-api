@@ -1,7 +1,7 @@
-import { Kafka } from "kafkajs";
+import { Kafka } from 'kafkajs';
 
-export const kafka =  new Kafka({
-    clientId: "serraforte",
-    brokers: [`https://kafka-broker-production-09a9.up.railway.app:9092`], // teste http://localhost:9092
+// Criar a instância do Kafka com as configurações corretas
+export const kafka = new Kafka({
+    clientId: "serraforte", // Identificador do cliente
+    brokers: ["kafka.railway.internal:29092"], // Broker interno (utilize o nome do host adequado)
 });
-

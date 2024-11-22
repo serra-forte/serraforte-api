@@ -1,0 +1,1 @@
+import "./melhor-envio/add-freight-to-cart-melhor-envio";

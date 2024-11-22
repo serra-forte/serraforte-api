@@ -8,6 +8,7 @@ import { AppError } from '@/usecases/errors/app-error'
 import { Status, User } from '@prisma/client';
 import 'dotenv/config'
 import { IProductsRepository } from '@/repositories/interfaces/interface-products-repository';
+import { KafkaSendMessage } from '@/providers/QueueProvider/kafka/kafka-producer';
 
 export interface IRequestReceiveEvent {
   event: string
@@ -35,7 +36,8 @@ export class PaymentWebHookUseCases {
     private mailProvider: IMailProvider,
     private userRepository: IUsersRepository,
     private dayjsProvider: IDateProvider,
-    private productRepository: IProductsRepository
+    private productRepository: IProductsRepository,
+    private kafkaProvider: KafkaSendMessage
   ) {}
 
   async execute({ event, payment:paymenAsaas }: IRequestReceiveEvent): Promise<void> {
@@ -237,6 +239,9 @@ export class PaymentWebHookUseCases {
             },
           )
         }
+
+        // chamar producer para enviar endOrder para o consumer enviar um frete para o carrinho da melhor envio
+        await this.kafkaProvider.execute('add-freight-to-cart', endOrder)
       }      
     }
   }

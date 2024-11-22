@@ -1,12 +1,9 @@
 import { env } from "./env";
 import { fastifyApp } from "./app";
 import { connectionNodeCron } from "./config/node-cron-connection";
-import { producer } from "./usecases/deliveries/kafka";
+import "./providers/QueueProvider/kafka/consumers/index";
 
 connectionNodeCron();
-producer.connect().then(() => {
-    console.log("Kafka producer connected");
-})
 
 fastifyApp.listen({
     host: env.HOST,

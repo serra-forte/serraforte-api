@@ -53,7 +53,9 @@ export class NodeCronProvider implements INodeCronProvider {
         this.asaasProvider = new AsaasProvider();
         this.railwayProvider = new RailwayProvider();
         this.melhorEnvio = new MelhorEnvioProvider(
-            this.railwayProvider
+            this.railwayProvider,
+            this.mailProvider,
+            this.userRepository
         );
 
     }
@@ -99,29 +101,6 @@ export class NodeCronProvider implements INodeCronProvider {
                     // senão enviar notificação para o ADMIN para inserir valor no painel do Melhor Envio
             } catch (error) {
                 
-                console.error('Erro ao verificar reservas:', error);
-            }
-        });
-    }
-
-    async sendLabelToCart(): Promise<void> {
-        // Agendar a tarefa cron para ser executada a cada minuto
-        // (minuto, hora, dia do mês, mês e dia da semana)
-        // cron.schedule('* /20 * * *', async () => {
-        cron.schedule('* * * * *', async () => {
-            try {
-                console.log('Checkando pedidos para gerar etiquetas.. . .');
-                // buscar pedidos com status "AWAITING_LABEL" com status do pagamento "APPROVED"
-
-                // criar laço para percorrer cada pedido para pegar medidas dos volumes
-
-                    // enviar frete para o carrinho na melhor envio
-
-                    // atualizar status do pedido para "AWAITING_LABEL_PAYMENT_PROCESS"
-
-                    // atualizar pedido com id da etiqueta no banco
-               
-            } catch (error) {
                 console.error('Erro ao verificar reservas:', error);
             }
         });

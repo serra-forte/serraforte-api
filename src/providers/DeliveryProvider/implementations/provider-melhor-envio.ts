@@ -12,6 +12,9 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
     private mailProvider: IMailProvider,
     private usersRepository: IUsersRepository
   ) {}
+  async addFreightToCart():Promise<any> {
+    throw new Error('Method not implemented.');
+  }
 
   async refreshToken(): Promise<IResponseAuth> {
     try {

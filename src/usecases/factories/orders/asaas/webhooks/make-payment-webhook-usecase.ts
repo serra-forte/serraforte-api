@@ -5,6 +5,7 @@ import { PrismaUsersRepository } from './../../../../../repositories/prisma/pris
 import { MailProvider } from './../../../../../providers/MailProvider/implementations/provider-sendgrid';
 import { PaymentWebHookUseCases } from './../../../../orders/create/asaas/webhooks/payments-webhook-usecases';
 import { PrismaProductsRepository } from '@/repositories/prisma/prisma-products-repository';
+import { KafkaSendMessage } from '@/providers/QueueProvider/kafka/kafka-producer';
 
 export async function makePaymentWebHook(): Promise<PaymentWebHookUseCases> {
   const paymentsRepository = new PrismaPaymentRepository
@@ -13,6 +14,7 @@ export async function makePaymentWebHook(): Promise<PaymentWebHookUseCases> {
   const userRepository = new PrismaUsersRepository()
   const dayjsDateProvider = new DayjsDateProvider();
   const productRepository = new PrismaProductsRepository()
+  const kafkaProvider = new KafkaSendMessage();
 
   const paymentWebHookUseCases = new PaymentWebHookUseCases(
     paymentsRepository,
@@ -20,7 +22,8 @@ export async function makePaymentWebHook(): Promise<PaymentWebHookUseCases> {
     mailProvider,
     userRepository,
     dayjsDateProvider,
-    productRepository
+    productRepository,
+    kafkaProvider
   )
 
   return paymentWebHookUseCases

@@ -1,7 +1,6 @@
 import { IUserRelations } from "@/dtos/user-relations.dto";
 import { env } from "@/env";
 import { IDateProvider } from "@/providers/DateProvider/interface-date-provider";
-import { KafkaSendMessage } from "@/providers/QueueProvider/kafka/kafka-producer";
 import { ITokensRepository } from "@/repositories/interfaces/interface-tokens-repository";
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository";
 import { AppError } from "@/usecases/errors/app-error";
@@ -31,7 +30,6 @@ export class LoginUseCase{
         private usersRepository: IUsersRepository,
         private usersTokensRepository: ITokensRepository,
         private dayjsDateProvider: IDateProvider,
-        private kafkaProvider: KafkaSendMessage
     ) {}
 
     async execute({
@@ -75,8 +73,6 @@ export class LoginUseCase{
             })
 
             const getSafeUser = await this.usersRepository.getUserSecurity(findUserExists.id) as User
-
-            await this.kafkaProvider.execute('add-freight-to-cart', getSafeUser)
 
             return {
                 user: getSafeUser,

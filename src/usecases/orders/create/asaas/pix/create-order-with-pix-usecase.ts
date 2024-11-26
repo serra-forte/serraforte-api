@@ -415,6 +415,7 @@ export class CreateOrderWithPixUsecase {
                 createdAt: dateNow
             }) as unknown as IOrderRelationsDTO
 
+            console.log(order)
                 // adicionar id do pedido ao array
                 createdOrders.push(order)
 

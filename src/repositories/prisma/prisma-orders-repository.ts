@@ -511,6 +511,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                     }
                 },
                 items: true,
+                boxes: true,
                 delivery: {
                     select:{
                         id: true,
@@ -568,6 +569,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                     }
                 },
                 items: true,
+                boxes: true,
                 delivery: {
                     select:{
                         id: true,
@@ -703,6 +705,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                     }
                 },
                 items: true,
+                boxes: true,
                 delivery: {
                     select:{
                         id: true,
@@ -756,6 +759,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                     }
                 },
                 items: true,
+                boxes: true,
                 delivery: {
                     select:{
                         id: true,

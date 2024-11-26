@@ -8,7 +8,7 @@ import { IProductsRepository, IResponseFindProductWithReviews } from "@/reposito
 import { IShoppingCartRepository } from "@/repositories/interfaces/interface-shopping-cart-repository";
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository";
 import { AppError } from "@/usecases/errors/app-error";
-import { Address, CartItem, Item, PaymentMethod, User } from "@prisma/client";
+import { Address, Box, CartItem, Item, PaymentMethod, User } from "@prisma/client";
 import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider';
 import { IOrderRelationsDTO } from '@/dtos/order-relations.dto';
 import { IUserRelations } from '@/dtos/user-relations.dto';
@@ -16,6 +16,16 @@ import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-
 import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementations/provider-melhor-envio';
 import { IDeliveryRepository } from '@/repositories/interfaces/interface-deliveries-repository';
 
+interface IITemRelation{
+    id: string
+    productId: string
+    userId: string
+    name: string
+    price: number,
+    mainImage: string
+    quantity: number,
+    boxes: Box[]
+}
 export interface IFreight{
     userId: string
     freight: number
@@ -383,6 +393,14 @@ export class CreateOrderWithPixUsecase {
                             } as unknown as Item;
                         })
                     }
+                },
+                boxes: {
+                    connect: itemsShopKeeper.map(item => {
+                        const itemWithBox = item as unknown as IITemRelation
+                        return {
+                            id: itemWithBox.boxes[0].id
+                        }
+                    })
                 },
                 payment: {
                     create: {

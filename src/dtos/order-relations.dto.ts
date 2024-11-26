@@ -1,4 +1,4 @@
-import { Cancellation, Delivery, Item, Payment, Role, ShoppingCart, Status, User } from "@prisma/client"
+import { Box, Cancellation, Delivery, Item, Payment, Role, ShoppingCart, Status, User } from "@prisma/client"
 
 export interface IOrderRelationsDTO{
     id: string
@@ -11,6 +11,7 @@ export interface IOrderRelationsDTO{
     payment: Payment
     cancellations: Cancellation[]
     shoppingCart: ShoppingCart
+    boxes: Box[]
     delivery: {
         id: true,
         orderId: string,

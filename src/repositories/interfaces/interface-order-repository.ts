@@ -28,9 +28,6 @@ export interface IOrderRepository {
     findByCode(code:string):Promise<Order | null>
     filterOrders(filters: IFilterOrders):Promise<IResponseListOrders>
     listByPaymentWithoutPaying24Hours():Promise<IOrderRelationsDTO[]>
-    listByAwaitingLabel():Promise<IOrderRelationsDTO[]>
-    listByAwaitingLabelPaymentProcess():Promise<IOrderRelationsDTO[]>
-    listByAwaitingLabelGenerate():Promise<IOrderRelationsDTO[]>
     listByIds(orderIds:string[]):Promise<Order[]>
     deleteById(id:string):Promise<void>
     updateStatus(id: string, status: Status): Promise<void>

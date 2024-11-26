@@ -4,24 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 
 export class PrismaOrderRepository implements IOrderRepository {
-    async listByAwaitingLabelPaymentProcess(): Promise<IOrderRelationsDTO[]> {
-        const orders = await prisma.order.findMany({
-            where: {
-                status: Status.AWAITING_LABEL_PAYMENT_PROCESS,
-            }
-        }) as unknown as IOrderRelationsDTO[]
-
-        return orders
-    }
-    async listByAwaitingLabelGenerate(): Promise<IOrderRelationsDTO[]> {
-        const orders = await prisma.order.findMany({
-            where: {
-                status: Status.AWAITING_LABEL_GENERATE,
-            }
-        }) 
-
-        return orders
-    }
     async updateCartLabelId(id: string, cartLabelId: string): Promise<void> {
         await prisma.order.update({
             where: {
@@ -43,18 +25,6 @@ export class PrismaOrderRepository implements IOrderRepository {
             }
         })
     }
-    async listByAwaitingLabel(): Promise<IOrderRelationsDTO[]> {
-        const orders = await prisma.order.findMany({
-            where: {
-                status: Status.AWAITING_LABEL,
-                payment:{
-                    paymentStatus: Status.APPROVED
-                }
-            }
-        }) as unknown as IOrderRelationsDTO[]
-
-        return orders
-    }
     async listByAsaasPaymentId(asaasPaymentId: string): Promise<IOrderRelationsDTO[]> {
         const orders = await prisma.order.findMany({
             where: {
@@ -67,6 +37,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 withdrawStore: true,
                 shoppingCartId: true,
                 code: true,
+                boxes: true,
                 user: {
                     select: {
                         id: true,
@@ -175,6 +146,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 withdrawStore: true,
                 shoppingCartId: true,
                 code: true,
+                boxes: true,
                 user: {
                     select: {
                         id: true,

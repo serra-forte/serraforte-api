@@ -31,16 +31,31 @@ export class AddFreightToCartMelhorEnvio {
         this.orderRepository = new PrismaOrderRepository()
     }
     async execute() {
-
         const createdConsumer = await this.kafkaConsumer.execute('add-freight-to-cart')
 
         createdConsumer.run({
             eachMessage: async ({ topic, partition, message }) => {
-                // enviar frete para o carrinho na melhor envio
+                // converter a mensagem para JSON
+                if(message.value) {
+                    const data = JSON.parse(message.value.toString())
 
-                // atualizar status do pedido para "AWAITING_LABEL_PAYMENT_PROCESS"
+                    // enviar frete para o carrinho na melhor envio
+                    // await this.melhorEnvioProvider.addFreightToCart({
+                    //     from: data.from,
+                    //     to: data.to,
+                    //     weight: data.weight,
+                    //     agency: data.agency,
+                    //     service: data.service,
+                    //     products: data.products,
+                    //     volumes: data.volumes
+                    // })
 
-                // atualizar pedido com id da etiqueta no banco
+                    // atualizar status do pedido para "AWAITING_LABEL_PAYMENT_PROCESS"
+
+                    // atualizar pedido com id da etiqueta no banco
+                }
+                
+                
             }
         })
     }

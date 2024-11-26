@@ -2,6 +2,16 @@ import { IChooseDeliveryMan, IConfirmDelivery, IConfirmShipment, IDeliveryReposi
 import { prisma } from '@/lib/prisma'
 
 export class PrismaDeliveryRepository implements IDeliveryRepository{
+    async addServiceIdToDelivery(serviceId: string, deliveryId: string): Promise<void> {
+        await prisma.delivery.update({
+            where: {
+                id: deliveryId
+            },
+            data: {
+                serviceId
+            }
+        })
+    }
     async chooseDeliveryMan({
         deliveryId,
         deliveryManId

@@ -24,4 +24,5 @@ export interface IDeliveryRepository {
     confirmShipment(data: IConfirmShipment): Promise<void>
     confirmDelivery(data: IConfirmDelivery): Promise<void>
     chooseDeliveryMan(data: IChooseDeliveryMan): Promise<void>
+    addServiceIdToDelivery(serviceId: string, deliveryId: string): Promise<void>
 }

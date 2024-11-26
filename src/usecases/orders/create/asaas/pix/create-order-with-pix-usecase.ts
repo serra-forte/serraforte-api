@@ -14,6 +14,7 @@ import { IOrderRelationsDTO } from '@/dtos/order-relations.dto';
 import { IUserRelations } from '@/dtos/user-relations.dto';
 import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-discount-coupons-repository';
 import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementations/provider-melhor-envio';
+import { IDeliveryRepository } from '@/repositories/interfaces/interface-deliveries-repository';
 
 export interface IFreight{
     userId: string
@@ -53,7 +54,8 @@ export class CreateOrderWithPixUsecase {
         private asaasProvider: IAsaasProvider,
         private mailProvider: IMailProvider,
         private discountCoupon: IDiscountCouponsRepository,
-        private melhorEnvioProvider: MelhorEnvioProvider
+        private melhorEnvioProvider: MelhorEnvioProvider,
+        private deliveryRepository: IDeliveryRepository
     ) {}
 
     async execute({
@@ -96,6 +98,9 @@ export class CreateOrderWithPixUsecase {
         let arrayToSplitToMembers: AsaasPaymentWallet[] = [];
 
         let paymentFeeDicount = 0
+
+        // constate para salvar o id do serviço escolhido no frete da entrega
+        let deliveryServiceId = 0
 
         // verificar a quantidade dos produtos no estoque
         for(let item of findShoppingCartExist.cartItem) {
@@ -247,6 +252,8 @@ export class CreateOrderWithPixUsecase {
         // converter o valor do frete para number
         const freightValue = Number(freightService.price)
 
+        deliveryServiceId = freightService.id
+
         // adicionar o valor do frete ao total do pedido
         total += freightValue
 
@@ -351,6 +358,7 @@ export class CreateOrderWithPixUsecase {
                 // description,
                 delivery: {
                     create: {
+                        serviceId: deliveryServiceId,
                         deliveryDate: dateNow,
                         price: valuesToFreightPerShopkeeper.find(item => item.userId === itemsShopKeeper[0].userId)?.freight,
                         address: {

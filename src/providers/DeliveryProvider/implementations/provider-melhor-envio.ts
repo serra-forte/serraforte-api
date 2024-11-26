@@ -1,6 +1,6 @@
 import { env } from '@/env';
 import axios, { AxiosError } from 'axios';
-import { IMelhorEnvioProvider, IRequestCalculateShipping, IResponseAuth, IResponseCalculateShipping } from './../interface-melhor-envio-provider';
+import { IMelhorEnvioProvider, IRequestCalculateShipping, IRequestSendFreightToCart, IResponseAuth, IResponseCalculateShipping } from './../interface-melhor-envio-provider';
 import { IRailwayProvider } from '@/providers/RailwayProvider/interface-railway-provider';
 import "dotenv/config"
 import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider';
@@ -12,8 +12,24 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
     private mailProvider: IMailProvider,
     private usersRepository: IUsersRepository
   ) {}
-  async addFreightToCart():Promise<any> {
-    throw new Error('Method not implemented.');
+  async addFreightToCart(data: IRequestSendFreightToCart):Promise<any> {
+    try {
+      const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/me/cart`, data, {
+        headers: {
+          'Authorization': `Bearer ${process.env.MELHOR_ENVIO_ACCESS_TOKEN}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'User-Agent': 'Serra Forte/kaiomoreira.dev@gmail.com',
+        },
+      })
+
+      if (response.status === 200) {
+        return response.data
+      }
+    } catch (error) {
+      // Tratamento de erro
+      throw error;
+    }
   }
 
   async refreshToken(): Promise<IResponseAuth> {

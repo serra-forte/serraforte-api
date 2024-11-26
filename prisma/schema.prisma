@@ -299,6 +299,8 @@ model Delivery {
   deliveryMan User?   @relation(fields: [userId], references: [id])
   userId      String?
 
+  serviceId Decimal? @map("service_id")
+
   shippingDate     DateTime? @map("shipping_date") @db.Timestamptz()
   deliveryDate     DateTime? @map("delivery_date") @db.Timestamptz()
   longitude        Decimal?

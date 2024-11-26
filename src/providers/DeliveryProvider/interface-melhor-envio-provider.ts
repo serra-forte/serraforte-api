@@ -89,12 +89,122 @@ export interface IResponseCalculateShipping {
     additional_services?: IAdditionalServices | null;
     company?: ICompany | null;
 }
+
+export interface IRequestSendFreightToCart {
+    service: number; // Id referente do serviço da transportadora
+    agency?: number; // Id da agência/unidade onde será postado o envio (consultar regras das transportadoras)
+    from: IShippingParty; // Informações do remetente do envio
+    to: IShippingParty; // Informações do destinatário do envio
+    products: IProductInfo[]; // Informações dos produtos que serão enviados
+    volumes: IVolumeInfo[]; // Descrição dos volumes contidos no envio
+    options?: IShippingOptions; // Informações complementares do envio
+  }
+  
+  export interface IShippingParty {
+    name: string; // Nome da pessoa ou empresa
+    address: string; // Endereço completo
+    city: string; // Cidade
+    state: string; // Estado
+    postalCode: string; // CEP
+    phone?: string; // Telefone (opcional)
+    email?: string; // Email (opcional)
+  }
+  
+  export interface IProductInfo {
+    id: number; // Id do produto
+    name: string; // Nome do produto
+    quantity: number; // Quantidade do produto
+    price: number; // Preço do produto
+    weight: number; // Peso do produto
+  }
+  
+  export interface IVolumeInfo {
+    id: number; // Id do volume
+    weight: number; // Peso do volume
+    length: number; // Comprimento do volume
+    height: number; // Altura do volume
+    width: number; // Largura do volume
+  }
+  
+  export interface IShippingOptions {
+    insuranceValue?: number; // Valor do seguro (opcional)
+    deliveryType?: string; // Tipo de entrega (exemplo: expressa, econômica)
+    notes?: string; // Notas adicionais sobre o envio
+  }
+
+  export interface IResponseSendFreightToCart {
+    id: string; // ID do envio
+    protocol: string; // Protocolo do envio
+    service_id: number; // ID do serviço da transportadora
+    agency_id: number; // ID da agência/unidade
+    contract: string | null; // Contrato, pode ser nulo
+    service_code: string | null; // Código do serviço, pode ser nulo
+    quote: number; // Cotação do envio
+    price: number; // Preço do envio
+    coupon: string | null; // Código do cupom, pode ser nulo
+    discount: number; // Desconto aplicado
+    delivery_min: number; // Prazo mínimo de entrega
+    delivery_max: number; // Prazo máximo de entrega
+    status: string; // Status do envio (ex: 'pending')
+    reminder: string | null; // Lembrete, pode ser nulo
+    insurance_value: number; // Valor do seguro
+    weight: number | null; // Peso total, pode ser nulo
+    width: number | null; // Largura, pode ser nulo
+    height: number | null; // Altura, pode ser nulo
+    length: number | null; // Comprimento, pode ser nulo
+    diameter: number | null; // Diâmetro, pode ser nulo
+    format: string; // Formato do volume (ex: 'box')
+    billed_weight: number; // Peso faturado
+    receipt: boolean; // Indica se será feita uma confirmação de recebimento
+    own_hand: boolean; // Indica se o envio será entregue em mãos
+    collect: boolean; // Indica se o envio é coletado
+    collect_scheduled_at: string | null; // Data agendada para coleta, pode ser nulo
+    reverse: boolean; // Indica se é uma remessa reversa
+    non_commercial: boolean; // Indica se é uma remessa não comercial
+    authorization_code: string | null; // Código de autorização, pode ser nulo
+    tracking: string | null; // Código de rastreamento, pode ser nulo
+    self_tracking: string | null; // Rastreamento próprio, pode ser nulo
+    delivery_receipt: string | null; // Comprovante de entrega, pode ser nulo
+    additional_info: string | null; // Informações adicionais, pode ser nulo
+    cte_key: string | null; // Chave CTE, pode ser nulo
+    paid_at: string | null; // Data de pagamento, pode ser nulo
+    generated_at: string | null; // Data de geração, pode ser nulo
+    posted_at: string | null; // Data de postagem, pode ser nulo
+    delivered_at: string | null; // Data de entrega, pode ser nulo
+    canceled_at: string | null; // Data de cancelamento, pode ser nulo
+    suspended_at: string | null; // Data de suspensão, pode ser nulo
+    expired_at: string | null; // Data de expiração, pode ser nulo
+    created_at: string; // Data de criação
+    updated_at: string; // Data de atualização
+    parse_pi_at: string | null; // Data de parsing do PI, pode ser nulo
+    products: {
+        name: string; // Nome do produto
+        quantity: number; // Quantidade do produto
+        unitary_value: number; // Valor unitário do produto
+        weight: number | null; // Peso do produto, pode ser nulo
+      }[]; // Lista de produtos no envio
+    volumes: IVolume[]; // Lista de volumes no envio
+  }
+  
+  export interface IVolume {
+    id: number; // ID do volume
+    height: string; // Altura do volume
+    width: string; // Largura do volume
+    length: string; // Comprimento do volume
+    diameter: string; // Diâmetro do volume
+    weight: string; // Peso do volume
+    format: string; // Formato do volume (ex: 'box')
+    created_at: string; // Data de criação do volume
+    updated_at: string; // Data de atualização do volume
+  }
+  
+  
   
 export interface IMelhorEnvioProvider {
     authorization(code: string): Promise<IResponseAuth>
     shipmentCalculate(data: IRequestCalculateShipping): Promise<IResponseCalculateShipping[]>
     refreshToken(): Promise<IResponseAuth>
-    addFreightToCart():Promise<any>
+    addFreightToCart(data: IRequestSendFreightToCart):Promise<IResponseSendFreightToCart>
     // paymentToFreight()
     // generateLabelTracking()
     // generateLabelLinkToPrinting()

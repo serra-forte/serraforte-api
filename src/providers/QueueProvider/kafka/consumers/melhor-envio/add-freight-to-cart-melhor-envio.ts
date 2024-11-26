@@ -9,6 +9,8 @@ import { MailProvider } from "@/providers/MailProvider/implementations/provider-
 import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
+import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
+import { IUserRelations } from "@/dtos/user-relations.dto";
 
 export class AddFreightToCartMelhorEnvio {
     private kafkaConsumer: KafkaConsumer
@@ -37,7 +39,18 @@ export class AddFreightToCartMelhorEnvio {
             eachMessage: async ({ topic, partition, message }) => {
                 // converter a mensagem para JSON
                 if(message.value) {
-                    const data = JSON.parse(message.value.toString())
+                    const order = JSON.parse(message.value.toString()) as IOrderRelationsDTO
+
+                    console.log(order.items)
+
+                    // buscar lojista pelo id no item do pedido
+                    const shopkeeper = await this.usersRepository.findById(order.items[0].userId as string) as unknown as IUserRelations
+                    console.log(shopkeeper.address)
+
+                    // buscar usuário do pedido
+                    const customer = await this.usersRepository.findById(order.user.id as string) as unknown as IUserRelations
+                    console.log(customer.address)
+                    
 
                     // enviar frete para o carrinho na melhor envio
                     // await this.melhorEnvioProvider.addFreightToCart({

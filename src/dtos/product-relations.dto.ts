@@ -1,4 +1,4 @@
-import { CartItem, Category, Review, User } from '@prisma/client';
+import { Box, CartItem, Category, Review, User } from '@prisma/client';
 export interface IProductRelationsDTO {
     id: string
     code: string,
@@ -21,4 +21,5 @@ export interface IProductRelationsDTO {
     width: number
     height: number
     length: number
+    boxes: Box[]
 }

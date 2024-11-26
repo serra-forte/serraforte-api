@@ -105,7 +105,7 @@ export class CreateOrderWithPixUsecase {
         // verificar a quantidade dos produtos no estoque
         for(let item of findShoppingCartExist.cartItem) {
             const response = await this.productsRepository.findById(item.productId) as IResponseFindProductWithReviews
-
+            
             const {
                 product
             } = response
@@ -124,7 +124,10 @@ export class CreateOrderWithPixUsecase {
 
                 }
                 // Adiciona o item ao array correspondente ao lojista
-                objItemsShopKeeper[shopKeeperId].push(item);
+                objItemsShopKeeper[shopKeeperId].push({
+                    ...item,
+                    boxes: product.boxes
+                });
             }
         }
 
@@ -325,6 +328,7 @@ export class CreateOrderWithPixUsecase {
             }
 
             const itemsShopKeeper = arrayShopKeeper[index];
+            console.log(itemsShopKeeper)
             let countBooking = await orderRepository.countOrders()
             let code = `#${countBooking + 1}`
             let stopVerifyCode = false

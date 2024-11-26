@@ -463,6 +463,7 @@ export class CreateOrderWithPixUsecase {
             delivery: {
                 address: address ? address : undefined
             },
+            boxes: createdOrders[0].boxes,
             payment: createdOrders[0].payment,
             total: 0, // Inicializa total como 0
             items: [] // Inicializa items como array vazio

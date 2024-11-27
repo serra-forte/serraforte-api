@@ -37,7 +37,13 @@ export class PrismaOrderRepository implements IOrderRepository {
                 withdrawStore: true,
                 shoppingCartId: true,
                 code: true,
-                boxes: true,
+                boxes: {
+                    select:{
+                        id:true,
+                        orderId: true,
+                        box: true
+                    }
+                },
                 user: {
                     select: {
                         id: true,
@@ -147,7 +153,13 @@ export class PrismaOrderRepository implements IOrderRepository {
                 withdrawStore: true,
                 shoppingCartId: true,
                 code: true,
-                boxes: true,
+                boxes: {
+                    select:{
+                        id:true,
+                        orderId: true,
+                        box: true
+                    }
+                },
                 user: {
                     select: {
                         id: true,
@@ -517,7 +529,13 @@ export class PrismaOrderRepository implements IOrderRepository {
                     }
                 },
                 items: true,
-                boxes: true,
+                boxes: {
+                    select:{
+                        id:true,
+                        orderId: true,
+                        box: true
+                    }
+                },
                 delivery: {
                     select:{
                         id: true,
@@ -576,7 +594,13 @@ export class PrismaOrderRepository implements IOrderRepository {
                     }
                 },
                 items: true,
-                boxes: true,
+                boxes: {
+                    select:{
+                        id:true,
+                        orderId: true,
+                        box: true
+                    }
+                },
                 delivery: {
                     select:{
                         id: true,
@@ -714,7 +738,13 @@ export class PrismaOrderRepository implements IOrderRepository {
                     }
                 },
                 items: true,
-                boxes: true,
+                boxes: {
+                    select:{
+                        id:true,
+                        orderId: true,
+                        box: true
+                    }
+                },
                 delivery: {
                     select:{
                         id: true,
@@ -769,7 +799,13 @@ export class PrismaOrderRepository implements IOrderRepository {
                     }
                 },
                 items: true,
-                boxes: true,
+                boxes: {
+                    select:{
+                        id:true,
+                        orderId: true,
+                        box: true
+                    }
+                },
                 delivery: {
                     select:{
                         id: true,

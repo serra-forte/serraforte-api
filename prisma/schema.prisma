@@ -303,6 +303,7 @@ model Delivery {
   userId      String?
 
   serviceId Decimal? @map("service_id")
+  serviceName String? @map("service_name")
 
   shippingDate     DateTime? @map("shipping_date") @db.Timestamptz()
   deliveryDate     DateTime? @map("delivery_date") @db.Timestamptz()

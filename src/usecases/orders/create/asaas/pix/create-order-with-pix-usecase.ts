@@ -16,6 +16,11 @@ import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-
 import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementations/provider-melhor-envio';
 import { IDeliveryRepository } from '@/repositories/interfaces/interface-deliveries-repository';
 
+interface IDeliveryService{
+    serviceId: number
+    serviceName: string
+    shopkeeperId: string
+}
 interface IITemRelation{
     id: string
     productId: string
@@ -114,7 +119,7 @@ export class CreateOrderWithPixUsecase {
         let paymentFeeDicount = 0
 
         // constate para salvar o id do serviço escolhido no frete da entrega
-        let deliveryServiceId = 0
+        let deliveryService: IDeliveryService[] = []
 
         // verificar a quantidade dos produtos no estoque
         for(let item of findShoppingCartExist.cartItem) {
@@ -269,7 +274,11 @@ export class CreateOrderWithPixUsecase {
         // converter o valor do frete para number
         const freightValue = Number(freightService.price)
 
-        deliveryServiceId = freightService.id
+        deliveryService.push({
+            shopkeeperId: findShopKeeperExist.id,
+            serviceId: freightService.id,
+            serviceName: freightName,
+        })
 
         // adicionar o valor do frete ao total do pedido
         total += freightValue
@@ -342,7 +351,6 @@ export class CreateOrderWithPixUsecase {
             }
 
             const itemsShopKeeper = arrayShopKeeper[index];
-            console.log(JSON.stringify(itemsShopKeeper, null, 2))
             let countBooking = await orderRepository.countOrders()
             let code = `#${countBooking + 1}`
             let stopVerifyCode = false
@@ -384,7 +392,8 @@ export class CreateOrderWithPixUsecase {
                 // description,
                 delivery: {
                     create: {
-                        serviceId: deliveryServiceId,
+                        serviceId: deliveryService.find(service => service.shopkeeperId === itemsShopKeeper[0].userId)?.serviceId,
+                        serviceName: deliveryService.find(service => service.shopkeeperId === itemsShopKeeper[0].userId)?.serviceName,
                         deliveryDate: dateNow,
                         price: valuesToFreightPerShopkeeper.find(item => item.userId === itemsShopKeeper[0].userId)?.freight,
                         address: {
@@ -428,7 +437,6 @@ export class CreateOrderWithPixUsecase {
                 createdAt: dateNow
             }) as unknown as IOrderRelationsDTO
 
-            console.log(order)
                 // adicionar id do pedido ao array
                 createdOrders.push(order)
 
@@ -475,6 +483,9 @@ export class CreateOrderWithPixUsecase {
         const endOrder: IOrderRelationsDTO = {
             user: findUserExist,
             delivery: {
+                serviceId: createdOrders[0].delivery.serviceId,
+                serviceName: createdOrders[0].delivery.serviceName,
+                price: createdOrders[0].delivery.price,
                 address: address ? address : undefined
             },
             boxes: createdOrders[0].boxes,

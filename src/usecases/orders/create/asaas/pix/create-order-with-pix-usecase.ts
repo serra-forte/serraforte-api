@@ -338,7 +338,7 @@ export class CreateOrderWithPixUsecase {
             }
 
             const itemsShopKeeper = arrayShopKeeper[index];
-            console.log(itemsShopKeeper)
+            console.log(JSON.stringify(itemsShopKeeper, null, 2))
             let countBooking = await orderRepository.countOrders()
             let code = `#${countBooking + 1}`
             let stopVerifyCode = false

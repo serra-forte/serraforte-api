@@ -575,7 +575,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         return {
             order: {
                 ...order,
-                boxes
+                boxes: boxes.map(box => box.box)
             }
         } as unknown as Order
     }
@@ -803,7 +803,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         return {
             order: {
                 ...order,
-                boxes
+                boxes: boxes.map(box => box.box)
             }
         } as unknown as Order
     }
@@ -873,7 +873,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         return {
             order: {
                 ...order,
-                boxes
+                boxes: boxes.map(box => box.box)
             }
         } as unknown as Order
     }

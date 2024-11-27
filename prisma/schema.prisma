@@ -116,7 +116,8 @@ model Product {
   cartItem CartItem[]
   Item     Item[]
   reviews  Review[]
-  boxes    Box[]
+  boxes    BoxInProduct[]
+
 
   @@index([name], name: "id_index")
   @@map("products")
@@ -190,7 +191,7 @@ model Order {
   description       String?
   // discountCoupon: string;
   cancellations     Cancellation[]
-  boxes Box[]
+  boxes BoxInOrder[]
   withdrawStore     Boolean?
   withdrawStoreDate DateTime?
 
@@ -426,11 +427,33 @@ model Box {
   amount      Decimal
   weight      Decimal
 
-  Product   Product? @relation(fields: [productId], references: [id])
-  productId String?
+  products BoxInProduct[]
 
-  Order   Order? @relation(fields: [orderId], references: [id])
-  orderId String?
+  orders BoxInOrder[]
 
   @@map("boxes")
+}
+
+model BoxInOrder{
+  id          String  @id @default(uuid())
+
+  order Order @relation(fields: [orderId], references: [id])
+  orderId String
+
+  box Box @relation(fields: [boxId], references: [id])
+  boxId String
+
+  @@map("boxes_in_orders")
+}
+
+model BoxInProduct{
+  id          String  @id @default(uuid())
+
+  product Product @relation(fields: [productId], references: [id])
+  productId String
+
+  box Box @relation(fields: [boxId], references: [id])
+  boxId String
+
+  @@map("boxes_in_products")
 }

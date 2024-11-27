@@ -24,7 +24,7 @@ export class CreateProductsUseCase {
     constructor(
         private productsRepository: IProductsRepository,
         private categoriesRepository: ICategoriesRepository,
-        private usersRepository: IUsersRepository
+        private usersRepository: IUsersRepository,
     ){}
 
     async execute({ 
@@ -96,11 +96,13 @@ export class CreateProductsUseCase {
                 }
             },
             boxes:{
-                connect: boxesIds.map(boxId => {
-                    return {
-                        id: boxId
-                    }
-                })
+                createMany: {
+                    data: boxesIds.map(boxId => {
+                        return {
+                            boxId
+                        }
+                    })
+                }
             }
         })
 

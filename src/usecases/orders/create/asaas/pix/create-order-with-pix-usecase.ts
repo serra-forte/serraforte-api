@@ -395,12 +395,14 @@ export class CreateOrderWithPixUsecase {
                     }
                 },
                 boxes: {
-                    connect: itemsShopKeeper.map(item => {
-                        const itemWithBox = item as unknown as IITemRelation
-                        return {
-                            id: itemWithBox.boxes[0].id
-                        }
-                    })
+                    createMany: {
+                        data: itemsShopKeeper.map(item => {
+                            const itemWithBox = item as unknown as IITemRelation
+                            return {
+                                boxId: itemWithBox.boxes[0].id,
+                            }
+                        })
+                    }
                 },
                 payment: {
                     create: {

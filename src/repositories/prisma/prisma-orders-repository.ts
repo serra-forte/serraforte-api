@@ -51,6 +51,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select: {
                         id: true,
+                        serviceId: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
@@ -161,6 +162,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select: {
                         id: true,
+                        serviceId: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
@@ -239,6 +241,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
+                        serviceId: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
@@ -301,6 +304,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
+                        serviceId: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
@@ -382,6 +386,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
+                        serviceId: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
@@ -461,6 +466,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
+                        serviceId: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
@@ -515,6 +521,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
+                        serviceId: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
@@ -573,6 +580,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
+                        serviceId: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
@@ -643,6 +651,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
+                        serviceId: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
@@ -709,6 +718,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
+                        serviceId: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
@@ -763,6 +773,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
+                        serviceId: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,

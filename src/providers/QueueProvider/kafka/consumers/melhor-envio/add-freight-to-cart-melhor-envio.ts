@@ -37,7 +37,7 @@ export class AddFreightToCartMelhorEnvio {
 
         createdConsumer.run({
             eachMessage: async ({ topic, partition, message }) => {
-                console.log(message)
+                console.log(message.value)
                 console.log(JSON.parse(message.toString()) )
                 // converter a mensagem para JSON
                 if(message.value) {

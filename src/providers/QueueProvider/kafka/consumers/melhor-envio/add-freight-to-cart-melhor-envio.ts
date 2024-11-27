@@ -33,7 +33,7 @@ export class AddFreightToCartMelhorEnvio {
         this.orderRepository = new PrismaOrderRepository()
     }
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('add-freight-to-cart')
+        const createdConsumer = await this.kafkaConsumer.execute('add-freight-to-cart',)
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {
@@ -41,40 +41,49 @@ export class AddFreightToCartMelhorEnvio {
 
                 const messaToString = JSON.parse(message.value!.toString())
 
-                const order = JSON.stringify(messaToString) as unknown as IOrderRelationsDTO
+                if(!messaToString) {
+                    return
+                }
 
-                console.log(order)
-                // converter a mensagem para JSON
-                if(order) {
-                    // const order = JSON.parse(message.value.toString()) as IOrderRelationsDTO
+                try {
+                    const order = JSON.stringify(messaToString) as unknown as IOrderRelationsDTO
 
-                    console.log(order.items)
-                    console.log(order.delivery)
-                    console.log(order.boxes)
+                    console.log(order)
+                    // converter a mensagem para JSON
+                    if(order) {
+                        // const order = JSON.parse(message.value.toString()) as IOrderRelationsDTO
 
-                    // buscar lojista pelo id no item do pedido
-                    const shopkeeper = await this.usersRepository.findById(order.items[0].userId as string) as unknown as IUserRelations
-                    console.log(shopkeeper.address)
+                        console.log(order.items)
+                        console.log(order.delivery)
+                        console.log(order.boxes)
 
-                    // buscar usuário do pedido
-                    const customer = await this.usersRepository.findById(order.user.id as string) as unknown as IUserRelations
-                    console.log(customer.address)
-                    
+                        // buscar lojista pelo id no item do pedido
+                        const shopkeeper = await this.usersRepository.findById(order.items[0].userId as string) as unknown as IUserRelations
+                        console.log(shopkeeper.address)
 
-                    // enviar frete para o carrinho na melhor envio
-                    // await this.melhorEnvioProvider.addFreightToCart({
-                    //     from: data.from,
-                    //     to: data.to,
-                    //     weight: data.weight,
-                    //     agency: data.agency,
-                    //     service: data.service,
-                    //     products: data.products,
-                    //     volumes: data.volumes
-                    // })
+                        // buscar usuário do pedido
+                        const customer = await this.usersRepository.findById(order.user.id as string) as unknown as IUserRelations
+                        console.log(customer.address)
+                        
 
-                    // atualizar status do pedido para "AWAITING_LABEL_PAYMENT_PROCESS"
+                        // enviar frete para o carrinho na melhor envio
+                        // await this.melhorEnvioProvider.addFreightToCart({
+                        //     from: data.from,
+                        //     to: data.to,
+                        //     weight: data.weight,
+                        //     agency: data.agency,
+                        //     service: data.service,
+                        //     products: data.products,
+                        //     volumes: data.volumes
+                        // })
 
-                    // atualizar pedido com id da etiqueta no banco
+                        // atualizar status do pedido para "AWAITING_LABEL_PAYMENT_PROCESS"
+
+                        // atualizar pedido com id da etiqueta no banco
+                    }
+                } catch (error) {
+                    console.log(error)
+                    throw error
                 }
             }
         })

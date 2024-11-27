@@ -566,9 +566,18 @@ export class PrismaOrderRepository implements IOrderRepository {
                 status:true,
                 createdAt: true
             }
-        }) as unknown as Order
+        }) as unknown as IOrderRelationsDTO
 
-        return order
+        const boxes = order.boxes as unknown as {
+            box: Box;
+        }[];
+        
+        return {
+            order: {
+                ...order,
+                boxes
+            }
+        } as unknown as Order
     }
     async list(page?: number | null) {
         const pageNumber = page ?? 1;
@@ -785,9 +794,18 @@ export class PrismaOrderRepository implements IOrderRepository {
                 status:true,
                 createdAt: true
             }
-        }) as unknown as Order
+        }) as unknown as IOrderRelationsDTO
         
-        return order
+        const boxes = order.boxes as unknown as {
+            box: Box;
+        }[];
+        
+        return {
+            order: {
+                ...order,
+                boxes
+            }
+        } as unknown as Order
     }
     async findByCode(code: string){
         const order = await prisma.order.findUnique({
@@ -846,9 +864,18 @@ export class PrismaOrderRepository implements IOrderRepository {
                 status:true,
                 createdAt: true
             }
-        }) as unknown as Order
+        }) as unknown as IOrderRelationsDTO
+
+        const boxes = order.boxes as unknown as {
+            box: Box;
+        }[];
         
-        return order
+        return {
+            order: {
+                ...order,
+                boxes
+            }
+        } as unknown as Order
     }
     async deleteById(id: string){
         await prisma.order.delete({where: {id}})

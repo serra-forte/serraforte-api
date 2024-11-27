@@ -785,18 +785,10 @@ export class PrismaOrderRepository implements IOrderRepository {
                 status:true,
                 createdAt: true
             }
-        }) as unknown as IOrderRelationsDTO
+        }) as unknown as Order
+       
         
-        const boxes = order.boxes as unknown as {
-            box: Box;
-        }[];
-        
-        return {
-            order: {
-                ...order,
-                boxes
-            }
-        } as unknown as Order
+        return order
     }
     async findByCode(code: string){
         const order = await prisma.order.findUnique({
@@ -855,18 +847,10 @@ export class PrismaOrderRepository implements IOrderRepository {
                 status:true,
                 createdAt: true
             }
-        }) as unknown as IOrderRelationsDTO
-
-        const boxes = order.boxes as unknown as {
-            box: Box;
-        }[];
+        }) as unknown as Order
+       
         
-        return {
-            order: {
-                ...order,
-                boxes
-            }
-        } as unknown as Order
+        return order
     }
     async deleteById(id: string){
         await prisma.order.delete({where: {id}})

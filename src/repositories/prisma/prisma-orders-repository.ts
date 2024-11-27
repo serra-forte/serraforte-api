@@ -1,4 +1,4 @@
-import { Order, Prisma, Status } from "@prisma/client";
+import { Box, Order, Prisma, Status, User } from "@prisma/client";
 import { IFilterOrders, IOrderRepository, IResponseListOrders } from "../interfaces/interface-order-repository";
 import { prisma } from "@/lib/prisma";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
@@ -632,17 +632,26 @@ export class PrismaOrderRepository implements IOrderRepository {
                 status:true,
                 createdAt: true
             }
-        }) as unknown as Order[]
+        }) as unknown as IOrderRelationsDTO[]
 
         const countPage = await prisma.order.count();
+
 
         // Calcular o total de páginas
         const totalPages = countPage > 0 ? Math.ceil(countPage / 13) : 0;
         
         return {
-            orders,
+            orders: orders.map(order => {
+                const boxFormated = order.boxes as unknown as {
+                    box: Box;
+                }[];
+                return {
+                    ...order,
+                    boxes: boxFormated.map(box => box.box)
+                };
+            }),
             totalPages
-        }
+        } as unknown as IResponseListOrders
         
     }
     async listByUserId(idUser: string, page?: number | null){

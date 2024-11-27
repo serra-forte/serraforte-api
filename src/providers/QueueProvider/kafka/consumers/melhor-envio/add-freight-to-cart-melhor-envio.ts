@@ -42,6 +42,8 @@ export class AddFreightToCartMelhorEnvio {
                     const order = JSON.parse(message.value.toString()) as IOrderRelationsDTO
 
                     console.log(order.items)
+                    console.log(order.delivery)
+                    console.log(order.boxes)
 
                     // buscar lojista pelo id no item do pedido
                     const shopkeeper = await this.usersRepository.findById(order.items[0].userId as string) as unknown as IUserRelations

@@ -401,9 +401,10 @@ export class CreateOrderWithPixUsecase {
                 boxes: {
                     createMany: {
                         data: itemsShopKeeper.map(item => {
+                            
                             const itemWithBox = item as unknown as IITemRelation
                             return {
-                                boxId: itemWithBox.boxes[0].boxId,
+                                boxId: itemWithBox.boxes.map(box => box.boxId).join(', '),
                             }
                         })
                     }

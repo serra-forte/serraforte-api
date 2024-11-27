@@ -37,6 +37,8 @@ export class AddFreightToCartMelhorEnvio {
 
         createdConsumer.run({
             eachMessage: async ({ topic, partition, message }) => {
+                console.log(message)
+                console.log(JSON.parse(message.toString()) )
                 // converter a mensagem para JSON
                 if(message.value) {
                     const order = JSON.parse(message.value.toString()) as IOrderRelationsDTO

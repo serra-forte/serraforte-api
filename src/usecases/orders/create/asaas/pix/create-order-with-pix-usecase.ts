@@ -481,7 +481,14 @@ export class CreateOrderWithPixUsecase {
         await this.shoppingCartRepository.updateTotal(findShoppingCartExist.id, 0)
 
         const endOrder: IOrderRelationsDTO = {
-            user: findUserExist,
+            user: {
+                id: createdOrders[0].user.id,
+                name: createdOrders[0].user.name,
+                email: createdOrders[0].user.email,
+                phone: createdOrders[0].user.phone,
+                avatar: createdOrders[0].user.avatarUrl,
+                shoppingCart: createdOrders[0].shoppingCart
+            },
             delivery: {
                 serviceId: createdOrders[0].delivery.serviceId,
                 serviceName: createdOrders[0].delivery.serviceName,

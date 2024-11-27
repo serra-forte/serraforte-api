@@ -24,7 +24,11 @@ interface IITemRelation{
     price: number,
     mainImage: string
     quantity: number,
-    boxes: Box[]
+    boxes: {
+        id: string
+        productId: string
+        boxId: string
+    }[]
 }
 export interface IFreight{
     userId: string
@@ -399,7 +403,7 @@ export class CreateOrderWithPixUsecase {
                         data: itemsShopKeeper.map(item => {
                             const itemWithBox = item as unknown as IITemRelation
                             return {
-                                boxId: itemWithBox.boxes[0].id,
+                                boxId: itemWithBox.boxes[0].boxId,
                             }
                         })
                     }

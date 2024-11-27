@@ -36,16 +36,17 @@ export class AddFreightToCartMelhorEnvio {
         const createdConsumer = await this.kafkaConsumer.execute('add-freight-to-cart')
 
         createdConsumer.run({
-            eachMessage: async ({ topic, partition, message }) => {
-                console.log({
-                    topic,
-                    partition,
-                    message
-                })
-                console.log(JSON.parse(message.toString()) )
+            eachMessage: async ({ message }) => {
+                console.log(JSON.parse(message.value!.toString()))
+
+                const messaToString = JSON.parse(message.value!.toString())
+
+                const order = JSON.stringify(messaToString) as unknown as IOrderRelationsDTO
+
+                console.log(order)
                 // converter a mensagem para JSON
-                if(message.value) {
-                    const order = JSON.parse(message.value.toString()) as IOrderRelationsDTO
+                if(order) {
+                    // const order = JSON.parse(message.value.toString()) as IOrderRelationsDTO
 
                     console.log(order.items)
                     console.log(order.delivery)
@@ -75,8 +76,6 @@ export class AddFreightToCartMelhorEnvio {
 
                     // atualizar pedido com id da etiqueta no banco
                 }
-                
-                
             }
         })
     }

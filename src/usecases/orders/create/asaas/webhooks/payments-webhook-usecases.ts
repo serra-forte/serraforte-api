@@ -240,6 +240,9 @@ export class PaymentWebHookUseCases {
           )
         }
 
+        console.log('WEBHOOK PAYMENT APROVED')
+        console.log(endOrder)
+
         // chamar producer para enviar endOrder para o consumer enviar um frete para o carrinho da melhor envio
         await this.kafkaProvider.execute('add-freight-to-cart', endOrder)
       }      

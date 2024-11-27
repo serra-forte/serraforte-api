@@ -366,6 +366,14 @@ export class CreateOrderWithPixUsecase {
             // somar total do carrinho
             total = itemsShopKeeper.reduce((total, item) => total + Number(item.price) * Number(item.quantity), 0)
 
+            let boxes = itemsShopKeeper.map(item => {
+                const itemWithBox = item as unknown as IITemRelation
+                return {
+                    boxId: itemWithBox.boxes.map(box => box.boxId),
+                }
+            })
+
+            console.log(boxes)
             // criar pedido passando lista de itens para criar juntos
             const order = await orderRepository.create({
                 userId: findUserExist.id,
@@ -401,10 +409,9 @@ export class CreateOrderWithPixUsecase {
                 boxes: {
                     createMany: {
                         data: itemsShopKeeper.map(item => {
-                            
                             const itemWithBox = item as unknown as IITemRelation
                             return {
-                                boxId: itemWithBox.boxes.map(box => box.boxId).join(', '),
+                                boxId: itemWithBox.boxes[0].id
                             }
                         })
                     }

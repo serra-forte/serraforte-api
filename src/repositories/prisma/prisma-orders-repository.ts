@@ -566,18 +566,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 status:true,
                 createdAt: true
             }
-        }) as unknown as IOrderRelationsDTO
+        }) as unknown as Order
 
-        const boxes = order.boxes as unknown as {
-            box: Box;
-        }[];
-        
-        return {
-            order: {
-                ...order,
-                boxes: boxes.map(box => box.box)
-            }
-        } as unknown as Order
+        return order
     }
     async list(page?: number | null) {
         const pageNumber = page ?? 1;
@@ -803,7 +794,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         return {
             order: {
                 ...order,
-                boxes: boxes.map(box => box.box)
+                boxes
             }
         } as unknown as Order
     }
@@ -873,7 +864,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         return {
             order: {
                 ...order,
-                boxes: boxes.map(box => box.box)
+                boxes
             }
         } as unknown as Order
     }

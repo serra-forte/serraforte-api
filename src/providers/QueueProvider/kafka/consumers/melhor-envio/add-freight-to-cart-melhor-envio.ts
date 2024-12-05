@@ -54,37 +54,37 @@ export class AddFreightToCartMelhorEnvio {
 
                     const order = parsedMessage as IOrderRelationsDTO;
                     console.log('[Consumer] Pedido:', order);
-                    // // Buscar lojista pelo ID do primeiro item
-                    // const shopkeeper = await this.usersRepository.findById(order.items[0].userId as string) as IUserRelations;
-                    // if (!shopkeeper || !shopkeeper.address) {
-                    //     console.error('[Consumer] Lojista não encontrado ou endereço inválido.');
-                    //     return;
-                    // }
-                    // console.log('[Shopkeeper Address]', shopkeeper.address);
+                    // Buscar lojista pelo ID do primeiro item
+                    const shopkeeper = await this.usersRepository.findById(order.items[0].userId as string) as unknown as IUserRelations;
+                    if (!shopkeeper || !shopkeeper.address) {
+                        console.error('[Consumer] Lojista não encontrado ou endereço inválido.');
+                        return;
+                    }
+                    console.log('[Shopkeeper Address]', shopkeeper.address);
 
-                    // // Buscar cliente pelo ID do pedido
-                    // const customer = await this.usersRepository.findById(order.user.id as string) as IUserRelations;
-                    // if (!customer || !customer.address) {
-                    //     console.error('[Consumer] Cliente não encontrado ou endereço inválido.');
-                    //     return;
-                    // }
-                    // console.log('[Customer Address]', customer.address);
+                    // Buscar cliente pelo ID do pedido
+                    const customer = await this.usersRepository.findById(order.user.id as string) as unknown as IUserRelations;
+                    if (!customer || !customer.address) {
+                        console.error('[Consumer] Cliente não encontrado ou endereço inválido.');
+                        return;
+                    }
+                    console.log('[Customer Address]', customer.address);
 
-                    // // Lógica de envio do frete
-                    // // await this.melhorEnvioProvider.addFreightToCart({
-                    // //     from: shopkeeper.address,
-                    // //     to: customer.address,
-                    // //     weight: order.boxes[0]?.weight || 0,
-                    // //     agency: "Agência Exemplo",
-                    // //     service: "Serviço Exemplo",
-                    // //     products: order.items,
-                    // //     volumes: order.boxes,
-                    // // });
+                    // Lógica de envio do frete
+                    // await this.melhorEnvioProvider.addFreightToCart({
+                    //     from: shopkeeper.address,
+                    //     to: customer.address,
+                    //     weight: order.boxes[0]?.weight || 0,
+                    //     agency: "Agência Exemplo",
+                    //     service: "Serviço Exemplo",
+                    //     products: order.items,
+                    //     volumes: order.boxes,
+                    // });
 
-                    // console.info('[Consumer] Frete adicionado ao carrinho com sucesso.');
+                    console.info('[Consumer] Frete adicionado ao carrinho com sucesso.');
 
-                    // // Atualizar status do pedido e informações relacionadas
-                    // // await this.orderRepository.updateStatus(order.id, "AWAITING_LABEL_PAYMENT_PROCESS");
+                    // Atualizar status do pedido e informações relacionadas
+                    await this.orderRepository.updateStatus(order.id, "AWAITING_LABEL_PAYMENT_PROCESS");
 
                 } catch (error) {
                     console.error('[Consumer] Erro ao processar mensagem:', error);

@@ -73,66 +73,72 @@ export class AddFreightToCartMelhorEnvio {
                         return;
                     }
 
-                    // Lógica de envio do frete
-                    await this.melhorEnvioProvider.addFreightToCart({
-                        from: {
-                            name: shopkeeper.name,
-                            email: shopkeeper.email,
-                            phone: shopkeeper.phone,
-                            city: shopkeeper.address.city,
-                            state_abbr: shopkeeper.address.state as string,
-                            postal_code: shopkeeper.address.zipCode as string,
-                            address: shopkeeper.address.street,
-                            country_id: '55', // Brasil
-                            number: String(shopkeeper.address.num),
-                            complement: shopkeeper.address.complement as string,
-                            district: shopkeeper.address.neighborhood as string,
-                            state_register: '',
-                            CPNJ: shopkeeper.cpf as string,
-                        },
-                        to: {
-                            name: customer.name,
-                            email: customer.email,
-                            phone: customer.phone,
-                            city: customer.address.city,
-                            state_abbr: customer.address.state as string,
-                            postal_code: customer.address.zipCode as string,
-                            address: customer.address.street,
-                            country_id: '55', // Brasil
-                            number: String(customer.address.num),
-                            complement: customer.address.complement as string,
-                            district: customer.address.neighborhood as string,
-                            state_register: '',
-                            CPNJ: customer.cpf as string
-                        },
-                        service: Number(order.delivery.serviceId),
-                        products: order.items.map(item => {
-                            return{
-                                id: item.productId,
-                                quantity: Number(item.quantity),
-                                name: item.name as string,
-                                price: Number(item.price),
-                                weight: Number(item.weight),
-                            }
-                        }),
-                        volumes: order.boxes.map(objeWithBox => {
-                            const {box} = objeWithBox as unknown as IRelationBox;
+                    const box = order.boxes.map(objWithBox => {
+                        const relationWithBox = objWithBox as unknown as IRelationBox;
 
-                            return{
-                                width: Number(box[0].width),
-                                height: Number(box[0].height),
-                                length: Number(box[0].length),
-                                weight: Number(box[0].weight),
-                            }
-                        }),
-                        options:{
-                            insuranceValue: 0,
-                            non_commercial: false,
-                            own_hand: false,
-                            receipt: false,
-                            reverse: false
-                        }
-                    });
+                        console.log(relationWithBox)
+                    })
+
+                    // Lógica de envio do frete
+                    // await this.melhorEnvioProvider.addFreightToCart({
+                    //     from: {
+                    //         name: shopkeeper.name,
+                    //         email: shopkeeper.email,
+                    //         phone: shopkeeper.phone,
+                    //         city: shopkeeper.address.city,
+                    //         state_abbr: shopkeeper.address.state as string,
+                    //         postal_code: shopkeeper.address.zipCode as string,
+                    //         address: shopkeeper.address.street,
+                    //         country_id: '55', // Brasil
+                    //         number: String(shopkeeper.address.num),
+                    //         complement: shopkeeper.address.complement as string,
+                    //         district: shopkeeper.address.neighborhood as string,
+                    //         state_register: '',
+                    //         CPNJ: shopkeeper.cpf as string,
+                    //     },
+                    //     to: {
+                    //         name: customer.name,
+                    //         email: customer.email,
+                    //         phone: customer.phone,
+                    //         city: customer.address.city,
+                    //         state_abbr: customer.address.state as string,
+                    //         postal_code: customer.address.zipCode as string,
+                    //         address: customer.address.street,
+                    //         country_id: '55', // Brasil
+                    //         number: String(customer.address.num),
+                    //         complement: customer.address.complement as string,
+                    //         district: customer.address.neighborhood as string,
+                    //         state_register: '',
+                    //         CPNJ: customer.cpf as string
+                    //     },
+                    //     service: Number(order.delivery.serviceId),
+                    //     products: order.items.map(item => {
+                    //         return{
+                    //             id: item.productId,
+                    //             quantity: Number(item.quantity),
+                    //             name: item.name as string,
+                    //             price: Number(item.price),
+                    //             weight: Number(item.weight),
+                    //         }
+                    //     }),
+                    //     volumes: order.boxes.map(objeWithBox => {
+                    //         const {box} = objeWithBox as unknown as IRelationBox;
+
+                    //         return{
+                    //             width: Number(box[0].width),
+                    //             height: Number(box[0].height),
+                    //             length: Number(box[0].length),
+                    //             weight: Number(box[0].weight),
+                    //         }
+                    //     }),
+                    //     options:{
+                    //         insuranceValue: 0,
+                    //         non_commercial: false,
+                    //         own_hand: false,
+                    //         receipt: false,
+                    //         reverse: false
+                    //     }
+                    // });
 
                     console.info('[Consumer] Frete adicionado ao carrinho com sucesso.');
 

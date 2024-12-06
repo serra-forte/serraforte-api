@@ -142,6 +142,7 @@ export class CreateOrderWithPixUsecase {
                     objItemsShopKeeper[shopKeeperId] = [];
 
                 }
+                console.log(item)
                 // Adiciona o item ao array correspondente ao lojista
                 objItemsShopKeeper[shopKeeperId].push({
                     ...item,

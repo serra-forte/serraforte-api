@@ -60,7 +60,6 @@ export class AddFreightToCartMelhorEnvio {
                         console.error('[Consumer] Lojista não encontrado ou endereço inválido.');
                         return;
                     }
-                    console.log('[Shopkeeper Address]', shopkeeper.address);
 
                     // Buscar cliente pelo ID do pedido
                     const customer = await this.usersRepository.findById(order.user.id as string) as unknown as IUserRelations;
@@ -68,14 +67,11 @@ export class AddFreightToCartMelhorEnvio {
                         console.error('[Consumer] Cliente não encontrado ou endereço inválido.');
                         return;
                     }
-                    console.log('[Customer Address]', customer.address);
 
                     // Lógica de envio do frete
                     // await this.melhorEnvioProvider.addFreightToCart({
                     //     from: shopkeeper.address,
                     //     to: customer.address,
-                    //     weight: order.boxes[0]?.weight || 0,
-                    //     agency: "Agência Exemplo",
                     //     service: "Serviço Exemplo",
                     //     products: order.items,
                     //     volumes: order.boxes,

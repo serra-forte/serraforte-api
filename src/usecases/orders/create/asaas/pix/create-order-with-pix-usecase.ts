@@ -411,7 +411,11 @@ export class CreateOrderWithPixUsecase {
                                 name: item.name,
                                 price: Number(item.price),
                                 mainImage: item.mainImage,
-                            } as unknown as Item;
+                                height: Number(item.height),
+                                width: Number(item.width),
+                                length: Number(item.length),
+                                weight: Number(item.weight),
+                            } 
                         })
                     }
                 },

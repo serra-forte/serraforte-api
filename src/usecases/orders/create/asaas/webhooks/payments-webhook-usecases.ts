@@ -80,6 +80,7 @@ export class PaymentWebHookUseCases {
         delivery: {
             address: findOrderExist.delivery.address ? findOrderExist.delivery.address : undefined
         },
+        boxes: findOrderExist.boxes,
         payment: orders[0].payment,
         total: 0, // Inicializa total como 0
         items: [] // Inicializa items como array vazio
@@ -239,9 +240,6 @@ export class PaymentWebHookUseCases {
             },
           )
         }
-
-        console.log('WEBHOOK PAYMENT APROVED')
-        console.log(endOrder)
 
         // chamar producer para enviar endOrder para o consumer enviar um frete para o carrinho da melhor envio
         await this.kafkaProvider.execute('add-freight-to-cart', endOrder)

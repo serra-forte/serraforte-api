@@ -69,18 +69,69 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     // Lógica de envio do frete
-                    // await this.melhorEnvioProvider.addFreightToCart({
-                    //     from: shopkeeper.address,
-                    //     to: customer.address,
-                    //     service: "Serviço Exemplo",
-                    //     products: order.items,
-                    //     volumes: order.boxes,
-                    // });
+                    await this.melhorEnvioProvider.addFreightToCart({
+                        from: {
+                            name: shopkeeper.name,
+                            email: shopkeeper.email,
+                            phone: shopkeeper.phone,
+                            city: shopkeeper.address.city,
+                            state_abbr: shopkeeper.address.state as string,
+                            postal_code: shopkeeper.address.zipCode as string,
+                            address: shopkeeper.address.street,
+                            country_id: '55', // Brasil
+                            number: String(shopkeeper.address.num),
+                            complement: shopkeeper.address.complement as string,
+                            district: shopkeeper.address.neighborhood as string,
+                            state_register: '',
+                            CPNJ: shopkeeper.cpf as string,
+                        },
+                        to: {
+                            name: customer.name,
+                            email: customer.email,
+                            phone: customer.phone,
+                            city: customer.address.city,
+                            state_abbr: customer.address.state as string,
+                            postal_code: customer.address.zipCode as string,
+                            address: customer.address.street,
+                            country_id: '55', // Brasil
+                            number: String(customer.address.num),
+                            complement: customer.address.complement as string,
+                            district: customer.address.neighborhood as string,
+                            state_register: '',
+                            CPNJ: customer.cpf as string
+                        },
+                        service: Number(order.delivery.serviceId),
+                        products: order.items.map(item => {
+                            return{
+                                id: item.productId,
+                                quantity: Number(item.quantity),
+                                name: item.name as string,
+                                price: Number(item.price),
+                                weight: Number(item.weight),
+                            }
+                        }),
+                        volumes: order.boxes.map(box => {
+                            return{
+                                id: box.id,
+                                weight: Number(box.weight),
+                                length: Number(box.length),
+                                height: Number(box.height),
+                                width: Number(box.width),
+                            }
+                        }),
+                        options:{
+                            insuranceValue: 0,
+                            non_commercial: false,
+                            own_hand: false,
+                            receipt: false,
+                            reverse: false
+                        }
+                    });
 
                     console.info('[Consumer] Frete adicionado ao carrinho com sucesso.');
 
                     // Atualizar status do pedido e informações relacionadas
-                    await this.orderRepository.updateStatus(order.id, "AWAITING_LABEL_PAYMENT_PROCESS");
+                    // await this.orderRepository.updateStatus(order.id, "AWAITING_LABEL_PAYMENT_PROCESS");
 
                 } catch (error) {
                     console.error('[Consumer] Erro ao processar mensagem:', error);

@@ -103,15 +103,22 @@ export interface IRequestSendFreightToCart {
   export interface IShippingParty {
     name: string; // Nome da pessoa ou empresa
     address: string; // Endereço completo
-    city: string; // Cidade
-    state: string; // Estado
-    postalCode: string; // CEP
+    complement?: string; // Complemento do destinatário (opcional)
+    postal_code: string; // CEP
     phone?: string; // Telefone (opcional)
     email?: string; // Email (opcional)
+    CPF?: string | null; // CPF do remetente (opcional)
+    CPNJ?: string | null; // CNPJ do remetente (opcional)
+    state_register?: string | null; // Estado de registro do remetente
+    number: string; // Número do destinatário (opcional)
+    district?: string; // Bairro do destinatário (opcional)
+    city: string; // Cidade do destinatário (opcional)
+    state_abbr: string; // Estado do destinatário (opcional)
+    country_id: string; // País do destinatário (opcional)
   }
   
   export interface IProductInfo {
-    id: number; // Id do produto
+    id: string; // Id do produto
     name: string; // Nome do produto
     quantity: number; // Quantidade do produto
     price: number; // Preço do produto
@@ -119,7 +126,6 @@ export interface IRequestSendFreightToCart {
   }
   
   export interface IVolumeInfo {
-    id: number; // Id do volume
     weight: number; // Peso do volume
     length: number; // Comprimento do volume
     height: number; // Altura do volume
@@ -128,8 +134,10 @@ export interface IRequestSendFreightToCart {
   
   export interface IShippingOptions {
     insuranceValue?: number; // Valor do seguro (opcional)
-    deliveryType?: string; // Tipo de entrega (exemplo: expressa, econômica)
-    notes?: string; // Notas adicionais sobre o envio
+    receipt: boolean; // Reembolso (true) ou sem reembolso (false)
+    own_hand: boolean; // Entrega em maos (true) ou sem entrega em maos (false)
+    reverse: boolean; // Remessa reversa (true) ou remessa comercial (false)
+    non_commercial: boolean; // Remessa comercial (true) ou remessa reversa (false)
   }
 
   export interface IResponseSendFreightToCart {

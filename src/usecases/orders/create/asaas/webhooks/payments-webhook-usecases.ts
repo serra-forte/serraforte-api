@@ -78,6 +78,8 @@ export class PaymentWebHookUseCases {
        const endOrder: IOrderRelationsDTO = {
         user: findOrderExist.user,
         delivery: {
+            serviceId: findOrderExist.delivery.serviceId,
+            serviceName: findOrderExist.delivery.serviceName,
             address: findOrderExist.delivery.address ? findOrderExist.delivery.address : undefined
         },
         boxes: findOrderExist.boxes,

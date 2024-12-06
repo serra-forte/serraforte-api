@@ -11,6 +11,11 @@ import { IOrderRepository } from "@/repositories/interfaces/interface-order-repo
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 import { IUserRelations } from "@/dtos/user-relations.dto";
+import { Box } from "@prisma/client";
+
+interface IRelationBox {
+    box: Box[]
+}
 
 export class AddFreightToCartMelhorEnvio {
     private kafkaConsumer: KafkaConsumer;
@@ -110,13 +115,14 @@ export class AddFreightToCartMelhorEnvio {
                                 weight: Number(item.weight),
                             }
                         }),
-                        volumes: order.boxes.map(box => {
+                        volumes: order.boxes.map(objeWithBox => {
+                            const {box} = objeWithBox as unknown as IRelationBox;
+
                             return{
-                                id: box.id,
-                                weight: Number(box.weight),
-                                length: Number(box.length),
-                                height: Number(box.height),
-                                width: Number(box.width),
+                                width: Number(box[0].width),
+                                height: Number(box[0].height),
+                                length: Number(box[0].length),
+                                weight: Number(box[0].weight),
                             }
                         }),
                         options:{

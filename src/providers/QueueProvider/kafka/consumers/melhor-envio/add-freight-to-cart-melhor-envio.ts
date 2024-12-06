@@ -76,7 +76,7 @@ export class AddFreightToCartMelhorEnvio {
                     const box = order.boxes.map(objWithBox => {
                         const {box} = objWithBox as unknown as IRelationBox;
 
-                        console.log(box[0].width, box[0].height, box[0].length);
+                        console.log(box);
                     })
 
                     // Lógica de envio do frete

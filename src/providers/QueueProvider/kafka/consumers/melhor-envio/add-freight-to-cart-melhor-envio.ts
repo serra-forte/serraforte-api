@@ -97,7 +97,7 @@ export class AddFreightToCartMelhorEnvio {
                             number: String(shopkeeper.address.num),
                             complement: shopkeeper.address.complement as string,
                             district: shopkeeper.address.neighborhood as string,
-                            state_register: '123456789',
+                            state_register: '12345678910',
                             CPNJ: shopkeeper.cpf as string,
                         },
                         to: {

@@ -97,7 +97,7 @@ export class AddFreightToCartMelhorEnvio {
                             number: String(shopkeeper.address.num),
                             complement: shopkeeper.address.complement as string,
                             district: shopkeeper.address.neighborhood as string,
-                            state_register: '',
+                            state_register: '123456789',
                             CPNJ: shopkeeper.cpf as string,
                         },
                         to: {
@@ -112,7 +112,7 @@ export class AddFreightToCartMelhorEnvio {
                             number: String(customer.address.num),
                             complement: customer.address.complement as string,
                             district: customer.address.neighborhood as string,
-                            state_register: '',
+                            state_register: '123456789',
                             CPNJ: customer.cpf as string
                         },
                         service: Number(order.delivery.serviceId),

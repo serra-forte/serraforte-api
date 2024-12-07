@@ -14,6 +14,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
   ) {}
   async addFreightToCart(data: IRequestSendFreightToCart):Promise<any> {
     try {
+      console.log(data)
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/cart`, data, {
         headers: {
           'Authorization': `Bearer ${process.env.MELHOR_ENVIO_ACCESS_TOKEN}`,

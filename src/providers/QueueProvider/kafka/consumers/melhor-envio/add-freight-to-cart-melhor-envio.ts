@@ -14,7 +14,7 @@ import { IUserRelations } from "@/dtos/user-relations.dto";
 import { Box } from "@prisma/client";
 
 interface IRelationBox {
-    box: Box[]
+    box: Box
 }
 
 export class AddFreightToCartMelhorEnvio {
@@ -74,7 +74,15 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     console.log(order.boxes);
-                   
+
+                    const [box] = order.boxes.map(objWithBox => {
+                        const {box} = objWithBox as unknown as IRelationBox;
+
+                        return box
+                    })
+
+                    console.log(box.width, box.height, box.length, box.weight);
+
                     // Lógica de envio do frete
                     // await this.melhorEnvioProvider.addFreightToCart({
                     //     from: {

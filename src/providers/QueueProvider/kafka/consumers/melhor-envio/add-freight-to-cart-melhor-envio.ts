@@ -84,7 +84,7 @@ export class AddFreightToCartMelhorEnvio {
                     // Determinar qual caixa vai ser usada
 
                     // Lógica de envio do frete
-                    const response = await this.melhorEnvioProvider.addFreightToCart({
+                    const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
                         from: {
                             name: shopkeeper.name,
                             phone: shopkeeper.phone,
@@ -144,14 +144,24 @@ export class AddFreightToCartMelhorEnvio {
                         }
                     });
 
+                    if(!freightInCart) {
+                        console.error('[Consumer] Erro ao adicionar frete ao carrinho.');
+                        return;
+                    }
+
                     // Atualizar status do pedido e informações relacionadas
                     await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);
 
+                    const freightToPayment = {
+                        orderId: order.id,
+                        freightId: freightInCart.id,
+                    }
+
                     // Enviar mensagem para o Kafka para processar o pagamento
-                    // await this.kafkaProducer.execute('payment-process', )
+                    await this.kafkaProducer.execute('payment-process-in-cart', freightToPayment)
                    
                     console.info('[Consumer] Frete adicionado ao carrinho com sucesso.');
-                    console.log(response);
+                    console.log(freightInCart);
 
                 } catch (error) {
                     console.error('[Consumer] Erro ao processar mensagem:', error);

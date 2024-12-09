@@ -200,6 +200,216 @@ export interface IRequestSendFreightToCart {
     updated_at: string; // Data de atualização do volume
   }
   
+  export interface IPurchaseResponse {
+    purchase: {
+      id: string;
+      protocol: string;
+      total: number;
+      discount: number;
+      status: string;
+      paid_at: string | null;
+      canceled_at: string | null;
+      created_at: string;
+      updated_at: string;
+      payment: string | null;
+      transactions: {
+        id: string;
+        protocol: string;
+        value: number;
+        type: string;
+        status: string;
+        description: string;
+        authorized_at: string | null;
+        unauthorized_at: string | null;
+        reserved_at: string | null;
+        canceled_at: string | null;
+        created_at: string;
+        description_internal: string | null;
+        reason: {
+          id: number;
+          label: string;
+          description: string;
+        };
+      }[];
+      orders: {
+        id: string;
+        protocol: string;
+        service_id: number;
+        agency_id: number | null;
+        contract: string | null;
+        service_code: string | null;
+        quote: number;
+        price: number;
+        coupon: string | null;
+        discount: number;
+        delivery_min: number;
+        delivery_max: number;
+        status: string;
+        reminder: string | null;
+        insurance_value: number;
+        weight: number | null;
+        width: number | null;
+        height: number | null;
+        length: number | null;
+        diameter: number | null;
+        format: string;
+        billed_weight: number;
+        receipt: boolean;
+        own_hand: boolean;
+        collect: boolean;
+        collect_scheduled_at: string | null;
+        reverse: boolean;
+        non_commercial: boolean;
+        authorization_code: string | null;
+        tracking: string | null;
+        self_tracking: string | null;
+        delivery_receipt: string | null;
+        additional_info: string | null;
+        cte_key: string | null;
+        paid_at: string | null;
+        generated_at: string | null;
+        posted_at: string | null;
+        delivered_at: string | null;
+        canceled_at: string | null;
+        suspended_at: string | null;
+        expired_at: string | null;
+        created_at: string;
+        updated_at: string;
+        parse_pi_at: string | null;
+        from: {
+          name: string;
+          phone: string;
+          email: string;
+          document: string;
+          company_document: string;
+          state_register: string;
+          postal_code: string;
+          address: string;
+          location_number: string;
+          complement: string;
+          district: string;
+          city: string;
+          state_abbr: string;
+          country_id: string;
+          latitude: number | null;
+          longitude: number | null;
+          note: string;
+        };
+        to: {
+          name: string;
+          phone: string;
+          email: string;
+          document: string;
+          company_document: string;
+          state_register: string;
+          postal_code: string;
+          address: string;
+          location_number: string;
+          complement: string;
+          district: string;
+          city: string;
+          state_abbr: string;
+          country_id: string;
+          latitude: number | null;
+          longitude: number | null;
+          note: string;
+        };
+        service: {
+          id: number;
+          name: string;
+          status: string;
+          type: string;
+          range: string;
+          restrictions: string;
+          requirements: string;
+          optionals: string;
+          company: {
+            id: number;
+            name: string;
+            status: string;
+            picture: string;
+            use_own_contract: boolean;
+          };
+        };
+        agency: {
+          id: number;
+          company_id: number;
+          name: string;
+          initials: string;
+          code: string;
+          status: string;
+          company_name: string;
+          email: string | null;
+          note: string | null;
+          created_at: string;
+          updated_at: string;
+          address: {
+            id: number;
+            label: string;
+            postal_code: string;
+            address: string;
+            number: string | null;
+            complement: string | null;
+            district: string;
+            latitude: number | null;
+            longitude: number | null;
+            confirmed_at: string | null;
+            created_at: string;
+            updated_at: string;
+            city: {
+              id: number;
+              city: string;
+              state: {
+                id: number;
+                state: string;
+                state_abbr: string;
+                country: {
+                  id: string;
+                  country: string;
+                };
+              };
+            };
+          };
+          phone: {
+            id: number;
+            label: string;
+            phone: string;
+            type: string;
+            country_id: string;
+            confirmed_at: string | null;
+            created_at: string;
+            updated_at: string;
+          };
+        };
+        invoice: {
+          model: string;
+          number: string;
+          serie: string;
+          key: string;
+          value: string | null;
+          cfop: string | null;
+          issued_at: string;
+          uploaded_at: string | null;
+          to_document: string | null;
+        };
+        tags: string[];
+        products: {
+          name: string;
+          quantity: number;
+          unitary_value: number;
+          weight: number | null;
+        }[];
+        generated_key: string | null;
+      }[];
+      paypal_discounts: string[];
+    };
+    digitable: string | null;
+    redirect: string | null;
+    message: string | null;
+    token: string | null;
+    payment_id: string | null;
+  }
+  
   
   
 export interface IMelhorEnvioProvider {
@@ -207,7 +417,7 @@ export interface IMelhorEnvioProvider {
     shipmentCalculate(data: IRequestCalculateShipping): Promise<IResponseCalculateShipping[]>
     refreshToken(): Promise<IResponseAuth>
     addFreightToCart(data: IRequestSendFreightToCart):Promise<IResponseSendFreightToCart | null>
-    // paymentToFreight()
+    paymentToFreight(orderId: string): Promise<IPurchaseResponse | null>
     // generateLabelTracking()
     // generateLabelLinkToPrinting()
 }

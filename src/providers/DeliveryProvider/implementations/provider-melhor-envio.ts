@@ -1,6 +1,6 @@
 import { env } from '@/env';
 import axios, { AxiosError } from 'axios';
-import { IMelhorEnvioProvider, IRequestCalculateShipping, IRequestSendFreightToCart, IResponseAuth, IResponseCalculateShipping, IResponseSendFreightToCart } from './../interface-melhor-envio-provider';
+import { IMelhorEnvioProvider, IPurchaseResponse, IRequestCalculateShipping, IRequestSendFreightToCart, IResponseAuth, IResponseCalculateShipping, IResponseSendFreightToCart } from './../interface-melhor-envio-provider';
 import { IRailwayProvider } from '@/providers/RailwayProvider/interface-railway-provider';
 import "dotenv/config"
 import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider';
@@ -12,6 +12,29 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
     private mailProvider: IMailProvider,
     private usersRepository: IUsersRepository
   ) {}
+  async paymentToFreight(orderId: string): Promise<IPurchaseResponse | null> {
+    try {
+      const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/shipment/checkout`, {
+        orders: [orderId],
+      }, {
+        headers: {
+          'Authorization': `Bearer ${process.env.MELHOR_ENVIO_ACCESS_TOKEN}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json', 
+          'User-Agent': 'Serra Forte/kaiomoreira.dev@gmail.com',
+        },
+      });
+      if (response.status === 201) {
+        return response.data;
+      }else{
+        return null
+      }
+    } catch (error: any) {
+      console.warn(JSON.stringify(error.response.data, null, 2))
+      // Tratamento de erro
+      throw error;
+    }
+  }
   async addFreightToCart(data: IRequestSendFreightToCart):Promise<IResponseSendFreightToCart | null> {
     try {
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/cart`, data, {

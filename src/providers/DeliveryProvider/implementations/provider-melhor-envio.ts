@@ -22,7 +22,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
           'User-Agent': 'Serra Forte/kaiomoreira.dev@gmail.com',
         },
       })
-
+      console.log(response.data)
       if (response.status === 200) {
         return response.data
       }

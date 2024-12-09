@@ -1,6 +1,6 @@
 import { env } from '@/env';
 import axios, { AxiosError } from 'axios';
-import { IMelhorEnvioProvider, IRequestCalculateShipping, IRequestSendFreightToCart, IResponseAuth, IResponseCalculateShipping } from './../interface-melhor-envio-provider';
+import { IMelhorEnvioProvider, IRequestCalculateShipping, IRequestSendFreightToCart, IResponseAuth, IResponseCalculateShipping, IResponseSendFreightToCart } from './../interface-melhor-envio-provider';
 import { IRailwayProvider } from '@/providers/RailwayProvider/interface-railway-provider';
 import "dotenv/config"
 import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider';
@@ -12,7 +12,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
     private mailProvider: IMailProvider,
     private usersRepository: IUsersRepository
   ) {}
-  async addFreightToCart(data: IRequestSendFreightToCart):Promise<any> {
+  async addFreightToCart(data: IRequestSendFreightToCart):Promise<IResponseSendFreightToCart | null> {
     try {
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/cart`, data, {
         headers: {
@@ -23,7 +23,9 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
         },
       })
       if (response.status === 200) {
-        return response.data
+        return response.data;
+      }else{
+        return null
       }
     } catch (error: any) {
       console.warn(JSON.stringify(error.response.data, null, 2))

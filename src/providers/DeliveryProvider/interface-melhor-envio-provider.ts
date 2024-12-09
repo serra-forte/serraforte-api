@@ -206,7 +206,7 @@ export interface IMelhorEnvioProvider {
     authorization(code: string): Promise<IResponseAuth>
     shipmentCalculate(data: IRequestCalculateShipping): Promise<IResponseCalculateShipping[]>
     refreshToken(): Promise<IResponseAuth>
-    addFreightToCart(data: IRequestSendFreightToCart):Promise<IResponseSendFreightToCart>
+    addFreightToCart(data: IRequestSendFreightToCart):Promise<IResponseSendFreightToCart | null>
     // paymentToFreight()
     // generateLabelTracking()
     // generateLabelLinkToPrinting()

@@ -69,6 +69,3 @@ export class PaymentProcessInCartMelhorEnvio {
     }
     
 }
-
-const kafkaConsumer = new PaymentProcessInCartMelhorEnvio();
-kafkaConsumer.execute();

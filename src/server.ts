@@ -4,9 +4,12 @@ import { connectionNodeCron } from "./config/node-cron-connection";
 import "./providers/QueueProvider/kafka/consumers/index";
 import { ConsumerManager } from "./providers/QueueProvider/kafka/consumers/index";
 
-const consumers = new ConsumerManager();
-consumers.startAll();
+async function bootstrap() {
+    const consumerManager = new ConsumerManager();
+    await consumerManager.startAll();
+}
 
+bootstrap();
 connectionNodeCron();
 
 fastifyApp.listen({

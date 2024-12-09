@@ -169,5 +169,3 @@ export class AddFreightToCartMelhorEnvio {
     }
 }
 
-const kafkaConsumer = new AddFreightToCartMelhorEnvio();
-kafkaConsumer.execute();

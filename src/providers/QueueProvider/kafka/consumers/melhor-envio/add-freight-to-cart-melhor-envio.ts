@@ -87,18 +87,18 @@ export class AddFreightToCartMelhorEnvio {
                     await this.melhorEnvioProvider.addFreightToCart({
                         from: {
                             name: shopkeeper.name,
-                            email: shopkeeper.email,
                             phone: shopkeeper.phone,
-                            city: shopkeeper.address.city,
-                            state_abbr: shopkeeper.address.state as string,
-                            postal_code: shopkeeper.address.zipCode as string,
-                            address: shopkeeper.address.street,
-                            country_id: "55", // Brasil
-                            number: String(shopkeeper.address.num),
-                            complement: shopkeeper.address.complement as string,
-                            district: shopkeeper.address.neighborhood as string,
-                            state_register: '12345678910',
+                            email: shopkeeper.email,
                             document: shopkeeper.cpf as string,
+                            state_register: '12345678910',
+                            address: shopkeeper.address.street,
+                            complement: shopkeeper.address.complement as string,
+                            number: String(shopkeeper.address.num),
+                            district: shopkeeper.address.neighborhood as string,
+                            city: shopkeeper.address.city,
+                            country_id: "55", // Brasil
+                            postal_code: shopkeeper.address.zipCode as string,
+                            state_abbr: shopkeeper.address.state as string,
                             note: "order for delivery"
                         },
                         to: {

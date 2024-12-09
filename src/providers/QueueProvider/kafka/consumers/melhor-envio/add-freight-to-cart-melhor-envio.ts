@@ -96,7 +96,7 @@ export class AddFreightToCartMelhorEnvio {
                             number: String(shopkeeper.address.num),
                             district: shopkeeper.address.neighborhood as string,
                             city: shopkeeper.address.city,
-                            country_id: "55", // Brasil
+                            country_id: "55", // Brasill
                             postal_code: shopkeeper.address.zipCode as string,
                             state_abbr: shopkeeper.address.state as string,
                             note: "order for delivery"

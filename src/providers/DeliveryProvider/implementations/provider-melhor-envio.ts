@@ -28,7 +28,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
         return response.data
       }
     } catch (error: any) {
-      console.log(error.response.data)
+      console.log(JSON.stringify(error.response.data, null, 2))
       // Tratamento de erro
       throw error;
     }

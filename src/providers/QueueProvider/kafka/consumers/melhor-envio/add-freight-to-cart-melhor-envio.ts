@@ -93,7 +93,7 @@ export class AddFreightToCartMelhorEnvio {
                             state_abbr: shopkeeper.address.state as string,
                             postal_code: shopkeeper.address.zipCode as string,
                             address: shopkeeper.address.street,
-                            country_id: "55", // Brasil
+                            country_id: "+55", // Brasil
                             number: String(shopkeeper.address.num),
                             complement: shopkeeper.address.complement as string,
                             district: shopkeeper.address.neighborhood as string,
@@ -108,7 +108,7 @@ export class AddFreightToCartMelhorEnvio {
                             state_abbr: customer.address.state as string,
                             postal_code: customer.address.zipCode as string,
                             address: customer.address.street,
-                            country_id: "55", // Brasil
+                            country_id: "+55", // Brasil
                             number: String(customer.address.num),
                             complement: customer.address.complement as string,
                             district: customer.address.neighborhood as string,

@@ -47,16 +47,16 @@ export class AddFreightToCartMelhorEnvio {
         createdConsumer.run({
             eachMessage: async ({ message }) => {
                 if (!message || !message.value) {
-                    console.warn('[Consumer] Mensagem vazia ou inválida:', message);
+                    console.warn('[Consumer - Freight] Mensagem vazia ou inválida:', message);
                     return;
                 }
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer] Mensagem recebida:');
+                    console.log('[Consumer - Freight] Mensagem recebida:');
 
                     if (!parsedMessage.items || !Array.isArray(parsedMessage.items) || parsedMessage.items.length === 0) {
-                        console.warn('[Consumer] Itens do pedido estão ausentes ou inválidos.');
+                        console.warn('[Consumer - Freight] Itens do pedido estão ausentes ou inválidos.');
                         return;
                     }
 
@@ -64,14 +64,14 @@ export class AddFreightToCartMelhorEnvio {
                     // Buscar lojista pelo ID do primeiro item
                     const shopkeeper = await this.usersRepository.findById(order.items[0].userId as string) as unknown as IUserRelations;
                     if (!shopkeeper || !shopkeeper.address) {
-                        console.error('[Consumer] Lojista não encontrado ou endereço inválido.');
+                        console.error('[Consumer - Freight] Lojista não encontrado ou endereço inválido.');
                         return;
                     }
 
                     // Buscar cliente pelo ID do pedido
                     const customer = await this.usersRepository.findById(order.user.id as string) as unknown as IUserRelations;
                     if (!customer || !customer.address) {
-                        console.error('[Consumer] Cliente não encontrado ou endereço inválido.');
+                        console.error('[Consumer - Freight] Cliente não encontrado ou endereço inválido.');
                         return;
                     }
 
@@ -145,7 +145,7 @@ export class AddFreightToCartMelhorEnvio {
                     });
 
                     if(!freightInCart) {
-                        console.error('[Consumer] Erro ao adicionar frete ao carrinho.');
+                        console.error('[Consumer - Freight] Erro ao adicionar frete ao carrinho.');
                         return;
                     }
 
@@ -160,11 +160,9 @@ export class AddFreightToCartMelhorEnvio {
                     // Enviar mensagem para o Kafka para processar o pagamento
                     await this.kafkaProducer.execute('payment-process-in-cart', freightToPayment)
                    
-                    console.info('[Consumer] Frete adicionado ao carrinho com sucesso.');
-                    console.log(freightInCart);
-
+                    console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
                 } catch (error) {
-                    console.error('[Consumer] Erro ao processar mensagem:', error);
+                    console.error('[Consumer - Freight] Erro ao processar mensagem:', error);
                 }
             },
         });

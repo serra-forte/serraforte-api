@@ -47,22 +47,22 @@ export class PaymentProcessInCartMelhorEnvio {
         createdConsumer.run({
             eachMessage: async ({ message }) => {
                 if (!message || !message.value) {
-                    console.warn('[Consumer] Mensagem vazia ou inválida:', message);
+                    console.warn('[Consumer - Payment] Mensagem vazia ou inválida:', message);
                     return;
                 }
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer] Mensagem recebida:', parsedMessage);
+                    console.log('[Consumer - Payment] Mensagem recebida:', parsedMessage);
 
                     if (!parsedMessage.items || !Array.isArray(parsedMessage.items) || parsedMessage.items.length === 0) {
-                        console.warn('[Consumer] Itens do pedido estão ausentes ou inválidos.');
+                        console.warn('[Consumer - Payment] Itens do pedido estão ausentes ou inválidos.');
                         return;
                     }
 
 
                 } catch (error) {
-                    console.error('[Consumer] Erro ao processar mensagem:', error);
+                    console.error('[Consumer - Payment] Erro ao processar mensagem:', error);
                 }
             },
         });

@@ -1,6 +1,6 @@
 import { kafka } from "@/providers/QueueProvider/kafka";
 
-export class KafkaSendMessage {
+export class KafkaProducer {
     async execute(topic: string, paylod: any) {
         const producer = kafka.producer({
             allowAutoTopicCreation: true

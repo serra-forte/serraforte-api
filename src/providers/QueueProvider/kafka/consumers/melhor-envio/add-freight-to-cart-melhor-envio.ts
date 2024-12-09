@@ -12,6 +12,7 @@ import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repos
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 import { IUserRelations } from "@/dtos/user-relations.dto";
 import { Box, Status } from "@prisma/client";
+import { KafkaProducer } from "../../kafka-producer";
 
 interface IRelationBox {
     box: Box
@@ -19,6 +20,7 @@ interface IRelationBox {
 
 export class AddFreightToCartMelhorEnvio {
     private kafkaConsumer: KafkaConsumer;
+    private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
     private usersRepository: IUsersRepository;
@@ -27,6 +29,7 @@ export class AddFreightToCartMelhorEnvio {
 
     constructor() {
         this.kafkaConsumer = new KafkaConsumer();
+        this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
         this.usersRepository = new PrismaUsersRepository();
@@ -50,7 +53,7 @@ export class AddFreightToCartMelhorEnvio {
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer] Mensagem recebida:', parsedMessage);
+                    console.log('[Consumer] Mensagem recebida:');
 
                     if (!parsedMessage.items || !Array.isArray(parsedMessage.items) || parsedMessage.items.length === 0) {
                         console.warn('[Consumer] Itens do pedido estão ausentes ou inválidos.');
@@ -81,7 +84,7 @@ export class AddFreightToCartMelhorEnvio {
                     // Determinar qual caixa vai ser usada
 
                     // Lógica de envio do frete
-                    await this.melhorEnvioProvider.addFreightToCart({
+                    const response = await this.melhorEnvioProvider.addFreightToCart({
                         from: {
                             name: shopkeeper.name,
                             phone: shopkeeper.phone,
@@ -141,10 +144,14 @@ export class AddFreightToCartMelhorEnvio {
                         }
                     });
 
-                    console.info('[Consumer] Frete adicionado ao carrinho com sucesso.');
-
                     // Atualizar status do pedido e informações relacionadas
                     await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);
+
+                    // Enviar mensagem para o Kafka para processar o pagamento
+                    // await this.kafkaProducer.execute('payment-process', )
+                   
+                    console.info('[Consumer] Frete adicionado ao carrinho com sucesso.');
+                    console.log(response);
 
                 } catch (error) {
                     console.error('[Consumer] Erro ao processar mensagem:', error);

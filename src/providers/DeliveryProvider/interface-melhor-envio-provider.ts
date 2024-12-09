@@ -114,6 +114,7 @@ export interface IRequestSendFreightToCart {
     state_abbr: string; // Estado do destinatário (opcional)
     country_id: string; // País do destinatário (opcional)
     document?: string; // Documento do destinatário (opcional)
+    note?: string; // Observação do destinatário (opcional)
   }
   
   export interface IProductInfo {

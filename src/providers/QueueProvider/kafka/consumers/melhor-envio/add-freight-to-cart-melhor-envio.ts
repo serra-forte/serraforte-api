@@ -99,6 +99,7 @@ export class AddFreightToCartMelhorEnvio {
                             district: shopkeeper.address.neighborhood as string,
                             state_register: '12345678910',
                             document: shopkeeper.cpf as string,
+                            note: "order for delivery"
                         },
                         to: {
                             name: customer.name,
@@ -113,7 +114,8 @@ export class AddFreightToCartMelhorEnvio {
                             complement: customer.address.complement as string,
                             district: customer.address.neighborhood as string,
                             state_register: '123456789',
-                            document: customer.cpf as string
+                            document: customer.cpf as string,
+                            note: "order for delivery"
                         },
                         service: Number(order.delivery.serviceId),
                         products: order.items.map(item => {

@@ -127,16 +127,14 @@ export class AddFreightToCartMelhorEnvio {
                                 weight: Number(item.weight),
                             }
                         }),
-                        volumes: order.boxes.map(objeWithBox => {
-                            const {box} = objeWithBox as unknown as IRelationBox;
-
-                            return{
+                        volumes: [
+                            {
                                 width: Number(box.width),
                                 height: Number(box.height),
                                 length: Number(box.length),
                                 weight: Number(box.weight),
                             }
-                        }),
+                        ],
                         options:{
                             insuranceValue: 0,
                             non_commercial: false,

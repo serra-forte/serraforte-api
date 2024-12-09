@@ -107,14 +107,13 @@ export interface IRequestSendFreightToCart {
     postal_code: string; // CEP
     phone?: string; // Telefone (opcional)
     email?: string; // Email (opcional)
-    CPF?: string | null; // CPF do remetente (opcional)
-    CPNJ?: string | null; // CNPJ do remetente (opcional)
     state_register?: string | null; // Estado de registro do remetente
     number: string; // Número do destinatário (opcional)
     district?: string; // Bairro do destinatário (opcional)
     city: string; // Cidade do destinatário (opcional)
     state_abbr: string; // Estado do destinatário (opcional)
     country_id: string; // País do destinatário (opcional)
+    document?: string; // Documento do destinatário (opcional)
   }
   
   export interface IProductInfo {

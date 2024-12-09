@@ -27,7 +27,8 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       if (response.status === 200) {
         return response.data
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error.response.data)
       // Tratamento de erro
       throw error;
     }

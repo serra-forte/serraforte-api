@@ -141,57 +141,51 @@ export interface IRequestSendFreightToCart {
   }
 
   export interface IResponseSendFreightToCart {
-    id: string; // ID do envio
-    protocol: string; // Protocolo do envio
-    service_id: number; // ID do serviço da transportadora
-    agency_id: number; // ID da agência/unidade
-    contract: string | null; // Contrato, pode ser nulo
-    service_code: string | null; // Código do serviço, pode ser nulo
-    quote: number; // Cotação do envio
-    price: number; // Preço do envio
-    coupon: string | null; // Código do cupom, pode ser nulo
-    discount: number; // Desconto aplicado
-    delivery_min: number; // Prazo mínimo de entrega
-    delivery_max: number; // Prazo máximo de entrega
-    status: string; // Status do envio (ex: 'pending')
-    reminder: string | null; // Lembrete, pode ser nulo
-    insurance_value: number; // Valor do seguro
-    weight: number | null; // Peso total, pode ser nulo
-    width: number | null; // Largura, pode ser nulo
-    height: number | null; // Altura, pode ser nulo
-    length: number | null; // Comprimento, pode ser nulo
-    diameter: number | null; // Diâmetro, pode ser nulo
-    format: string; // Formato do volume (ex: 'box')
-    billed_weight: number; // Peso faturado
-    receipt: boolean; // Indica se será feita uma confirmação de recebimento
-    own_hand: boolean; // Indica se o envio será entregue em mãos
-    collect: boolean; // Indica se o envio é coletado
-    collect_scheduled_at: string | null; // Data agendada para coleta, pode ser nulo
-    reverse: boolean; // Indica se é uma remessa reversa
-    non_commercial: boolean; // Indica se é uma remessa não comercial
-    authorization_code: string | null; // Código de autorização, pode ser nulo
-    tracking: string | null; // Código de rastreamento, pode ser nulo
-    self_tracking: string | null; // Rastreamento próprio, pode ser nulo
-    delivery_receipt: string | null; // Comprovante de entrega, pode ser nulo
-    additional_info: string | null; // Informações adicionais, pode ser nulo
-    cte_key: string | null; // Chave CTE, pode ser nulo
-    paid_at: string | null; // Data de pagamento, pode ser nulo
-    generated_at: string | null; // Data de geração, pode ser nulo
-    posted_at: string | null; // Data de postagem, pode ser nulo
-    delivered_at: string | null; // Data de entrega, pode ser nulo
-    canceled_at: string | null; // Data de cancelamento, pode ser nulo
-    suspended_at: string | null; // Data de suspensão, pode ser nulo
-    expired_at: string | null; // Data de expiração, pode ser nulo
-    created_at: string; // Data de criação
-    updated_at: string; // Data de atualização
-    parse_pi_at: string | null; // Data de parsing do PI, pode ser nulo
-    products: {
-        name: string; // Nome do produto
-        quantity: number; // Quantidade do produto
-        unitary_value: number; // Valor unitário do produto
-        weight: number | null; // Peso do produto, pode ser nulo
-      }[]; // Lista de produtos no envio
-    volumes: IVolume[]; // Lista de volumes no envio
+    id: string;
+    protocol: string;
+    service_id: number;
+    agency_id: string | null;
+    contract: string | null;
+    service_code: string | null;
+    quote: number;
+    price: number;
+    coupon: string | null;
+    discount: number;
+    delivery_min: number;
+    delivery_max: number;
+    status: string;
+    reminder: string | null;
+    insurance_value: number;
+    weight: number | null;
+    width: number | null;
+    height: number | null;
+    length: number | null;
+    diameter: number | null;
+    format: string;
+    billed_weight: number;
+    receipt: boolean;
+    own_hand: boolean;
+    collect: boolean;
+    collect_scheduled_at: string | null;
+    reverse: number;
+    non_commercial: boolean;
+    authorization_code: string | null;
+    tracking: string | null;
+    self_tracking: string | null;
+    delivery_receipt: string | null;
+    additional_info: string | null;
+    cte_key: string | null;
+    paid_at: string | null;
+    generated_at: string | null;
+    posted_at: string | null;
+    delivered_at: string | null;
+    canceled_at: string | null;
+    suspended_at: string | null;
+    expired_at: string | null;
+    created_at: string;
+    updated_at: string;
+    parse_pi_at: string | null;
+    received_at: string | null;
   }
   
   export interface IVolume {

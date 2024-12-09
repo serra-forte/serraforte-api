@@ -62,11 +62,12 @@ export class PaymentProcessInCartMelhorEnvio {
 
 
                 } catch (error) {
-                    console.error('[Consumer - Payment] Erro ao processar mensagem:', error);
+                    console.error('[Consumer ] Erro ao processar mensagem:', error);
                 }
             },
         });
     }
+    
 }
 
 const kafkaConsumer = new PaymentProcessInCartMelhorEnvio();

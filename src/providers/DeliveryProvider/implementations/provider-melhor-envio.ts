@@ -14,7 +14,6 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
   ) {}
   async addFreightToCart(data: IRequestSendFreightToCart):Promise<any> {
     try {
-      console.log(data)
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/cart`, data, {
         headers: {
           'Authorization': `Bearer ${process.env.MELHOR_ENVIO_ACCESS_TOKEN}`,
@@ -28,7 +27,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
         return response.data
       }
     } catch (error: any) {
-      console.log(JSON.stringify(error.response.data, null, 2))
+      console.warn(JSON.stringify(error.response.data, null, 2))
       // Tratamento de erro
       throw error;
     }

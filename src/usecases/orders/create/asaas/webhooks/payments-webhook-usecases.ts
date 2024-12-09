@@ -76,6 +76,7 @@ export class PaymentWebHookUseCases {
        const orders = await this.orderRepository.listByAsaasPaymentId(paymenAsaasId)
 
        const endOrder: IOrderRelationsDTO = {
+        id: findOrderExist.id,
         user: findOrderExist.user,
         delivery: {
             serviceId: findOrderExist.delivery.serviceId,

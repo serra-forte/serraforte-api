@@ -11,7 +11,7 @@ import { IOrderRepository } from "@/repositories/interfaces/interface-order-repo
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 import { IUserRelations } from "@/dtos/user-relations.dto";
-import { Box } from "@prisma/client";
+import { Box, Status } from "@prisma/client";
 
 interface IRelationBox {
     box: Box
@@ -58,7 +58,6 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     const order = parsedMessage as IOrderRelationsDTO;
-                    console.log('[Consumer] Pedido:', order);
                     // Buscar lojista pelo ID do primeiro item
                     const shopkeeper = await this.usersRepository.findById(order.items[0].userId as string) as unknown as IUserRelations;
                     if (!shopkeeper || !shopkeeper.address) {
@@ -72,8 +71,6 @@ export class AddFreightToCartMelhorEnvio {
                         console.error('[Consumer] Cliente não encontrado ou endereço inválido.');
                         return;
                     }
-
-                    console.log(order.boxes);
 
                     const [box] = order.boxes.map(objWithBox => {
                         const {box} = objWithBox as unknown as IRelationBox;
@@ -147,7 +144,7 @@ export class AddFreightToCartMelhorEnvio {
                     console.info('[Consumer] Frete adicionado ao carrinho com sucesso.');
 
                     // Atualizar status do pedido e informações relacionadas
-                    // await this.orderRepository.updateStatus(order.id, "AWAITING_LABEL_PAYMENT_PROCESS");
+                    await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);
 
                 } catch (error) {
                     console.error('[Consumer] Erro ao processar mensagem:', error);

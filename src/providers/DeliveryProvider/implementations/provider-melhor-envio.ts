@@ -22,8 +22,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
           'User-Agent': 'Serra Forte/kaiomoreira.dev@gmail.com',
         },
       })
-      console.log(response.status)
-      if (response.status === 200) {
+      if (response.status === 201) {
         return response.data;
       }else{
         return null

@@ -15,7 +15,11 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
   async paymentToFreight(orderId: string): Promise<IPurchaseResponse | null> {
     try {
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/shipment/checkout`, {
-        orders: [orderId],
+        orders: [
+          {
+            orderId,
+          },
+        ],
       }, {
         headers: {
           'Authorization': `Bearer ${process.env.MELHOR_ENVIO_ACCESS_TOKEN}`,

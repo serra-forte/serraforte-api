@@ -1,5 +1,4 @@
 import { IMelhorEnvioProvider } from "@/providers/DeliveryProvider/interface-melhor-envio-provider";
-import { KafkaConsumer } from "../../kafka-consumer";
 import { MelhorEnvioProvider } from "@/providers/DeliveryProvider/implementations/provider-melhor-envio";
 import { IRailwayProvider } from "@/providers/RailwayProvider/interface-railway-provider";
 import { IMailProvider } from "@/providers/MailProvider/interface-mail-provider";
@@ -9,17 +8,12 @@ import { MailProvider } from "@/providers/MailProvider/implementations/provider-
 import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
-import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
-import { IUserRelations } from "@/dtos/user-relations.dto";
-import { Box, Status } from "@prisma/client";
 import { KafkaProducer } from "../../kafka-producer";
+import { KafkaConsumerPayment } from "../../kafka-consumer-payment";
 
-interface IRelationBox {
-    box: Box
-}
 
 export class PaymentProcessInCartMelhorEnvio {
-    private kafkaConsumer: KafkaConsumer;
+    private kafkaConsumer: KafkaConsumerPayment;
     private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
@@ -28,7 +22,7 @@ export class PaymentProcessInCartMelhorEnvio {
     private orderRepository: IOrderRepository;
 
     constructor() {
-        this.kafkaConsumer = new KafkaConsumer();
+        this.kafkaConsumer = new KafkaConsumerPayment();
         this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
@@ -69,3 +63,6 @@ export class PaymentProcessInCartMelhorEnvio {
     }
     
 }
+
+const paymentProcessInCartMelhorEnvio = new PaymentProcessInCartMelhorEnvio();
+paymentProcessInCartMelhorEnvio.execute();

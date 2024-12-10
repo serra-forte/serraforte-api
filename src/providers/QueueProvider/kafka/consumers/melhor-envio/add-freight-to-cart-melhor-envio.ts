@@ -1,5 +1,4 @@
 import { IMelhorEnvioProvider } from "@/providers/DeliveryProvider/interface-melhor-envio-provider";
-import { KafkaConsumer } from "../../kafka-consumer";
 import { MelhorEnvioProvider } from "@/providers/DeliveryProvider/implementations/provider-melhor-envio";
 import { IRailwayProvider } from "@/providers/RailwayProvider/interface-railway-provider";
 import { IMailProvider } from "@/providers/MailProvider/interface-mail-provider";
@@ -13,13 +12,14 @@ import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 import { IUserRelations } from "@/dtos/user-relations.dto";
 import { Box, Status } from "@prisma/client";
 import { KafkaProducer } from "../../kafka-producer";
+import { KafkaConsumerFreight } from "../../kafka-consumer-freight";
 
 interface IRelationBox {
     box: Box
 }
 
 export class AddFreightToCartMelhorEnvio {
-    private kafkaConsumer: KafkaConsumer;
+    private kafkaConsumer: KafkaConsumerFreight;
     private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
@@ -28,7 +28,7 @@ export class AddFreightToCartMelhorEnvio {
     private orderRepository: IOrderRepository;
 
     constructor() {
-        this.kafkaConsumer = new KafkaConsumer();
+        this.kafkaConsumer = new KafkaConsumerFreight();
         this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
@@ -168,4 +168,7 @@ export class AddFreightToCartMelhorEnvio {
         });
     }
 }
+
+const addFreightToCartMelhorEnvio = new AddFreightToCartMelhorEnvio();
+addFreightToCartMelhorEnvio.execute();
 

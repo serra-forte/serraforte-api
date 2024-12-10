@@ -2,14 +2,7 @@ import { env } from "./env";
 import { fastifyApp } from "./app";
 import { connectionNodeCron } from "./config/node-cron-connection";
 import "./providers/QueueProvider/kafka/consumers/index";
-import { ConsumerManager } from "./providers/QueueProvider/kafka/consumers/index";
 
-async function bootstrap() {
-    const consumerManager = new ConsumerManager();
-    await consumerManager.startAll();
-}
-
-bootstrap();
 connectionNodeCron();
 
 fastifyApp.listen({

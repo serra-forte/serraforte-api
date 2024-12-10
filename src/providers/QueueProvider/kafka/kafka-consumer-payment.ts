@@ -1,10 +1,10 @@
 import { kafka } from "."
 
-export class KafkaConsumer {
+export class KafkaConsumerPayment {
     async execute(topic: string) {
         // criar consumer com um grupo de id para ficar escutando as mensagens
         const consumer = kafka.consumer({
-            groupId: 'APP_SERRA_FORTE',
+            groupId: 'PAYMENT_PROCESS_IN_CART',
         })
 
         // criar conexão com o consumer

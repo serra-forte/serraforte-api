@@ -158,7 +158,7 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     // Enviar mensagem para o Kafka para processar o pagamento
-                    await this.kafkaProducer.execute('payment-process-in-cart', freightToPayment)
+                    await this.kafkaProducer.execute('PAYMENT_PROCESS_IN_CART', freightToPayment)
                    
                     console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
                 } catch (error) {

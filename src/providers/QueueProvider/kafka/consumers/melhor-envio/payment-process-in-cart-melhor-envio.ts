@@ -41,7 +41,7 @@ export class PaymentProcessInCartMelhorEnvio {
         createdConsumer.run({
             eachMessage: async ({ message }) => {
                 if (!message || !message.value) {
-                    console.warn('[Consumer - Payment] Mensagem vazia ou inválida:', message);
+                    console.warn('[Consumer - Payment] Mensagem vazia ou inválida:');
                     return;
                 }
 

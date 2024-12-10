@@ -36,7 +36,7 @@ export class PaymentProcessInCartMelhorEnvio {
     }
 
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('payment-process-in-cart');
+        const createdConsumer = await this.kafkaConsumer.execute('PAYMENT_PROCESS_IN_CART');
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {

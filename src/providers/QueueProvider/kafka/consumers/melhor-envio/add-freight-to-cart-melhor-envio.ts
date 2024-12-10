@@ -42,7 +42,7 @@ export class AddFreightToCartMelhorEnvio {
     }
 
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('add-freight-to-cart');
+        const createdConsumer = await this.kafkaConsumer.execute('ADD_FREIGHT_TO_CART');
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {

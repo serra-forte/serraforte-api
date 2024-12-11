@@ -39,7 +39,7 @@ export class GenerateFreightMelhorEnvio {
     }
 
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_FREIGHT_MELHOR_ENVIO');
+        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_LABEL');
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {

@@ -56,7 +56,7 @@ export class GenerateLabelLinkMelhorEnvio {
                     }
 
                     // gerar etiqueta na melhor envio
-                    const response = await this.melhorEnvioProvider.generateLabelLinkToPrinting(parsedMessage.orderId)
+                    const response = await this.melhorEnvioProvider.generateLabelLinkToPrinting(parsedMessage.freightId)
 
                     if (!response) {
                         throw new AppError('Erro ao processar mensagem');

@@ -13,8 +13,9 @@ import { KafkaConsumerPayment } from "../../kafka-consumer-payment";
 import { Status } from "@prisma/client";
 import { AppError } from "@/usecases/errors/app-error";
 
-interface IResponseProcessPayment {
+interface IInfoGenerateLabelFreight {
     orderId: string;
+    freightId: string;
 }
 interface IPaymentProcessInCartMelhorEnvio {
     orderId: string;
@@ -74,12 +75,13 @@ export class PaymentProcessInCartMelhorEnvio {
                     await this.orderRepository.updateStatus(messageReceived.orderId, Status.AWAITING_LABEL_GENERATE)
 
                     // criar objeto para enviar a mensagem de gerar um etiqueta.
-                    const responseProcessPayment: IResponseProcessPayment = {
-                        orderId: response.purchase.orders[0].id
+                    const infoToGenerateLabel: IInfoGenerateLabelFreight = {
+                        freightId: response.purchase.orders[0].id,
+                        orderId: messageReceived.orderId
                     }
 
                     // enviar mensagem para o consumer de gerar uma etiqueta
-                    await this.kafkaProducer.execute("GENERATE_LABEL", responseProcessPayment);
+                    await this.kafkaProducer.execute("GENERATE_LABEL", infoToGenerateLabel);
 
                     console.info('[Consumer - Payment] Pagamento processado com sucesso');
                 } catch (error) {

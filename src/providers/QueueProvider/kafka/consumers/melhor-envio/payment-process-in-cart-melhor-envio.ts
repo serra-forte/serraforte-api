@@ -60,7 +60,7 @@ export class PaymentProcessInCartMelhorEnvio {
                     const messageReceived = parsedMessage as IPaymentProcessInCartMelhorEnvio;
                     // chamar melhor envio para processar o pagamento
                     const response = await this.melhorEnvioProvider.paymentToFreight(messageReceived.freightId)
-
+                    console.log(response);
                     if (!response) {
                         throw new Error('Erro ao processar pagamento');
                     }

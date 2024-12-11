@@ -50,14 +50,14 @@ export class GenerateFreightMelhorEnvio {
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer - Generate Freight] Mensagem recebida:', parsedMessage);
+                    console.log('[Consumer - Generate Freight] Mensagem recebida:');
 
                     if (!parsedMessage) {
                         // console.warn('[Consumer - Payment] Itens do pedido estão ausentes ou inválidos.');
                         return;
                     }
 
-                    console.info('[Consumer - Generate Freight] Pagamento processado com sucesso');
+                    console.info('[Consumer - Generate Freight] Frete gerado com sucesso');
                 } catch (error) {
                     console.error('[Consumer - Generate Freight ] Erro ao processar mensagem:', error);
                 }

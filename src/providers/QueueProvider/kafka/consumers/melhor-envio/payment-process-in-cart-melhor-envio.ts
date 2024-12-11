@@ -54,7 +54,7 @@ export class PaymentProcessInCartMelhorEnvio {
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer - Payment] Mensagem recebida:', parsedMessage);
+                    console.log('[Consumer - Payment] Mensagem recebida:');
 
                     if (!parsedMessage) {
                         // console.warn('[Consumer - Payment] Itens do pedido estão ausentes ou inválidos.');
@@ -76,7 +76,7 @@ export class PaymentProcessInCartMelhorEnvio {
                     const responseProcessPayment: IResponseProcessPayment = {
                         orderId: response.purchase.orders[0].id
                     }
-                    
+
                     // enviar mensagem para o consumer de gerar uma etiqueta
                     await this.kafkaProducer.execute("GENERATE_LABEL", responseProcessPayment);
 

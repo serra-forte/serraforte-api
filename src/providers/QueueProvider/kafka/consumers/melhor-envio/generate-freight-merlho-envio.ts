@@ -9,18 +9,14 @@ import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-reposi
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { KafkaProducer } from "../../kafka-producer";
-import { KafkaConsumerPayment } from "../../kafka-consumer-payment";
-import { Status } from "@prisma/client";
+import { KafkaConsumerGenerateFreight } from "../../kafka-consumer-generate-freight";
 
 interface IResponseProcessPayment {
     orderId: string;
 }
-interface IPaymentProcessInCartMelhorEnvio {
-    orderId: string;
-    freightId: string;
-}
-export class PaymentProcessInCartMelhorEnvio {
-    private kafkaConsumer: KafkaConsumerPayment;
+
+export class GenerateFreightMelhorEnvio {
+    private kafkaConsumer: KafkaConsumerGenerateFreight;
     private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
@@ -29,7 +25,7 @@ export class PaymentProcessInCartMelhorEnvio {
     private orderRepository: IOrderRepository;
 
     constructor() {
-        this.kafkaConsumer = new KafkaConsumerPayment();
+        this.kafkaConsumer = new KafkaConsumerGenerateFreight();
         this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
@@ -43,46 +39,27 @@ export class PaymentProcessInCartMelhorEnvio {
     }
 
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('PAYMENT_PROCESS_IN_CART');
+        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_FREIGHT_MELHOR_ENVIO');
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {
                 if (!message || !message.value) {
-                    console.warn('[Consumer - Payment] Mensagem vazia ou inválida:');
+                    console.warn('[Consumer - Generate Freight] Mensagem vazia ou inválida:');
                     return;
                 }
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer - Payment] Mensagem recebida:', parsedMessage);
+                    console.log('[Consumer - Generate Freight] Mensagem recebida:', parsedMessage);
 
                     if (!parsedMessage) {
                         // console.warn('[Consumer - Payment] Itens do pedido estão ausentes ou inválidos.');
                         return;
                     }
 
-                    const messageReceived = parsedMessage as IPaymentProcessInCartMelhorEnvio;
-                    // chamar melhor envio para processar o pagamento
-                    const response = await this.melhorEnvioProvider.paymentToFreight(messageReceived.freightId)
-                    
-                    if (!response) {
-                        throw new Error('Erro ao processar pagamento');
-                    }
-
-                    // atualizar pedido com status "AWAITING_LABEL_GENERATE"
-                    await this.orderRepository.updateStatus(messageReceived.orderId, Status.AWAITING_LABEL_GENERATE)
-
-                    // criar objeto para enviar a mensagem de gerar um etiqueta.
-                    const responseProcessPayment: IResponseProcessPayment = {
-                        orderId: response.purchase.orders[0].id
-                    }
-                    
-                    // enviar mensagem para o consumer de gerar uma etiqueta
-                    await this.kafkaProducer.execute("GENERATE_LABEL", responseProcessPayment);
-
-                    console.info('[Consumer - Payment] Pagamento processado com sucesso');
+                    console.info('[Consumer - Generate Freight] Pagamento processado com sucesso');
                 } catch (error) {
-                    console.error('[Consumer ] Erro ao processar mensagem:', error);
+                    console.error('[Consumer - Generate Freight ] Erro ao processar mensagem:', error);
                 }
             },
         });
@@ -90,5 +67,5 @@ export class PaymentProcessInCartMelhorEnvio {
     
 }
 
-const paymentProcessInCartMelhorEnvio = new PaymentProcessInCartMelhorEnvio();
-paymentProcessInCartMelhorEnvio.execute();
+const generateFreightMelhorEnvio = new GenerateFreightMelhorEnvio();
+generateFreightMelhorEnvio.execute();

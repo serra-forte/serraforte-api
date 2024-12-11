@@ -26,7 +26,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       });
 
       if (response.status === 200) {
-        return response.data.purchase;
+        return response.data;
       }else{
         return null
       }

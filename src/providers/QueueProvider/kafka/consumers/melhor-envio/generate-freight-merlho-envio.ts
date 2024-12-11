@@ -60,7 +60,7 @@ export class GenerateFreightMelhorEnvio {
                     }
 
                     // gerar etiqueta na melhor envio
-                    const response = await this.melhorEnvioProvider.generateLabelTracking(parsedMessage.orderId)
+                    const response = await this.melhorEnvioProvider.generateLabelTracking(parsedMessage.freightId)
 
                     if (!response) {
                         throw new AppError('Erro ao processar mensagem');

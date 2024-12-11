@@ -9,12 +9,12 @@ import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-reposi
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { KafkaProducer } from "../../kafka-producer";
-import { KafkaConsumerGenerateFreight } from "../../kafka-consumer-generate-freight";
 import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
+import { KafkaConsumerGenerateLabelLink } from "../../kafka-consumer-generate-label-link";
 
-export class GenerateFreightMelhorEnvio {
-    private kafkaConsumer: KafkaConsumerGenerateFreight;
+export class GenerateLabelLinkMelhorEnvio {
+    private kafkaConsumer: KafkaConsumerGenerateLabelLink;
     private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
@@ -23,7 +23,7 @@ export class GenerateFreightMelhorEnvio {
     private orderRepository: IOrderRepository;
 
     constructor() {
-        this.kafkaConsumer = new KafkaConsumerGenerateFreight();
+        this.kafkaConsumer = new KafkaConsumerGenerateLabelLink();
         this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
@@ -37,18 +37,18 @@ export class GenerateFreightMelhorEnvio {
     }
 
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_LABEL');
+        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_LABEL_LINK');
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {
                 if (!message || !message.value) {
-                    console.warn('[Consumer - Generate Freight] Mensagem vazia ou inválida:');
+                    console.warn('[Consumer - Generate Label Link] Mensagem vazia ou inválida:');
                     return;
                 }
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer - Generate Freight] Mensagem recebida:');
+                    console.log('[Consumer - Generate Label Link] Mensagem recebida:');
 
                     if (!parsedMessage) {
                         // console.warn('[Consumer - Payment] Itens do pedido estão ausentes ou inválidos.');
@@ -56,31 +56,18 @@ export class GenerateFreightMelhorEnvio {
                     }
 
                     // gerar etiqueta na melhor envio
-                    const response = await this.melhorEnvioProvider.generateLabelTracking(parsedMessage.orderId)
+                    const response = await this.melhorEnvioProvider.generateLabelLinkToPrinting(parsedMessage.orderId)
 
                     if (!response) {
                         throw new AppError('Erro ao processar mensagem');
                     }
 
-                    console.log(response);
+                    // atualizar pedido com status "LABEL_GENERATED"
+                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.LABEL_GENERATED)
 
-                    for(let value in response){
-                        console.log(response[value]);
-
-                        if(!response[value].status){
-                            throw new AppError('Erro ao gerar etiqueta');
-                        }
-                    }
-
-                    // atualizar pedido com status "AWAITING_LABEL_LINK"
-                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.AWAITING_LABEL_LINK)
-
-                    // criar enviar id da etiqueta para a melhor envio gerar o link da etiqueta
-                    await this.kafkaProducer.execute('GENERATE_LABEL_LINK', parsedMessage.orderId)
-
-                    console.info('[Consumer - Generate Freight] Frete gerado com sucesso');
+                    console.info('[Consumer - Generate Label Link] Frete gerado com sucesso');
                 } catch (error) {
-                    console.error('[Consumer - Generate Freight ] Erro ao processar mensagem:', error);
+                    console.error('[Consumer - Generate Label Link ] Erro ao processar mensagem:', error);
                 }
             },
         });
@@ -88,5 +75,5 @@ export class GenerateFreightMelhorEnvio {
     
 }
 
-const generateFreightMelhorEnvio = new GenerateFreightMelhorEnvio();
-generateFreightMelhorEnvio.execute();
+const generateLabelLinkMelhorEnvio = new GenerateLabelLinkMelhorEnvio();
+generateLabelLinkMelhorEnvio.execute();

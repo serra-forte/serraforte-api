@@ -409,7 +409,19 @@ export interface IRequestSendFreightToCart {
     token: string | null;
     payment_id: string | null;
   }
+
+  export interface IResponseDetails {
+    status: boolean;
+    message: string;
+  }
   
+  export interface IResponseGenerateLabel {
+    [key: string]: IResponseDetails;
+  }
+
+  export interface IResponseGenerateLabelLinkToPrinting {
+    url: string;
+  }
   
   
 export interface IMelhorEnvioProvider {
@@ -418,6 +430,6 @@ export interface IMelhorEnvioProvider {
     refreshToken(): Promise<IResponseAuth>
     addFreightToCart(data: IRequestSendFreightToCart):Promise<IResponseSendFreightToCart | null>
     paymentToFreight(orderId: string): Promise<IPurchaseResponse | null>
-    generateLabelTracking(orderId: string): Promise<any>
-    // generateLabelLinkToPrinting()
+    generateLabelTracking(orderId: string): Promise<IResponseGenerateLabel | null>
+    generateLabelLinkToPrinting(orderId: string): Promise<IResponseGenerateLabelLinkToPrinting | null>
 }

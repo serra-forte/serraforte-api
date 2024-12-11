@@ -52,7 +52,7 @@ export class PaymentProcessInCartMelhorEnvio {
                     const parsedMessage = JSON.parse(message.value.toString());
                     console.log('[Consumer - Payment] Mensagem recebida:', parsedMessage);
 
-                    if (!parsedMessage.items || parsedMessage.items.length === 0) {
+                    if (!parsedMessage) {
                         // console.warn('[Consumer - Payment] Itens do pedido estão ausentes ou inválidos.');
                         return;
                     }

@@ -10,6 +10,7 @@ import { IOrderRepository } from "@/repositories/interfaces/interface-order-repo
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { KafkaProducer } from "../../kafka-producer";
 import { KafkaConsumerPayment } from "../../kafka-consumer-payment";
+import { Status } from "@prisma/client";
 
 interface IPaymentProcessInCartMelhorEnvio {
     orderId: string;
@@ -60,13 +61,15 @@ export class PaymentProcessInCartMelhorEnvio {
                     const messageReceived = parsedMessage as IPaymentProcessInCartMelhorEnvio;
                     // chamar melhor envio para processar o pagamento
                     const response = await this.melhorEnvioProvider.paymentToFreight(messageReceived.freightId)
-                    console.log(response);
+                    
                     if (!response) {
                         throw new Error('Erro ao processar pagamento');
                     }
 
-                    console.log(response);
+                    // atualizar pedido com status "AWAITING_LABEL_GENERATE"
+                    await this.orderRepository.updateStatus(messageReceived.orderId, Status.AWAITING_LABEL_GENERATE)
 
+                    console.info('[Consumer - Payment] Pagamento processado com sucesso');
                 } catch (error) {
                     console.error('[Consumer ] Erro ao processar mensagem:', error);
                 }

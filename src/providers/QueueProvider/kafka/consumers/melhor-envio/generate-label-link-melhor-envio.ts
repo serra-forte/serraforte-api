@@ -63,9 +63,11 @@ export class GenerateLabelLinkMelhorEnvio {
                     }
 
                     // atualizar pedido com status "LABEL_GENERATED"
-                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.LABEL_GENERATED)
+                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.AWAITING_LABEL_LINK)
 
-                    console.info('[Consumer - Generate Label Link] Frete gerado com sucesso');
+                    console.log(response);
+
+                    console.info('[Consumer - Generate Label Link] Frete Link gerado com sucesso');
                 } catch (error) {
                     console.error('[Consumer - Generate Label Link ] Erro ao processar mensagem:', error);
                 }

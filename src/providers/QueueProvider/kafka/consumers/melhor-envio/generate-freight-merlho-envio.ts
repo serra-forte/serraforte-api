@@ -66,8 +66,6 @@ export class GenerateFreightMelhorEnvio {
                         throw new AppError('Erro ao processar mensagem');
                     }
 
-                    console.log(response);
-
                     for(let value in response){
                         console.log(response[value]);
 

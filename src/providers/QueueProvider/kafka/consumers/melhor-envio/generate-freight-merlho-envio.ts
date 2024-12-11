@@ -10,6 +10,7 @@ import { IOrderRepository } from "@/repositories/interfaces/interface-order-repo
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { KafkaProducer } from "../../kafka-producer";
 import { KafkaConsumerGenerateFreight } from "../../kafka-consumer-generate-freight";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IResponseProcessPayment {
     orderId: string;
@@ -56,6 +57,15 @@ export class GenerateFreightMelhorEnvio {
                         // console.warn('[Consumer - Payment] Itens do pedido estão ausentes ou inválidos.');
                         return;
                     }
+
+                    // gerar etiqueta na melhor envio
+                    const response = await this.melhorEnvioProvider.generateLabelTracking(parsedMessage.orderId)
+
+                    if (!response) {
+                        throw new AppError('Erro ao processar mensagem');
+                    }
+
+                    console.log(response);
 
                     console.info('[Consumer - Generate Freight] Frete gerado com sucesso');
                 } catch (error) {

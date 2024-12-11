@@ -418,6 +418,6 @@ export interface IMelhorEnvioProvider {
     refreshToken(): Promise<IResponseAuth>
     addFreightToCart(data: IRequestSendFreightToCart):Promise<IResponseSendFreightToCart | null>
     paymentToFreight(orderId: string): Promise<IPurchaseResponse | null>
-    // generateLabelTracking()
+    generateLabelTracking(orderId: string): Promise<any>
     // generateLabelLinkToPrinting()
 }

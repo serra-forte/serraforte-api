@@ -12,6 +12,29 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
     private mailProvider: IMailProvider,
     private usersRepository: IUsersRepository
   ) {}
+  async generateLabelTracking(orderId: string) {
+    try {
+      const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/shipment/generate`, {
+        orders: [orderId],
+      }, {
+        headers: {
+          'Authorization': `Bearer ${process.env.MELHOR_ENVIO_ACCESS_TOKEN}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json', 
+          'User-Agent': 'Serra Forte/kaiomoreira.dev@gmail.com',
+        },
+      });
+
+      console.log(response.status)
+      if (response.status === 200 || response.status === 201) {
+        return response.data;
+      }else{
+        return null
+      }
+    } catch (error) {
+      
+    }
+  }
   async paymentToFreight(orderId: string): Promise<IPurchaseResponse | null> {
     try {
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/shipment/checkout`, {
@@ -57,7 +80,6 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       throw error;
     }
   }
-
   async refreshToken(): Promise<IResponseAuth> {
     try {
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/oauth/token`, {
@@ -117,7 +139,6 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       throw error;
     }
   }
-
   async shipmentCalculate(data: IRequestCalculateShipping): Promise<IResponseCalculateShipping[]> {
     try {
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/shipment/calculate`, data, {
@@ -156,7 +177,6 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       throw error;
     }
   }
-
   async authorization(code: string): Promise<IResponseAuth> {
     try {
         const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/oauth/token`,

@@ -309,6 +309,9 @@ model Delivery {
   serviceId Decimal? @map("service_id")
   serviceName String? @map("service_name")
 
+  freightId String?  @map("freight_id")
+  freightLink String? @map("freight_link")
+   
   shippingDate     DateTime? @map("shipping_date") @db.Timestamptz()
   deliveryDate     DateTime? @map("delivery_date") @db.Timestamptz()
   longitude        Decimal?

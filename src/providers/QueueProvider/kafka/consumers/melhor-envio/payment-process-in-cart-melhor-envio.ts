@@ -11,6 +11,7 @@ import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repos
 import { KafkaProducer } from "../../kafka-producer";
 import { KafkaConsumerPayment } from "../../kafka-consumer-payment";
 import { Status } from "@prisma/client";
+import { AppError } from "@/usecases/errors/app-error";
 
 interface IResponseProcessPayment {
     orderId: string;
@@ -66,7 +67,7 @@ export class PaymentProcessInCartMelhorEnvio {
                     const response = await this.melhorEnvioProvider.paymentToFreight(messageReceived.freightId)
                     
                     if (!response) {
-                        throw new Error('Erro ao processar pagamento');
+                        throw new AppError('Erro ao processar pagamento');
                     }
 
                     // atualizar pedido com status "AWAITING_LABEL_GENERATE"

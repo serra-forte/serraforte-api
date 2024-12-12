@@ -24,8 +24,12 @@ export class PrismaOrderRepository implements IOrderRepository {
                 id
             },
             data: {
-                labelId,
-                labelUrl
+                delivery:{
+                    update:{
+                        freightId: labelId,
+                        freightLink: labelUrl
+                    }
+                }
             }
         })
     }

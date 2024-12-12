@@ -422,6 +422,25 @@ export interface IRequestSendFreightToCart {
   export interface IResponseGenerateLabelLinkToPrinting {
     url: string;
   }
+
+  interface ITrackingDetails {
+    id: string;
+    protocol: string;
+    status: string;
+    tracking: string;
+    melhorenvio_tracking: string;
+    created_at: string;
+    paid_at: string;
+    generated_at: string;
+    posted_at: string;
+    delivered_at: string | null;
+    canceled_at: string | null;
+    expired_at: string | null;
+  }
+  
+  export interface ITrackingResponse {
+    [key: string]: ITrackingDetails;
+  }
   
   
 export interface IMelhorEnvioProvider {
@@ -432,4 +451,5 @@ export interface IMelhorEnvioProvider {
     paymentToFreight(orderId: string): Promise<IPurchaseResponse | null>
     generateLabelTracking(orderId: string): Promise<IResponseGenerateLabel | null>
     generateLabelLinkToPrinting(orderId: string): Promise<IResponseGenerateLabelLinkToPrinting | null>
+    getShipmentTracking(orderId: string): Promise<ITrackingResponse | null>
 }

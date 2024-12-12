@@ -59,13 +59,25 @@ export class GenerateLabelLinkMelhorEnvio {
                     const response = await this.melhorEnvioProvider.generateLabelLinkToPrinting(parsedMessage.freightId)
 
                     if (!response) {
-                        throw new AppError('Erro ao processar mensagem');
+                        throw new AppError('Erro ao gerar link da etiqueta');
                     }
 
                     // atualizar pedido com status "LABEL_GENERATED"
                     await this.orderRepository.updateStatus(parsedMessage.orderId, Status.AWAITING_LABEL_LINK)
 
-                    console.log(response);
+                    // salvar id da etique e link da etiqueta no banco de dados.
+                    await this.orderRepository.updateLabelDelivery(parsedMessage.orderId, parsedMessage.freightId, response.url)
+
+                    // buscar informações da etiqueta gerada
+                    const responseShipmentTracking = await this.melhorEnvioProvider.getShipmentTracking(parsedMessage.freightId)
+
+                    if (!responseShipmentTracking) {
+                        throw new AppError('Erro ao buscar informações da etiqueta');
+                    }
+
+                    console.log(responseShipmentTracking);
+
+                    await this.orderRepository.saveTrackingCode(parsedMessage.orderId, responseShipmentTracking[0].tracking)
 
                     console.info('[Consumer - Generate Label Link] Frete Link gerado com sucesso');
                 } catch (error) {

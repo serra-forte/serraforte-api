@@ -34,6 +34,6 @@ export interface IOrderRepository {
     countOrders(): Promise<number>
     addDescription(id: string, description: string): Promise<void>
     confirmWithdrawed(id: string, date: string): Promise<void>
-    updateCartLabelId(id: string, cartLabelId: string): Promise<void>
-    updateLabelDelivery(id: string, labelId?: string | null, labelUrl?: string | null): Promise<void>
+    updateLabelDelivery(id: string, labelId: string, labelUrl: string): Promise<void>
+    saveTrackingCode(id: string, trackingCode: string): Promise<void>
 }

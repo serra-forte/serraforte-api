@@ -75,9 +75,9 @@ export class GenerateLabelLinkMelhorEnvio {
                         throw new AppError('Erro ao buscar informações da etiqueta');
                     }
 
-                    console.log(responseShipmentTracking);
-
-                    await this.orderRepository.saveTrackingCode(parsedMessage.orderId, responseShipmentTracking[0].tracking)
+                    const objectTracking = Object.values(responseShipmentTracking)
+                    
+                    await this.orderRepository.saveTrackingCode(parsedMessage.orderId, objectTracking[0].tracking)
 
                     console.info('[Consumer - Generate Label Link] Frete Link gerado com sucesso');
                 } catch (error) {

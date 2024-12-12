@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 
 export class PrismaOrderRepository implements IOrderRepository {
-    async saveTrackingCode(id: string, trackingCode: string): Promise<void> {
+    async saveTrackingLink(id: string, trackingCode: string): Promise<void> {
         await prisma.order.update({
             where: {
                 id
@@ -12,7 +12,7 @@ export class PrismaOrderRepository implements IOrderRepository {
             data: {
                 delivery:{
                     update: {
-                        trackingCode
+                        trackingLink: trackingCode
                     }
                 },
             }
@@ -72,7 +72,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         freightId: true,
                         freightLink: true,
-                        trackingCode: true,
+                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -193,7 +193,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         freightId: true,
                         freightLink: true,
-                        trackingCode: true,
+                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -276,7 +276,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         freightId: true,
                         freightLink: true,
-                        trackingCode: true,
+                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -343,7 +343,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         freightId: true,
                         freightLink: true,
-                        trackingCode: true,
+                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -429,7 +429,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         freightId: true,
                         freightLink: true,
-                        trackingCode: true,
+                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -513,7 +513,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         freightId: true,
                         freightLink: true,
-                        trackingCode: true,
+                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -578,7 +578,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         freightId: true,
                         freightLink: true,
-                        trackingCode: true,
+                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -647,7 +647,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         freightId: true,
                         freightLink: true,
-                        trackingCode: true,
+                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -731,7 +731,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         freightId: true,
                         freightLink: true,
-                        trackingCode: true,
+                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -808,7 +808,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         freightId: true,
                         freightLink: true,
-                        trackingCode: true,
+                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -874,7 +874,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         freightId: true,
                         freightLink: true,
-                        trackingCode: true,
+                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,

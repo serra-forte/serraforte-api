@@ -32,6 +32,7 @@ const envSchema = z.object({
     MELHOR_REDIRECT_URI: z.string(),
     MELHOR_ENVIO_ACCESS_TOKEN: z.string(),
     MELHOR_ENVIO_REFRESH_TOKEN: z.string(),
+    MELHOR_ENVIO_TRANCKING_LINK: z.string(),
     RAILWAY_API_URL: z.string(),
     RAILWAY_TOKEN: z.string(),
     RAILWAY_PROJECT_ID: z.string(),

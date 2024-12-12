@@ -35,5 +35,5 @@ export interface IOrderRepository {
     addDescription(id: string, description: string): Promise<void>
     confirmWithdrawed(id: string, date: string): Promise<void>
     updateLabelDelivery(id: string, labelId: string, labelUrl: string): Promise<void>
-    saveTrackingCode(id: string, trackingCode: string): Promise<void>
+    saveTrackingLink(id: string, trackingCode: string): Promise<void>
 }

@@ -312,7 +312,7 @@ model Delivery {
 
   freightId String?  @map("freight_id")
   freightLink String? @map("freight_link")
-  trackingCode String? @map("tracking_code")
+  trackingLink String? @map("tracking_link")
    
   shippingDate     DateTime? @map("shipping_date") @db.Timestamptz()
   deliveryDate     DateTime? @map("delivery_date") @db.Timestamptz()

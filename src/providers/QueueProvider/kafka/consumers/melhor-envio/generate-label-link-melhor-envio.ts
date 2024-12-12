@@ -12,6 +12,7 @@ import { KafkaProducer } from "../../kafka-producer";
 import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
 import { KafkaConsumerGenerateLabelLink } from "../../kafka-consumer-generate-label-link";
+import { env } from "@/env";
 
 export class GenerateLabelLinkMelhorEnvio {
     private kafkaConsumer: KafkaConsumerGenerateLabelLink;
@@ -76,8 +77,9 @@ export class GenerateLabelLinkMelhorEnvio {
                     }
 
                     const objectTracking = Object.values(responseShipmentTracking)
+                    const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0].tracking}`
                     
-                    await this.orderRepository.saveTrackingCode(parsedMessage.orderId, objectTracking[0].tracking)
+                    await this.orderRepository.saveTrackingLink(parsedMessage.orderId, trackingLink)
 
                     console.info('[Consumer - Generate Label Link] Frete Link gerado com sucesso');
                 } catch (error) {

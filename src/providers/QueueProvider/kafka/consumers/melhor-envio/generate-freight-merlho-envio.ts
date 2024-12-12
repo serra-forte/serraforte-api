@@ -66,12 +66,10 @@ export class GenerateFreightMelhorEnvio {
                         throw new AppError('Erro ao processar mensagem');
                     }
 
-                    for(let value in response){
-                        console.log(response[value]);
+                    const labelGenerated = Object.values(response)
 
-                        if(!response[value].status){
-                            throw new AppError('Erro ao gerar etiqueta');
-                        }
+                    if(!labelGenerated[0].status){
+                        throw new AppError('Erro ao gerar etiqueta');
                     }
 
                     const infoToGenerateLabelLink: IGenerateLabelLink = {

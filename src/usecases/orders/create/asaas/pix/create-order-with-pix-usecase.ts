@@ -145,7 +145,8 @@ export class CreateOrderWithPixUsecase {
                 // Adiciona o item ao array correspondente ao lojista
                 objItemsShopKeeper[shopKeeperId].push({
                     ...item,
-                    boxes: product.boxes
+                    boxes: product.boxes,
+                    productId: product.id
                 });
             }
         }

@@ -130,7 +130,6 @@ export interface IRequestSendFreightToCart {
     length: number; // Comprimento do volume
     height: number; // Altura do volume
     width: number; // Largura do volume
-    insurance_value: number; // Valor do seguro
   }
   
   export interface IShippingOptions {

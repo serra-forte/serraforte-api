@@ -76,14 +76,11 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     let boxes = []
-                    console.log(order.boxes)
+
                     for(let relationWithBox of order.boxes){
                         const {box} = relationWithBox as unknown as IRelationBox;
 
-                        boxes.push({
-                            ...box,
-                            // productId: relationWithBox.productId as string
-                        })
+                        boxes.push(box)
                     }
 
                     // * Determinar qual caixa vai ser usada
@@ -153,11 +150,11 @@ export class AddFreightToCartMelhorEnvio {
                                 width: Number(box.width),
                                 height: Number(box.height),
                                 weight: Number(box.weight),
-                                insurance_value: Number(order.total)
+                                insurance_value: 0
                             }
                         }),
                         options:{
-                            insurance_value: Number(order.total),
+                            insurance_value: 0,
                             non_commercial: true,
                             own_hand: false,
                             receipt: false,

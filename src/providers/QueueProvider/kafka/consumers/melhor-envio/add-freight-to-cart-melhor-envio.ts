@@ -150,7 +150,7 @@ export class AddFreightToCartMelhorEnvio {
                                 width: Number(box.width),
                                 height: Number(box.height),
                                 weight: Number(box.weight),
-                                insurance_value: 5
+                                insurance_value: Number(order.total)
                             }
                         }),
                         options:{

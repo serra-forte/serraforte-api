@@ -75,13 +75,30 @@ export class AddFreightToCartMelhorEnvio {
                         return;
                     }
 
-                    const [box] = order.boxes.map(objWithBox => {
-                        const {box} = objWithBox as unknown as IRelationBox;
+                    let boxes = []
 
-                        return box
-                    })
+                    for(let relationWithBox of order.boxes){
+                        const {box} = relationWithBox as unknown as IRelationBox;
 
-                    // Determinar qual caixa vai ser usada
+                        boxes.push(box)
+                    }
+
+                    // * Determinar qual caixa vai ser usada
+                    // if(order.delivery.companyName.includes('Correios')) {
+                    //     // Correios
+                    //     let rightBox = {}
+
+                    //     for(let box of boxes) {
+
+                    //         if()
+                    //     }
+
+                    //     if(!box) {
+                            
+                    //     }
+                    // }
+
+                    // * Determinar qual tipo da transportadora porque se for Correio so pode enviar um volume por vez.
 
                     // Lógica de envio do frete
                     const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
@@ -127,17 +144,17 @@ export class AddFreightToCartMelhorEnvio {
                                 weight: Number(item.weight),
                             }
                         }),
-                        volumes: [
-                            {
+                        volumes: boxes.map(box => {
+                            return{
+                                length: Number(box.length),
                                 width: Number(box.width),
                                 height: Number(box.height),
-                                length: Number(box.length),
                                 weight: Number(box.weight),
                             }
-                        ],
+                        }),
                         options:{
                             insuranceValue: 0,
-                            non_commercial: false,
+                            non_commercial: true,
                             own_hand: false,
                             receipt: false,
                             reverse: false

@@ -32,7 +32,23 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       }
     } catch (error: any) {
       console.warn(JSON.stringify(error.response.data, null, 2))
-      // Tratamento de erro
+      // * Renovar o token caso seja o problema de token expirado
+      if (error instanceof AxiosError && error.response?.status === 401) {
+        console.log('Token expirado, renovando...');
+        // Tenta renovar o tokenn
+        try {
+          const response = await this.refreshToken();
+          console.log('Token renovado com sucesso');
+
+          if(response.access_token){
+            // Após renovar o token, tenta novamente calcular o frete
+            return this.getShipmentTracking(orderId);
+          }
+        } catch (refreshError) {
+          console.error('Erro ao renovar o token:', refreshError);
+          // throw refreshError;
+        }
+      }
       throw error;
     }
   }
@@ -56,7 +72,23 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       }
     } catch (error: any) {
       console.warn(JSON.stringify(error.response.data, null, 2))
-      // Tratamento de erro
+      // * Renovar o token caso seja o problema de token expirado
+      if (error instanceof AxiosError && error.response?.status === 401) {
+        console.log('Token expirado, renovando...');
+        // Tenta renovar o tokenn
+        try {
+          const response = await this.refreshToken();
+          console.log('Token renovado com sucesso');
+
+          if(response.access_token){
+            // Após renovar o token, tenta novamente calcular o frete
+            return this.generateLabelLinkToPrinting(orderId);
+          }
+        } catch (refreshError) {
+          console.error('Erro ao renovar o token:', refreshError);
+          // throw refreshError;
+        }
+      }
       throw error;
     }
   }
@@ -80,7 +112,23 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       }
     } catch (error: any) {
       console.warn(JSON.stringify(error.response.data, null, 2))
-      // Tratamento de erro
+      // * Renovar o token caso seja o problema de token expirado
+      if (error instanceof AxiosError && error.response?.status === 401) {
+        console.log('Token expirado, renovando...');
+        // Tenta renovar o tokenn
+        try {
+          const response = await this.refreshToken();
+          console.log('Token renovado com sucesso');
+
+          if(response.access_token){
+            // Após renovar o token, tenta novamente calcular o frete
+            return this.generateLabelTracking(orderId);
+          }
+        } catch (refreshError) {
+          console.error('Erro ao renovar o token:', refreshError);
+          // throw refreshError;
+        }
+      }
       throw error;
     }
   }
@@ -104,7 +152,23 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       }
     } catch (error: any) {
       console.warn(JSON.stringify(error.response.data, null, 2))
-      // Tratamento de erro
+      // * Renovar o token caso seja o problema de token expirado
+      if (error instanceof AxiosError && error.response?.status === 401) {
+        console.log('Token expirado, renovando...');
+        // Tenta renovar o tokenn
+        try {
+          const response = await this.refreshToken();
+          console.log('Token renovado com sucesso');
+
+          if(response.access_token){
+            // Após renovar o token, tenta novamente calcular o frete
+            return this.paymentToFreight(orderId);
+          }
+        } catch (refreshError) {
+          console.error('Erro ao renovar o token:', refreshError);
+          // throw refreshError;
+        }
+      }
       throw error;
     }
   }
@@ -125,7 +189,24 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       }
     } catch (error: any) {
       console.warn(JSON.stringify(error.response.data, null, 2))
-      // Tratamento de erro
+      // * Renovar o token caso seja o problema de token expirado
+      if (error instanceof AxiosError && error.response?.status === 401) {
+        console.log('Token expirado, renovando...');
+        // Tenta renovar o tokenn
+        try {
+          const response = await this.refreshToken();
+          console.log('Token renovado com sucesso');
+
+          if(response.access_token){
+            // Após renovar o token, tenta novamente calcular o frete
+            return this.addFreightToCart(data);
+          }
+        } catch (refreshError) {
+          console.error('Erro ao renovar o token:', refreshError);
+          // throw refreshError;
+        }
+      }
+
       throw error;
     }
   }

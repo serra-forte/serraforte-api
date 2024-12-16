@@ -144,14 +144,14 @@ export class AddFreightToCartMelhorEnvio {
                                 weight: Number(item.weight),
                             }
                         }),
-                        volumes: boxes.map(box => {
-                            return{
-                                length: Number(box.length),
-                                width: Number(box.width),
-                                height: Number(box.height),
-                                weight: Number(box.weight),
+                        volumes: [
+                            {
+                                weight: Number(boxes[0].weight),
+                                length: Number(boxes[0].length),
+                                height: Number(boxes[0].height),
+                                width: Number(boxes[0].width),
                             }
-                        }),
+                        ],
                         options:{
                             insuranceValue: Number(order.total),
                             non_commercial: false,

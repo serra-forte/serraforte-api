@@ -76,11 +76,14 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     let boxes = []
-
+                    console.log(order.boxes)
                     for(let relationWithBox of order.boxes){
                         const {box} = relationWithBox as unknown as IRelationBox;
 
-                        boxes.push(box)
+                        boxes.push({
+                            ...box,
+                            // productId: relationWithBox.productId as string
+                        })
                     }
 
                     // * Determinar qual caixa vai ser usada

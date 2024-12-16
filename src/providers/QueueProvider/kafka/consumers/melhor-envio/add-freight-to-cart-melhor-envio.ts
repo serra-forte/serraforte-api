@@ -154,7 +154,7 @@ export class AddFreightToCartMelhorEnvio {
                             }
                         }),
                         options:{
-                            insuranceValue: Number(order.total),
+                            insurance_value: Number(order.total),
                             non_commercial: true,
                             own_hand: false,
                             receipt: false,

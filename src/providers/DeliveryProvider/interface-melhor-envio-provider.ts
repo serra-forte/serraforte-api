@@ -134,7 +134,7 @@ export interface IRequestSendFreightToCart {
   }
   
   export interface IShippingOptions {
-    insuranceValue?: number; // Valor do seguro (opcional)
+    insurance_value?: number; // Valor do seguro (opcional)
     receipt: boolean; // Reembolso (true) ou sem reembolso (false)
     own_hand: boolean; // Entrega em maos (true) ou sem entrega em maos (false)
     reverse: boolean; // Remessa reversa (true) ou remessa comercial (false)

@@ -1,19 +1,19 @@
 import fastify, { FastifyError, FastifyReply, FastifyRequest } from "fastify";
-import fastifyCors from '@fastify/cors'
+import fastifyCors from '@fastify/cors';
 import "dotenv/config";
 import fastifyMultipart from "@fastify/multipart";
 import { usersRoutes } from "./http/controllers/users/routes";
 import { ZodError } from "zod";
 import { env } from "@/env";
-import urlEncodede from '@fastify/formbody'
+import urlEncodede from '@fastify/formbody';
 import { addressRoutes } from "./http/controllers/address/router";
 import { AppError } from "./usecases/errors/app-error";
-import rateLimiter from '@fastify/rate-limit'
+import rateLimiter from '@fastify/rate-limit';
 import { authRoutes } from "./http/controllers/auth/route";
 import { imageRoutes } from "./http/controllers/images/router";
 import { categoriesRoutes } from "./http/controllers/categories/routes";
 import { usersAdminRoutes } from "./http/controllers/admin/routes-admin";
-import cookie from '@fastify/cookie'
+import cookie from '@fastify/cookie';
 import { productsRoutes } from "./http/controllers/products/routes";
 import { cartItemsRoutes } from "./http/controllers/cart-items/routes";
 import { shoppingCartRoutes } from "./http/controllers/shopping-carts/routes";
@@ -22,6 +22,7 @@ import { deliveriesRoutes } from "./http/controllers/deliveries/routes";
 import { boxesRoutes } from "./http/controllers/boxes/routes";
 import { envRoutes } from "./http/controllers/envs/routes";
 import handlebars from "handlebars";
+import { tokensRoutes } from "./http/controllers/tokens/routes";
 
 export const fastifyApp = fastify()
 
@@ -99,6 +100,10 @@ fastifyApp.register(boxesRoutes, {
 
 fastifyApp.register(envRoutes, {
   prefix: 'envs',
+})
+
+fastifyApp.register(tokensRoutes, {
+  prefix: 'tokens',
 })
 
 // Registrar o helper equals sem usar 'this'

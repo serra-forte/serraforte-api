@@ -86,16 +86,12 @@ export class AddFreightToCartMelhorEnvio {
                     // * Determinar qual caixa vai ser usada
                     // if(order.delivery.companyName.includes('Correios')) {
                     //     // Correios
-                    //     let rightBox = {}
+                        // let rightBox = {}
 
-                    //     for(let box of boxes) {
+                        // for(let box of boxes) {
+                        //     rightBox = Object.assign({}, box)
+                        // }
 
-                    //         if()
-                    //     }
-
-                    //     if(!box) {
-                            
-                    //     }
                     // }
 
                     // * Determinar qual tipo da transportadora porque se for Correio so pode enviar um volume por vez.

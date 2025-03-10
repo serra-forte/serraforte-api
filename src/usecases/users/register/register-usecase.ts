@@ -85,7 +85,7 @@ export class RegisterUseCase{
         const link =
         env.NODE_ENV === 'development'
         ? `${env.APP_URL_FRONTEND_DEVELOPMENT}/verification/${token}/${email}`
-        : `${env.APP_URL_PRODUCTION}/verification/${token}/${email}`
+        : `${env.APP_URL_FRONTEND_PRODUCTION}/verification/${token}/${email}`
 
         // enviar verificação de emaill
         await this.sendMailProvider.sendEmail(

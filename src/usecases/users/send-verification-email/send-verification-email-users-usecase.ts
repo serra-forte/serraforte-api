@@ -53,7 +53,7 @@ export class SendVerificationEmailUserUseCase {
     const link =
       env.NODE_ENV === 'development'
         ? `${env.APP_URL_FRONTEND_DEVELOPMENT}/verification/${token}/${email}`
-        : `${env.APP_URL_FRONTEND_DEVELOPMENT}/verification/${token}/${email}`
+        : `${env.APP_URL_FRONTEND_PRODUCTION}/verification/${token}/${email}`
 
     // pegar template de verificaçao de email
     const pathTemplate =

@@ -34,6 +34,6 @@ export class DeleteUserUseCase{
             throw new AppError('Password not match', 401)
         }
 
-        await this.usersRepository.activeSoftDelete(findUserExist.id)
+        await this.usersRepository.delete(findUserExist.id)
     }
 }

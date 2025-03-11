@@ -702,7 +702,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
                 },
             }
         }) as unknown as IProductRelationsDTO;
-
+        console.log(product)
         // contagem das reviews
         // Primeiro, obtenha a contagem total de reviews
         const countPages = await prisma.review.count({
@@ -720,7 +720,6 @@ export class PrismaProductsRepository  implements IProductsRepository{
     
             // Criar a string de distribuição de ratings
             const ratingCounts = [0, 0, 0, 0, 0];
-    
             product.reviews.forEach(review => {
                 const ratingIndex = review.rating - 1; // Ajustar índice para 0-based
                 if (ratingIndex >= 0 && ratingIndex < 5) {

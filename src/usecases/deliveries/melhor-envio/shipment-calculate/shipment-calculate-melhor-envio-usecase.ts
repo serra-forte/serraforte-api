@@ -20,8 +20,8 @@ export class ShipmentCalculateDeliveriesUseCase {
         shopkeeperIds, 
         to, 
         productsId
-    }: IRequestShipmentCalculate): Promise<Record<string, IResponseCalculateShipping[]>> {
-        const shipmentResults: Record<string, IResponseCalculateShipping[]> = {};
+    }: IRequestShipmentCalculate): Promise<IResponseCalculateShipping[]> {
+        const shipmentResults: IResponseCalculateShipping[] = [];
 
         for (let shopkeeperId of shopkeeperIds) {
             // Buscar lojista pelo ID
@@ -72,8 +72,23 @@ export class ShipmentCalculateDeliveriesUseCase {
                 })) as IProduct[],
             });
 
-            // Adicionar o resultado ao objeto agrupado por lojista
-            shipmentResults[shopkeeperId] = shipmentCalculate;
+            if (shipmentResults.length === 0) {
+                shipmentResults.push(...shipmentCalculate);
+            } else {
+                for (const freight of shipmentCalculate) {
+                    const existingFreight = shipmentResults.find(result => result.name === freight.name);
+            
+                    if (existingFreight) {
+                        existingFreight.price += freight.price;
+                        if (existingFreight.delivery_time < freight.delivery_time) {
+                            existingFreight.delivery_time = freight.delivery_time;
+                        }
+                    } else {
+                        shipmentResults.push(freight);
+                    }
+                }
+            }
+
         }
 
         return shipmentResults;

@@ -149,7 +149,7 @@ export class AddFreightToCartMelhorEnvio {
                             }
                         }),
                         options:{
-                            insurance_value: 10,
+                            insurance_value: order.items.reduce((acc, item) => acc + Number(item.price), 0),
                             non_commercial: true,
                             own_hand: false,
                             receipt: false,

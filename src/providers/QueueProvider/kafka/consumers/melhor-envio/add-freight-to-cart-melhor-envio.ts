@@ -156,6 +156,7 @@ export class AddFreightToCartMelhorEnvio {
                             reverse: false
                         }
                     });
+                    console.log(order.items.reduce((acc, item) => acc + Number(item.price) * Number(item.quantity), 0))
                     console.log(freightInCart)
                     if(!freightInCart) {
                         console.error('[Consumer - Freight] Erro ao adicionar frete ao carrinho.');

@@ -7,19 +7,9 @@ export async function ListByShopkeeper(
   reply: FastifyReply,
 ) {
   try {
-    const querySchema = z.object({
-      page: z.coerce.number().optional(),
-      take: z.coerce.number().optional(),
-    })
-
-    const { page, take } = querySchema.parse(request.query)
-
     const listUserUseCase = await makeListByShopkeeper()
 
-    const users = await listUserUseCase.execute({
-      page,
-      take
-    })
+    const users = await listUserUseCase.execute()
 
     return reply.status(200).send(users)
   } catch (error) {

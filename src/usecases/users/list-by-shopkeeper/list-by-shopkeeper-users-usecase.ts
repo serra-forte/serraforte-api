@@ -2,19 +2,13 @@ import { IResponseListUsers, IUsersRepository } from '@/repositories/interfaces/
 import { User } from '@prisma/client'
 import 'dotenv/config'
 
-export interface IRequestListUsers{
-  page?: number | null
-  take?: number | null
-}
+
 export class ListUserByShopkeeperUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
-  async execute({
-    page,
-    take
-  }: IRequestListUsers): Promise<IResponseListUsers> {
+  async execute(): Promise<IResponseListUsers> {
     const users =
-      await this.usersRepository.listByShopkeeper(page, take)
+      await this.usersRepository.listByShopkeeper()
 
     // retornar usuarios
     return users

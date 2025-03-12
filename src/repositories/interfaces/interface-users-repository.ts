@@ -15,7 +15,7 @@ export interface IUsersRepository {
     create(data:Prisma.UserUncheckedCreateInput): Promise<User>
     list(): Promise<User[]>
     listAdmins(): Promise<User[]>
-    listByShopkeeper(page?: number | null, take?: number | null): Promise<IResponseListUsers>
+    listByShopkeeper(): Promise<IResponseListUsers>
     listByDeliveryMan(page?: number | null, take?: number | null): Promise<IResponseListUsers>
     findById(id:string): Promise<User | null>
     getUserSecurity(id:string): Promise<User | null>

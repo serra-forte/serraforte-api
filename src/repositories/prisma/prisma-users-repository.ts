@@ -57,13 +57,11 @@ export class PrismaUsersRepository implements IUsersRepository{
             totalPages
         }
     }
-    async listByShopkeeper(page?: number | null, take?: number | null){
+    async listByShopkeeper(){
         const users = await prisma.user.findMany({
             where:{
                 role: 'SHOPKEEPER' as Role
             },
-            take: take ?? 13,
-            skip: take && page ? (page - 1) * take : (1 - 1) * 13,
             select: {
                 id: true,
                 asaasCustomerId: true,
@@ -94,17 +92,8 @@ export class PrismaUsersRepository implements IUsersRepository{
             }
         }) as unknown as User[]
 
-        const countPages = await prisma.user.count({
-            where:{
-                role: 'SHOPKEEPER' as Role
-            }
-        })
-
-        const totalPages = countPages > 0 ? Math.ceil(countPages / 13) : 1
-
         return {
             users,
-            totalPages
         }
     }
     async updateAsaasCostumerId(id: string, asaasCustomerId: string){

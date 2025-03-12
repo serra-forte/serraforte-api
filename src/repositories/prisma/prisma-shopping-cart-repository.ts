@@ -107,6 +107,10 @@ export class PrismaShoppingCartRepository implements IShoppingCartRepository{
             price: item.product.price,
             mainImage: item.product.mainImage,
             quantity: item.quantity,
+            height: item.product.height,
+            weight: item.product.weight,
+            width: item.product.width,
+            length: item.product.length,
         }));
 
         return {

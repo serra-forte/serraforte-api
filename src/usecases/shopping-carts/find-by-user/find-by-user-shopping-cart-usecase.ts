@@ -1,6 +1,6 @@
 import { IShoppingCartRelationsDTO } from "@/dtos/shopping-cart-relations.dto";
 import { IShoppingCartRepository } from "@/repositories/interfaces/interface-shopping-cart-repository";
-import { ShoppingCart } from "@prisma/client";
+import { AppError } from "@/usecases/errors/app-error";
 
 export interface IRequestFindShoppingCart {
     id: string
@@ -19,7 +19,7 @@ export class FindShoppingCartUseCase {
 
         // validar se carrinho existe
         if(!findShoppingCartExists){
-            throw new Error('Carrinho não encontrado')
+            throw new AppError('Carrinho não encontrado')
         }
 
         // retornar carrinho

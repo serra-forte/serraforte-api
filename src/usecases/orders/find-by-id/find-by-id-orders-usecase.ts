@@ -1,3 +1,4 @@
+import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { AppError } from "@/usecases/errors/app-error";
 import { Order } from "@prisma/client";
@@ -13,7 +14,7 @@ export class FindOrderUseCase {
 
     async execute({
         id
-    }: IRequestFindOrder): Promise<Order> {
+    }: IRequestFindOrder): Promise<IOrderRelationsDTO> {
         // buscar pedido pelo id
         const findOrderExist = await this.orderRepository.findById(id)
 

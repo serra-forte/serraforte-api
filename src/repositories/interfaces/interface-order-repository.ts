@@ -2,7 +2,7 @@ import { IOrderRelationsDTO } from "@/dtos/order-relations.dto"
 import { Order, Prisma, Status } from "@prisma/client"
 
 export interface IResponseListOrders{
-    orders: Order[]
+    orders: IOrderRelationsDTO[]
     totalPages: number
 }
 
@@ -24,7 +24,7 @@ export interface IOrderRepository {
     listByDeliveryMan(userId: string, page?: number | null):Promise<IResponseListOrders>
     listByAsaasPaymentId(asaasPaymentId:string):Promise<IOrderRelationsDTO[]>
     listByUserId(idUser:string, page?: number | null):Promise<IResponseListOrders>
-    findById(id:string):Promise<Order | null>
+    findById(id:string):Promise<IOrderRelationsDTO | null>
     findByCode(code:string):Promise<Order | null>
     filterOrders(filters: IFilterOrders):Promise<IResponseListOrders>
     listByPaymentWithoutPaying24Hours():Promise<IOrderRelationsDTO[]>

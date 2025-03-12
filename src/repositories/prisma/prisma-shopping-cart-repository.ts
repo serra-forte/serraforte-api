@@ -177,7 +177,6 @@ export class PrismaShoppingCartRepository implements IShoppingCartRepository{
 
         return {
             ...shoppingCart,
-            total: Number(shoppingCart.total),
             cartItem: formattedCartItems
         } as unknown as ShoppingCart
     }

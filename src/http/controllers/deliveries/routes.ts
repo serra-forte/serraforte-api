@@ -14,9 +14,9 @@ export async function deliveriesRoutes(fastifyApp: FastifyInstance) {
         onRequest: []
     }, Authenticate)
 
-    fastifyApp.post('/melhor-envio/shipment-calculate', {
+    fastifyApp.post('/melhor-envio/shipment-calculate/checkout', {
         onRequest: [
-            verifyTokenJWT
+            verifyTokenJWT        
         ],
     }, ShipmentCalculate)
 }

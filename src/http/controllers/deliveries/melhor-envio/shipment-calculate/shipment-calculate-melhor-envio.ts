@@ -15,12 +15,12 @@ export async function ShipmentCalculate(request: FastifyRequest, reply:FastifyRe
        
         const authenticateMelhorEnvioUseCase = await makeShipmentCalculate()
         
-        const authenticateURL = await authenticateMelhorEnvioUseCase.execute({
+        const freights = await authenticateMelhorEnvioUseCase.execute({
             to,
             userId: request.user.id
         })
         
-        return reply.status(200).send(authenticateURL)
+        return reply.status(200).send(freights)
         
         } catch (error) {
         throw error

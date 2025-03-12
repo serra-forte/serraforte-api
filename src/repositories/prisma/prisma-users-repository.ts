@@ -62,8 +62,8 @@ export class PrismaUsersRepository implements IUsersRepository{
             where:{
                 role: 'SHOPKEEPER' as Role
             },
-            take: take ? take : 0,
-            skip: take && page ? (page - 1) * take : 0,
+            take: take ? take : 13,
+            skip: take && page ? (page - 1) * take : 1,
             select: {
                 id: true,
                 asaasCustomerId: true,

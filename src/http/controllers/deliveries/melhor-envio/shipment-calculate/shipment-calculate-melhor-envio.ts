@@ -8,26 +8,16 @@ export async function ShipmentCalculate(request: FastifyRequest, reply:FastifyRe
             to: z.string(),
         })
 
-        const bodySchema = z.object({
-            shopkeeperIds: z.array(z.string()),
-            productsId: z.array(z.string()),
-        })
-
         const { 
             to,
          } = querySchema.parse(request.query)
 
-        const { 
-            shopkeeperIds,
-            productsId
-         } = bodySchema.parse(request.body)
-
+       
         const authenticateMelhorEnvioUseCase = await makeShipmentCalculate()
         
         const authenticateURL = await authenticateMelhorEnvioUseCase.execute({
             to,
-            shopkeeperIds,
-            productsId
+            userId: request.user.id
         })
         
         return reply.status(200).send({authenticateURL})

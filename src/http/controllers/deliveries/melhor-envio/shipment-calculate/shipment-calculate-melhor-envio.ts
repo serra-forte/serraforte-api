@@ -20,7 +20,7 @@ export async function ShipmentCalculate(request: FastifyRequest, reply:FastifyRe
             userId: request.user.id
         })
         
-        return reply.status(200).send({authenticateURL})
+        return reply.status(200).send(authenticateURL)
         
         } catch (error) {
         throw error

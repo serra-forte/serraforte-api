@@ -13,7 +13,6 @@ export class ShipmentCalculateDeliveriesUseCase {
     constructor(
         private melhorEnvioProvider: IMelhorEnvioProvider,
         private userRepository: IUsersRepository,
-        private productsRepository: IProductsRepository,
         private shoppingCartRepository: IShoppingCartRepository
     ) {}
 

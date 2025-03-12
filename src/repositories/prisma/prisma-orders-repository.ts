@@ -606,14 +606,13 @@ export class PrismaOrderRepository implements IOrderRepository {
 
         return order
     }
-    async list(page?: number | null) {
-        const pageNumber = page ?? 1;
+    async list(page = 1, take = 13) {
         const orders = await prisma.order.findMany({
             orderBy: {
                 createdAt: 'desc',
             },
-            take: 13,
-            skip: (pageNumber - 1) * 13,
+            take,
+            skip: (page - 1) * 13,
             select: {
                 id: true,
                 withdrawStore: true,
@@ -687,6 +686,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 }[];
                 return {
                     ...order,
+                    total: Number(order.total) + Number(order.delivery.price),
                     boxes: boxFormated.map(box => box.box)
                 };
             }),

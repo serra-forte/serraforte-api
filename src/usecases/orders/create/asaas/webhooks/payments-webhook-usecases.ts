@@ -81,7 +81,8 @@ export class PaymentWebHookUseCases {
         delivery: {
             serviceId: findOrderExist.delivery.serviceId,
             serviceName: findOrderExist.delivery.serviceName,
-            address: findOrderExist.delivery.address ? findOrderExist.delivery.address : undefined
+            address: findOrderExist.delivery.address ? findOrderExist.delivery.address : undefined,
+            price: findOrderExist.delivery.price
         },
         boxes: findOrderExist.boxes,
         payment: orders[0].payment,

@@ -16,5 +16,6 @@ export interface IShoppingCartRelationsDTO {
         length: number,
         weight: number,
         quantity: number,
-}[]
+    }[]
+    expiredAt: Date
 }

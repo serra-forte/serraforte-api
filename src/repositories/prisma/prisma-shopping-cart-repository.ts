@@ -2,6 +2,7 @@ import { Prisma, ShoppingCart } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
 import { IShoppingCartRepository } from "../interfaces/interface-shopping-cart-repository";
 import { prisma } from "@/lib/prisma";
+import { IShoppingCartRelationsDTO } from "@/dtos/shopping-cart-relations.dto";
 
 export class PrismaShoppingCartRepository implements IShoppingCartRepository{
     async updateTotal(id: string, total: number){
@@ -111,7 +112,7 @@ export class PrismaShoppingCartRepository implements IShoppingCartRepository{
         return {
             ...shoppingCart,
             cartItem: formattedCartItems
-        } as unknown as ShoppingCart
+        } as unknown as IShoppingCartRelationsDTO
     }
     async findById(id: string){
         const shoppingCart = await prisma.shoppingCart.findUnique({

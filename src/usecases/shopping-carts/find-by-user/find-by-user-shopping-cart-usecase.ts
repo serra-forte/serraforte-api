@@ -1,3 +1,4 @@
+import { IShoppingCartRelationsDTO } from "@/dtos/shopping-cart-relations.dto";
 import { IShoppingCartRepository } from "@/repositories/interfaces/interface-shopping-cart-repository";
 import { ShoppingCart } from "@prisma/client";
 
@@ -12,7 +13,7 @@ export class FindShoppingCartUseCase {
 
     async execute({
          id,
-    }: IRequestFindShoppingCart):Promise<ShoppingCart> {
+    }: IRequestFindShoppingCart):Promise<IShoppingCartRelationsDTO> {
         // buscar carrinho pelo id
         const findShoppingCartExists = await this.shoppingCartsRepository.findByUserId(id)
 

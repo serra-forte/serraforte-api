@@ -694,7 +694,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         } as unknown as IResponseListOrders
         
     }
-    async listByUserId(idUser: string, page = 1) {
+    async listByUserId(idUser: string, page = 1, take = 13) {
         const orders = await prisma.order.findMany({
             where: {
                 userId: idUser
@@ -702,8 +702,8 @@ export class PrismaOrderRepository implements IOrderRepository {
             orderBy: {
                 createdAt: 'desc'
             },
-            take: 13,
-            skip: page,
+            take,
+            skip: (page - 1) * take,
             select: {
                 id: true,
                 withdrawStore: true,
@@ -767,12 +767,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         const totalPages = countPage > 0 ? Math.ceil(countPage / 13) : 0;
         
         return {
-            orders: orders.map(order => {
-                return{
-                    ...order,
-                    total: Number(order.total) + Number(order.delivery.price)
-                }
-            }),
+            orders,
             totalPages
         } as unknown as IResponseListOrders
     }
@@ -840,10 +835,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         }) as unknown as IOrderRelationsDTO
        
         
-        return {
-            ...order,
-            total: Number(order.total) + Number(order.delivery.price)
-        }
+        return order
     }
     async findByCode(code: string){
         const order = await prisma.order.findUnique({

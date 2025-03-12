@@ -9,6 +9,13 @@ export interface IRequestShipmentCalculate {
     userId: string;
     to: string
 }
+
+interface IResponseShipmentCalculate{
+    id: number
+    name: string
+    price: string
+    delivery_time: number
+}
 export class ShipmentCalculateDeliveriesUseCase {
     constructor(
         private melhorEnvioProvider: IMelhorEnvioProvider,
@@ -19,8 +26,8 @@ export class ShipmentCalculateDeliveriesUseCase {
     async execute({
         userId,
         to, 
-    }: IRequestShipmentCalculate): Promise<IResponseCalculateShipping[]> {
-        const shipmentResults: IResponseCalculateShipping[] = [];
+    }: IRequestShipmentCalculate): Promise<IResponseShipmentCalculate[]> {
+        const shipmentResults: IResponseShipmentCalculate[] = [];
 
         const findShopingCart = await this.shoppingCartRepository.findByUserId(userId);
 
@@ -59,7 +66,14 @@ export class ShipmentCalculateDeliveriesUseCase {
             });
 
             if (shipmentResults.length === 0) {
-                shipmentResults.push(...shipmentCalculate);
+                for(const freight of shipmentCalculate) {
+                    shipmentResults.push({
+                        id: freight.id,
+                        name: freight.name,
+                        price: freight.price,
+                        delivery_time: freight.delivery_time
+                    })
+                }
             } else {
                 for (const freight of shipmentCalculate) {
                     const existingFreight = shipmentResults.find(result => result.name === freight.name);
@@ -70,12 +84,16 @@ export class ShipmentCalculateDeliveriesUseCase {
                             existingFreight.delivery_time = freight.delivery_time;
                         }
                     } else {
-                        shipmentResults.push(freight);
+                        shipmentResults.push({
+                            id: freight.id,
+                            name: freight.name,
+                            price: freight.price,
+                            delivery_time: freight.delivery_time
+                        })
                     }
                 }
             }
         }
-
 
         return shipmentResults;
     }

@@ -702,7 +702,6 @@ export class PrismaProductsRepository  implements IProductsRepository{
                 },
             }
         }) as unknown as IProductRelationsDTO;
-        console.log(product)
         // contagem das reviews
         // Primeiro, obtenha a contagem total de reviews
         const countPages = await prisma.review.count({

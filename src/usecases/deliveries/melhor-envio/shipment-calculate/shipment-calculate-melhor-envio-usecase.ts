@@ -65,6 +65,8 @@ export class ShipmentCalculateDeliveriesUseCase {
                 })) as IProduct[],
             });
 
+
+            console.log(shipmentCalculate);
             if (shipmentResults.length === 0) {
                 for(const freight of shipmentCalculate) {
                     shipmentResults.push({

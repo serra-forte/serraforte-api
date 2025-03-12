@@ -156,7 +156,7 @@ export class AddFreightToCartMelhorEnvio {
                             reverse: false
                         }
                     });
-
+                    console.log(freightInCart)
                     if(!freightInCart) {
                         console.error('[Consumer - Freight] Erro ao adicionar frete ao carrinho.');
                         return;

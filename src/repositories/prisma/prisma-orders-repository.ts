@@ -767,7 +767,12 @@ export class PrismaOrderRepository implements IOrderRepository {
         const totalPages = countPage > 0 ? Math.ceil(countPage / 13) : 0;
         
         return {
-            orders,
+            orders: orders.map(order => {
+                return{
+                    ...order,
+                    total: Number(order.total) + Number(order.delivery.price)
+                }
+            }),
             totalPages
         } as unknown as IResponseListOrders
     }
@@ -835,7 +840,10 @@ export class PrismaOrderRepository implements IOrderRepository {
         }) as unknown as IOrderRelationsDTO
        
         
-        return order
+        return {
+            ...order,
+            total: Number(order.total) + Number(order.delivery.price)
+        }
     }
     async findByCode(code: string){
         const order = await prisma.order.findUnique({

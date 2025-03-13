@@ -118,14 +118,14 @@ export class AddFreightToCartMelhorEnvio {
                             name: customer.name,
                             email: customer.email,
                             phone: customer.phone,
-                            city: customer.address.city,
-                            state_abbr: customer.address.state as string,
-                            postal_code: customer.address.zipCode as string,
-                            address: customer.address.street,
+                            city: order.delivery.address.city as string,
+                            state_abbr: order.delivery.address.state as string,
+                            postal_code: order.delivery.address.zipCode as string,
+                            address: order.delivery.address.street as string,
                             country_id: "BR", // Brasil
-                            number: String(customer.address.num),
-                            complement: customer.address.complement as string,
-                            district: customer.address.neighborhood as string,
+                            number: String(order.delivery.address.num),
+                            complement: order.delivery.address.complement as string,
+                            district: order.delivery.address.neighborhood as string,
                             state_register: '123456789',
                             document: customer.cpf as string,
                             note: "order for delivery"
@@ -150,10 +150,10 @@ export class AddFreightToCartMelhorEnvio {
                         }),
                         options:{
                             insurance_value: order.items.reduce((acc, item) => acc + Number(item.price) * Number(item.quantity), 0),
-                            non_commercial: false,
+                            non_commercial: true,
                             own_hand: false,
                             receipt: false,
-                            reverse: false
+                            reverse: false,
                         }
                     });
                     if(!freightInCart) {

@@ -149,14 +149,14 @@ export class AddFreightToCartMelhorEnvio {
                             }
                         }),
                         options:{
-                            insurance_value: Number(order.delivery.price),
+                            insurance_value: order.items.reduce((acc, item) => acc + Number(item.price) * Number(item.quantity), 0),
                             non_commercial: true,
                             own_hand: false,
                             receipt: false,
                             reverse: false
                         }
                     });
-                    
+                    console.log(order.items.reduce((acc, item) => acc + Number(item.price) * Number(item.quantity), 0))
                     if(!freightInCart) {
                         console.error('[Consumer - Freight] Erro ao adicionar frete ao carrinho.');
                         return;

@@ -215,7 +215,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
         grant_type: 'refresh_token',
         client_id: env.MELHOR_ENVIO_CLIENT_ID,
         client_secret: env.MELHOR_ENVIO_CLIENT_SECRET,
-        refresh_token: env.MELHOR_ENVIO_REFRESH_TOKEN,
+        refresh_token: process.env.MELHOR_ENVIO_REFRESH_TOKEN,
       });
       
       if (response.status === 200) {
@@ -291,9 +291,9 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
         // Tenta renovar o tokenn
         try {
           const response = await this.refreshToken();
-          console.log('Token renovado com sucesso');
-
+          
           if(response.access_token){
+            console.log('Token renovado com sucesso');
             // Após renovar o token, tenta novamente calcular o frete
             return this.shipmentCalculate(data);
           }

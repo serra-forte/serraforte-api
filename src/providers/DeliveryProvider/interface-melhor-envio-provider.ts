@@ -131,7 +131,7 @@ export interface IRequestSendFreightToCart {
     height: number; // Altura do volume
     width: number; // Largura do volume
   }
-  
+
   export interface IShippingOptions {
     insurance_value?: number; // Valor do seguro (opcional)
     receipt: boolean; // Reembolso (true) ou sem reembolso (false)
@@ -441,7 +441,8 @@ export interface IRequestSendFreightToCart {
   export interface ITrackingResponse {
     [key: string]: ITrackingDetails;
   }
-  
+
+ 
   
 export interface IMelhorEnvioProvider {
     authorization(code: string): Promise<IResponseAuth>

@@ -91,53 +91,50 @@ export interface IResponseCalculateShipping {
 }
 
 export interface IRequestSendFreightToCart {
-    service: number; // Id referente do serviço da transportadora
-    agency?: number; // Id da agência/unidade onde será postado o envio (consultar regras das transportadoras)
-    from: IShippingParty; // Informações do remetente do envio
-    to: IShippingParty; // Informações do destinatário do envio
-    products: IProductInfo[]; // Informações dos produtos que serão enviados
-    volumes: IVolumeInfo[]; // Descrição dos volumes contidos no envio
-    options?: IShippingOptions; // Informações complementares do envio
+    service: number; 
+    agency?: number; 
+    from: IShippingParty; 
+    to: IShippingParty; 
+    products: IProductInfo[]; 
+    volumes: IVolumeInfo[]; 
+    options?: IShippingOptions; 
   }
   
   export interface IShippingParty {
-    name: string; // Nome da pessoa ou empresa
-    address: string; // Endereço completo
-    complement?: string; // Complemento do destinatário (opcional)
-    postal_code: string; // CEP
-    phone?: string; // Telefone (opcional)
-    email?: string; // Email (opcional)
-    state_register?: string | null; // Estado de registro do remetente
-    number: string; // Número do destinatário (opcional)
-    district?: string; // Bairro do destinatário (opcional)
-    city: string; // Cidade do destinatário (opcional)
-    state_abbr: string; // Estado do destinatário (opcional)
-    country_id: string; // País do destinatário (opcional)
-    document?: string; // Documento do destinatário (opcional)
-    note?: string; // Observação do destinatário (opcional)
+    name: string; 
+    address: string; 
+    complement?: string; 
+    postal_code: string;
+    phone?: string; 
+    email?: string; 
+    state_register?: string | null; 
+    number: string;
+    district?: string; 
+    city: string; 
+    state_abbr: string; 
+    country_id: string;
+    document?: string;
+    note?: string;
   }
   
   export interface IProductInfo {
-    id: string; // Id do produto
-    name: string; // Nome do produto
-    quantity: number; // Quantidade do produto
-    price: number; // Preço do produto
-    weight: number; // Peso do produto
+    name: string;
+    quantity: number;
+    unitary_value: number; 
   }
-  
   export interface IVolumeInfo {
-    weight: number; // Peso do volume
-    length: number; // Comprimento do volume
-    height: number; // Altura do volume
-    width: number; // Largura do volume
+    weight: number; 
+    length: number; 
+    height: number;
+    width: number; 
   }
 
   export interface IShippingOptions {
-    insurance_value?: number; // Valor do seguro (opcional)
-    receipt: boolean; // Reembolso (true) ou sem reembolso (false)
-    own_hand: boolean; // Entrega em maos (true) ou sem entrega em maos (false)
-    reverse: boolean; // Remessa reversa (true) ou remessa comercial (false)
-    non_commercial: boolean; // Remessa comercial (true) ou remessa reversa (false)
+    insurance_value?: number; 
+    receipt: boolean; 
+    own_hand: boolean;
+    reverse: boolean; 
+    non_commercial: boolean; 
   }
 
   export interface IResponseSendFreightToCart {
@@ -189,15 +186,15 @@ export interface IRequestSendFreightToCart {
   }
   
   export interface IVolume {
-    id: number; // ID do volume
-    height: string; // Altura do volume
-    width: string; // Largura do volume
-    length: string; // Comprimento do volume
-    diameter: string; // Diâmetro do volume
-    weight: string; // Peso do volume
-    format: string; // Formato do volume (ex: 'box')
-    created_at: string; // Data de criação do volume
-    updated_at: string; // Data de atualização do volume
+    id: number; 
+    height: string; 
+    width: string; 
+    length: string; 
+    diameter: string; 
+    weight: string; 
+    format: string; 
+    created_at: string; 
+    updated_at: string; 
   }
   
   export interface IPurchaseResponse {

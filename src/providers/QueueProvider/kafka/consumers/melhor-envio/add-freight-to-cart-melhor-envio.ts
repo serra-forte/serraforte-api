@@ -133,11 +133,9 @@ export class AddFreightToCartMelhorEnvio {
                         service: Number(order.delivery.serviceId),
                         products: order.items.map(item => {
                             return{
-                                id: item.productId,
                                 quantity: Number(item.quantity),
                                 name: item.name as string,
-                                price: Number(item.price),
-                                weight: Number(item.weight),
+                                unitary_value: Number(item.price),
                             }
                         }),
                         volumes: boxes.map(box => {
@@ -150,7 +148,7 @@ export class AddFreightToCartMelhorEnvio {
                         }),
                         options:{
                             insurance_value: order.items.reduce((acc, item) => acc + Number(item.price) * Number(item.quantity), 0),
-                            non_commercial: false,
+                            non_commercial: true,
                             own_hand: false,
                             receipt: false,
                             reverse: false,

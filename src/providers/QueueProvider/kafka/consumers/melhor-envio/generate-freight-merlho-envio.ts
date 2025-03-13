@@ -60,7 +60,9 @@ export class GenerateFreightMelhorEnvio {
                     }
 
                     // gerar etiqueta na melhor envio
-                    await this.melhorEnvioProvider.generateLabelTracking(parsedMessage.freightId)
+                    const labelTracking = await this.melhorEnvioProvider.generateLabelTracking(parsedMessage.freightId)
+
+                    console.log(labelTracking)
 
                     const infoToGenerateLabelLink: IGenerateLabelLink = {
                         freightId: parsedMessage.freightId,

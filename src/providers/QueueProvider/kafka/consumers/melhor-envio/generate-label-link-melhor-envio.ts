@@ -64,14 +64,14 @@ export class GenerateLabelLinkMelhorEnvio {
                     }
 
                     // atualizar pedido com status "LABEL_GENERATED"
-                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.AWAITING_LABEL_LINK)
+                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.LABEL_GENERATED)
 
                     // salvar id da etique e link da etiqueta no banco de dados.
                     await this.orderRepository.updateLabelDelivery(parsedMessage.orderId, parsedMessage.freightId, response.url)
 
                     // buscar informações da etiqueta gerada
                     const responseShipmentTracking = await this.melhorEnvioProvider.getShipmentTracking(parsedMessage.freightId)
-
+                    console.log(responseShipmentTracking)
                     if (!responseShipmentTracking) {
                         throw new AppError('Erro ao buscar informações da etiqueta');
                     }

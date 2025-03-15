@@ -27,7 +27,7 @@ interface IRequestStatusLabel{
 
 export class WebHookGetStatusLabelUseCase {
     constructor(
-        // private kafkaProducer: KafkaProducer
+        private kafkaProducer: KafkaProducer
     ) {}
 
     async execute({
@@ -36,5 +36,23 @@ export class WebHookGetStatusLabelUseCase {
     }: IRequestStatusLabel): Promise<void> {
         console.log(event)
         console.log(data)
+
+        switch (event) {
+            case 'order.created':
+                // Enviar mensagem para o Kafka para processar o pagamento
+                await this.kafkaProducer.execute('PAYMENT_PROCESS_IN_CART', data.id)
+                break;
+            case 'order.released':
+                // Enviar mensagem para gerar etiqueta
+                await this.kafkaProducer.execute('GENERATE_LABEL', data.id)
+                break;
+            case 'order.generated':
+                // Enviar mensagem para gerar link da etiqueta
+                await this.kafkaProducer.execute('GENERATE_LABEL_TO_PRINT', data.id)
+                break;
+            default:
+                console.log('Evento desconhecido:', event);
+                break;
+        }
     }
 }

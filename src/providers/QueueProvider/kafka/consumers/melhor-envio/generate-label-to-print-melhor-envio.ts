@@ -65,12 +65,6 @@ export class GenerateLabelLinkMelhorEnvio {
                     // atualizar pedido com status "LABEL_GENERATED"
                     await this.orderRepository.updateStatus(parsedMessage.orderId, Status.AWAITING_TRACK_LINK)
 
-                    // gerar link de rastreio da etiqueta
-                    await this.kafkaProducer.execute('GENERATE_TRACKING_LINK', {
-                        freightId: parsedMessage.freightId,
-                        orderId: parsedMessage.orderId
-                    })
-
                     console.info('[Consumer - Generate Label Link] Link do frete gerado com sucesso');
                 } catch (error) {
                     console.error('[Consumer - Generate Label Link ] Erro ao processar mensagem:', error);

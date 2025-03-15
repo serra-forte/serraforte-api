@@ -74,15 +74,6 @@ export class PaymentProcessInCartMelhorEnvio {
                     // atualizar pedido com status "AWAITING_LABEL_GENERATE"
                     await this.orderRepository.updateStatus(messageReceived.orderId, Status.AWAITING_LABEL_GENERATE)
 
-                    // criar objeto para enviar a mensagem de gerar um etiqueta.
-                    const infoToGenerateLabel: IInfoGenerateLabelFreight = {
-                        freightId: response.purchase.orders[0].id,
-                        orderId: messageReceived.orderId
-                    }
-
-                    // enviar mensagem para o consumer de gerar uma etiqueta
-                    await this.kafkaProducer.execute("GENERATE_LABEL", infoToGenerateLabel);
-
                     console.info('[Consumer - Payment] Pagamento processado com sucesso');
                 } catch (error) {
                     console.error('[Consumer ] Erro ao processar mensagem:', error);

@@ -162,14 +162,6 @@ export class AddFreightToCartMelhorEnvio {
                     // Atualizar status do pedido e informações relacionadas
                     await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);
 
-                    const freightToPayment = {
-                        orderId: order.id,
-                        freightId: freightInCart.id,
-                    }
-
-                    // Enviar mensagem para o Kafka para processar o pagamento
-                    await this.kafkaProducer.execute('PAYMENT_PROCESS_IN_CART', freightToPayment)
-                   
                     console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
                 } catch (error) {
                     console.error('[Consumer - Freight] Erro ao processar mensagem:', error);

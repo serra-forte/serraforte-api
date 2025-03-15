@@ -18,18 +18,18 @@ export async function WebHookGetStatusLabel(request: FastifyRequest, reply:Fasti
                     .array(
                         z.object({
                             tag: z.string(),
-                            url: z.string().url(),
+                            url: z.string(),
                         })
                     )
                     .optional(),
-                created_at: z.string().datetime(),
-                paid_at: z.string().datetime().nullable(),
-                generated_at: z.string().datetime().nullable(),
-                posted_at: z.string().datetime().nullable(),
-                delivered_at: z.string().datetime().nullable(),
-                canceled_at: z.string().datetime().nullable(),
-                expired_at: z.string().datetime().nullable(),
-                tracking_url: z.string().url().nullable(),
+                created_at: z.string(),
+                paid_at: z.string().nullable(),
+                generated_at: z.string().nullable(),
+                posted_at: z.string().nullable(),
+                delivered_at: z.string().nullable(),
+                canceled_at: z.string().nullable(),
+                expired_at: z.string().nullable(),
+                tracking_url: z.string().nullable(),
             }),
         });
 

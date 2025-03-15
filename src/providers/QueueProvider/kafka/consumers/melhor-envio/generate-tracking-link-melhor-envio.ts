@@ -11,7 +11,7 @@ import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repos
 import { KafkaProducer } from "../../kafka-producer";
 import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
-import { KafkaConsumerGenerateLabelLink } from "../../kafka-consumer-generate-label-link";
+import { KafkaConsumerGenerateLabelLink } from "../../kafka-consumer-generate-label-to-print";
 import { env } from "@/env";
 import { IGenerateLabelLink } from "./generate-label-melhor-envio";
 

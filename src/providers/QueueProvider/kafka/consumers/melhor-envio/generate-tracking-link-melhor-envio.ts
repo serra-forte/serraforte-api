@@ -93,7 +93,7 @@ export class GenerateTrackingLinkMelhorEnvio {
 
            const objectTracking = Object.values(responseShipmentTracking)
 
-      
+           console.log(objectTracking[0].status);
           if (objectTracking[0].status === 'posted') {
             await this.orderRepository.updateStatus(orderId, Status.TRACK_LINK_GENERATED)
             return true;

@@ -12,10 +12,9 @@ import { KafkaProducer } from "../../kafka-producer";
 import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
 import { env } from "@/env";
-import { IGenerateLabelLink } from "./generate-label-melhor-envio";
 import { KafkaConsumerGenerateTrackingLink } from "../../kafka-consumer-generate-tracking-link";
 
-export class VerifyStatusLabelMelhorEnvio {
+export class GenerateTrackingLinkMelhorEnvio {
     private kafkaConsumer: KafkaConsumerGenerateTrackingLink;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
@@ -112,5 +111,5 @@ export class VerifyStatusLabelMelhorEnvio {
     
 }
 
-const verifyStatusLabelMelhorEnvio = new VerifyStatusLabelMelhorEnvio();
-verifyStatusLabelMelhorEnvio.execute();
+const generateTrackingLinkMelhorEnvio = new GenerateTrackingLinkMelhorEnvio();
+generateTrackingLinkMelhorEnvio.execute();

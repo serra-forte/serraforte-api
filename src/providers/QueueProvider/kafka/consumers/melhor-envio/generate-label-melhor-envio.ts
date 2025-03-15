@@ -10,7 +10,6 @@ import { IOrderRepository } from "@/repositories/interfaces/interface-order-repo
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { KafkaProducer } from "../../kafka-producer";
 import { KafkaConsumerGenerateLabel } from "../../kafka-consumer-generate-label";
-import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
 
 export interface IGenerateLabelLink {
@@ -46,13 +45,13 @@ export class GenerateFreightMelhorEnvio {
         createdConsumer.run({
             eachMessage: async ({ message }) => {
                 if (!message || !message.value) {
-                    console.warn('[Consumer - Generate Freight] Mensagem vazia ou inválida:');
+                    console.warn('[Consumer - Generate Label] Mensagem vazia ou inválida:');
                     return;
                 }
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer - Generate Freight] Mensagem recebida:');
+                    console.log('[Consumer - Generate Label] Mensagem recebida:');
 
                     if (!parsedMessage) {
                         // console.warn('[Consumer - Payment] Itens do pedido estão ausentes ou inválidos.');
@@ -60,7 +59,7 @@ export class GenerateFreightMelhorEnvio {
                     }
 
                     // gerar etiqueta na melhor envio
-                    const labelTracking = await this.melhorEnvioProvider.generateLabel(parsedMessage.freightId)
+                    await this.melhorEnvioProvider.generateLabel(parsedMessage.freightId)
 
                     const infoToGenerateLabelLink: IGenerateLabelLink = {
                         freightId: parsedMessage.freightId,
@@ -73,9 +72,9 @@ export class GenerateFreightMelhorEnvio {
                     // criar enviar id da etiqueta para a melhor envio gerar o link da etiqueta
                     await this.kafkaProducer.execute('GENERATE_LABEL_TO_PRINT', infoToGenerateLabelLink)
 
-                    console.info('[Consumer - Generate Freight] Frete gerado com sucesso');
+                    console.info('[Consumer - Generate Label] Frete gerado com sucesso');
                 } catch (error) {
-                    console.error('[Consumer - Generate Freight ] Erro ao processar mensagem:', error);
+                    console.error('[Consumer - Generate Label ] Erro ao processar mensagem:', error);
                 }
             },
         });

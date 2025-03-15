@@ -8,7 +8,6 @@ import { MailProvider } from "@/providers/MailProvider/implementations/provider-
 import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
-import { KafkaProducer } from "../../kafka-producer";
 import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
 import { env } from "@/env";
@@ -36,7 +35,7 @@ export class GenerateTrackingLinkMelhorEnvio {
     }
 
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('');
+        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_TRACKING_LINK');
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {

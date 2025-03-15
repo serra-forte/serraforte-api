@@ -71,7 +71,7 @@ export class GenerateLabelLinkMelhorEnvio {
                         orderId: parsedMessage.orderId
                     })
 
-                    console.info('[Consumer - Generate Label Link] Frete Link gerado com sucesso');
+                    console.info('[Consumer - Generate Label Link] Link do frete gerado com sucesso');
                 } catch (error) {
                     console.error('[Consumer - Generate Label Link ] Erro ao processar mensagem:', error);
                 }

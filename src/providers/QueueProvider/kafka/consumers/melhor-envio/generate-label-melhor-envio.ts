@@ -60,7 +60,7 @@ export class GenerateFreightMelhorEnvio {
                     }
 
                     // gerar etiqueta na melhor envio
-                    const labelTracking = await this.melhorEnvioProvider.generateLabelTracking(parsedMessage.freightId)
+                    const labelTracking = await this.melhorEnvioProvider.generateLabel(parsedMessage.freightId)
 
                     const infoToGenerateLabelLink: IGenerateLabelLink = {
                         freightId: parsedMessage.freightId,
@@ -71,7 +71,7 @@ export class GenerateFreightMelhorEnvio {
                     await this.orderRepository.updateStatus(parsedMessage.orderId, Status.AWAITING_LABEL_LINK)
 
                     // criar enviar id da etiqueta para a melhor envio gerar o link da etiqueta
-                    await this.kafkaProducer.execute('GENERATE_LABEL_LINK', infoToGenerateLabelLink)
+                    await this.kafkaProducer.execute('GENERATE_LABEL_TO_PRINT', infoToGenerateLabelLink)
 
                     console.info('[Consumer - Generate Freight] Frete gerado com sucesso');
                 } catch (error) {

@@ -91,7 +91,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       throw error;
     }
   }
-  async generateLabelTracking(orderId: string): Promise<IResponseGenerateLabel | null> {
+  async generateLabel(orderId: string): Promise<IResponseGenerateLabel | null> {
     try {
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/shipment/generate`, {
         orders: [orderId],
@@ -121,7 +121,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
 
           if(response.access_token){
             // Após renovar o token, tenta novamente calcular o frete
-            return this.generateLabelTracking(orderId);
+            return this.generateLabel(orderId);
           }
         } catch (refreshError) {
           console.error('Erro ao renovar o token:', refreshError);

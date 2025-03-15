@@ -447,7 +447,7 @@ export interface IMelhorEnvioProvider {
     refreshToken(): Promise<IResponseAuth>
     addFreightToCart(data: IRequestSendFreightToCart):Promise<IResponseSendFreightToCart | null>
     paymentToFreight(orderId: string): Promise<IPurchaseResponse | null>
-    generateLabelTracking(orderId: string): Promise<IResponseGenerateLabel | null>
+    generateLabel(orderId: string): Promise<IResponseGenerateLabel | null>
     generateLabelLinkToPrinting(orderId: string): Promise<IResponseGenerateLabelLinkToPrinting | null>
     getShipmentTracking(orderId: string): Promise<ITrackingResponse | null>
 }

@@ -13,7 +13,7 @@ import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
 import { KafkaConsumerGenerateLabelLink } from "../../kafka-consumer-generate-label-link";
 import { env } from "@/env";
-import { IGenerateLabelLink } from "./generate-freight-merlho-envio";
+import { IGenerateLabelLink } from "./generate-label-melhor-envio";
 
 export class GenerateLabelLinkMelhorEnvio {
     private kafkaConsumer: KafkaConsumerGenerateLabelLink;
@@ -39,7 +39,7 @@ export class GenerateLabelLinkMelhorEnvio {
     }
 
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_LABEL_LINK');
+        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_LABEL_TO_PRINT');
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {
@@ -65,36 +65,13 @@ export class GenerateLabelLinkMelhorEnvio {
                     }
 
                     // atualizar pedido com status "LABEL_GENERATED"
-                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.LABEL_GENERATED)
+                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.AWAITING_TRACK_LINK)
 
-                    // salvar id da etique e link da etiqueta no banco de dados.
-                    await this.orderRepository.updateLabelDelivery(parsedMessage.orderId, parsedMessage.freightId, response.url)
-
-                    // buscar informações da etiqueta gerada
-                    const responseShipmentTracking = await this.melhorEnvioProvider.getShipmentTracking(parsedMessage.freightId)
-                   
-                    if (!responseShipmentTracking) {
-                        throw new AppError('Erro ao buscar informações da etiqueta');
-                    }
-
-                    const objectTracking = Object.values(responseShipmentTracking)
-
-                    const infoToGenerateLabelLink: IGenerateLabelLink = {
+                    // gerar link de rastreio da etiqueta
+                    await this.kafkaProducer.execute('GENERATE_TRACK_LINK', {
                         freightId: parsedMessage.freightId,
                         orderId: parsedMessage.orderId
-                    }
-
-                    if(objectTracking[0].status === 'released') {
-                        // enviar para novo consumer de verificação de etiqueta gerada
-                        await this.kafkaProducer.execute('VERIFY_STATUS_LABEL', infoToGenerateLabelLink)
-
-                        return;
-                    }
-
-                    const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0].tracking}`
-                    
-                    await this.orderRepository.saveTrackingLink(parsedMessage.orderId, trackingLink)
-
+                    })
                     console.info('[Consumer - Generate Label Link] Frete Link gerado com sucesso');
                 } catch (error) {
                     console.error('[Consumer - Generate Label Link ] Erro ao processar mensagem:', error);

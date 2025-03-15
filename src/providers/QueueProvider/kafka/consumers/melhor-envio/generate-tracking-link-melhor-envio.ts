@@ -13,7 +13,7 @@ import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
 import { KafkaConsumerGenerateLabelLink } from "../../kafka-consumer-generate-label-link";
 import { env } from "@/env";
-import { IGenerateLabelLink } from "./generate-freight-merlho-envio";
+import { IGenerateLabelLink } from "./generate-label-melhor-envio";
 
 export class VerifyStatusLabelMelhorEnvio {
     private kafkaConsumer: KafkaConsumerGenerateLabelLink;
@@ -39,7 +39,7 @@ export class VerifyStatusLabelMelhorEnvio {
     }
 
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('VERIFY_STATUS_LABEL');
+        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_TRACKING_LINK');
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {
@@ -56,28 +56,32 @@ export class VerifyStatusLabelMelhorEnvio {
                         return;
                     }
 
-                    // gerar etiqueta na melhor envio
-                    const responseShipmentTracking = await this.melhorEnvioProvider.getShipmentTracking(parsedMessage.freightId)
-
-                    if (!responseShipmentTracking) {
-                        throw new AppError('Erro ao buscar informações da etiqueta');
-                    }
-
-                    const objectTracking = Object.values(responseShipmentTracking)
-
-                    if(objectTracking[0].status !== 'posted') {
+                     // buscar informações da etiqueta gerada
+                     const responseShipmentTracking = await this.melhorEnvioProvider.getShipmentTracking(parsedMessage.freightId)
+                    
+                     if (!responseShipmentTracking) {
+                         throw new AppError('Erro ao buscar informações da etiqueta');
+                     }
+ 
+                     const objectTracking = Object.values(responseShipmentTracking)
+ 
+                     const infoToGenerateLabelLink: IGenerateLabelLink = {
+                         freightId: parsedMessage.freightId,
+                         orderId: parsedMessage.orderId
+                     }
+ 
+                     if(objectTracking[0].status !== 'posted') {
                         // esperar por 5 minutos durante 4 tentativas
-                        const isPosted = await this.verificarStatusAteGerado(objectTracking[0].id)
+                        const isPosted = await this.checkStatusLabel(parsedMessage.orderId,objectTracking[0].id)
 
                        if(isPosted){
-                        const infoToGenerateLabelLink: IGenerateLabelLink = {
-                            freightId: parsedMessage.freightId,
-                            orderId: parsedMessage.orderId
-                        }
-
-                        await this.kafkaProducer.execute('GENERATE_LABEL_LINK', infoToGenerateLabelLink)
+                        await this.kafkaProducer.execute('GENERATE_TRACKING_LINK', infoToGenerateLabelLink)
 
                         console.info('[Consumer - Verify Status Label] Status da etiqueta gerada: posted');
+
+                        const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0].tracking}`
+                     
+                        await this.orderRepository.saveTrackingLink(parsedMessage.orderId, trackingLink)
                        }
                     }
                  
@@ -88,7 +92,7 @@ export class VerifyStatusLabelMelhorEnvio {
         });
     }
 
-    private async verificarStatusAteGerado(shipmentId: string, tentativas = 5) {
+    private async checkStatusLabel(orderId:string, shipmentId: string, tentativas = 5) {
         for (let i = 0; i < tentativas; i++) {
            // gerar etiqueta na melhor envio
            const responseShipmentTracking = await this.melhorEnvioProvider.getShipmentTracking(shipmentId)
@@ -100,8 +104,8 @@ export class VerifyStatusLabelMelhorEnvio {
            const objectTracking = Object.values(responseShipmentTracking)
 
       
-          if (objectTracking[0].status === 'posted' || objectTracking[0].status === 'generated') {
-            console.log(`✅ Status atualizado para: ${objectTracking[0].status}`);
+          if (objectTracking[0].status === 'posted') {
+            await this.orderRepository.updateStatus(orderId, Status.TRACK_LINK_GENERATED)
             return true;
           }
       
@@ -110,6 +114,7 @@ export class VerifyStatusLabelMelhorEnvio {
       
         console.log(`⚠️ Atenção! A etiqueta ${shipmentId} ainda não foi gerada.`);
         // alterar status no banco com status pendente
+        await this.orderRepository.updateStatus(orderId, Status.BROKE_GENERATED_LABEL)
 
         return false
       }

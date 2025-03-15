@@ -13,7 +13,7 @@ interface IRequestStatusLabel{
         tracking: string | null;
         self_tracking: string | null;
         user_id: string;
-        tags: Tag[];
+        // tags: Tag[];
         created_at: string;
         paid_at: string | null;
         generated_at: string | null;
@@ -21,7 +21,7 @@ interface IRequestStatusLabel{
         delivered_at: string | null;
         canceled_at: string | null;
         expired_at: string | null;
-        tracking_url: string;
+        tracking_url?: string | null;
     };
 }
 

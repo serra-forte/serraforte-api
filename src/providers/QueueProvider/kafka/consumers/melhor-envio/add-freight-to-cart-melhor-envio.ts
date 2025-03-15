@@ -13,6 +13,8 @@ import { IUserRelations } from "@/dtos/user-relations.dto";
 import { Box, Status } from "@prisma/client";
 import { KafkaProducer } from "../../kafka-producer";
 import { KafkaConsumerFreight } from "../../kafka-consumer-freight";
+import { IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
+import { PrismaDeliveryRepository } from "@/repositories/prisma/prisma-deliveries-repository";
 
 interface IRelationBox {
     box: Box
@@ -20,16 +22,15 @@ interface IRelationBox {
 
 export class AddFreightToCartMelhorEnvio {
     private kafkaConsumer: KafkaConsumerFreight;
-    private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
     private usersRepository: IUsersRepository;
     private melhorEnvioProvider: IMelhorEnvioProvider;
     private orderRepository: IOrderRepository;
+    private deliveryProvider: IDeliveryRepository
 
     constructor() {
         this.kafkaConsumer = new KafkaConsumerFreight();
-        this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
         this.usersRepository = new PrismaUsersRepository();
@@ -39,6 +40,7 @@ export class AddFreightToCartMelhorEnvio {
             this.usersRepository
         );
         this.orderRepository = new PrismaOrderRepository();
+        this.deliveryProvider = new PrismaDeliveryRepository()
     }
 
     async execute() {
@@ -159,7 +161,9 @@ export class AddFreightToCartMelhorEnvio {
                         return;
                     }
 
-                    console.log(freightInCart)
+                    // Adicionar frete ao pedido
+                    await this.deliveryProvider.save(order.id, freightInCart.id);
+                    
                     // Atualizar status do pedido e informações relacionadas
                     await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);
 

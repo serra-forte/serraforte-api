@@ -313,7 +313,7 @@ model Delivery {
   serviceId Decimal? @map("service_id")
   serviceName String? @map("service_name")
 
-  freightId String?  @map("freight_id")
+  freightId String? @unique  @map("freight_id")
   freightLink String? @map("freight_link")
   trackingLink String? @map("tracking_link")
   companyName String? @map("company_name")

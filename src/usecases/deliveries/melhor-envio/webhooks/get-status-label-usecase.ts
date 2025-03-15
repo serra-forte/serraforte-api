@@ -13,11 +13,11 @@ interface IRequestStatusLabel{
         tracking: string | null;
         self_tracking: string | null;
         user_id: string;
-        // tags: Tag[];
+        tags?: Tag[];
         created_at: string;
         paid_at: string | null;
         generated_at: string | null;
-        posted_at: string;
+        posted_at?: string | null;
         delivered_at: string | null;
         canceled_at: string | null;
         expired_at: string | null;

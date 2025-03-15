@@ -15,14 +15,14 @@ import { KafkaConsumerGenerateLabelLink } from "../../kafka-consumer-generate-la
 import { env } from "@/env";
 import { IGenerateLabelLink } from "./generate-freight-merlho-envio";
 
-export class GenerateLabelLinkMelhorEnvio {
+export class VerifyStatusLabelMelhorEnvio {
     private kafkaConsumer: KafkaConsumerGenerateLabelLink;
-    private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
     private usersRepository: IUsersRepository;
     private melhorEnvioProvider: IMelhorEnvioProvider;
     private orderRepository: IOrderRepository;
+    private kafkaProducer: KafkaProducer;
 
     constructor() {
         this.kafkaConsumer = new KafkaConsumerGenerateLabelLink();
@@ -39,71 +39,82 @@ export class GenerateLabelLinkMelhorEnvio {
     }
 
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_LABEL_LINK');
+        const createdConsumer = await this.kafkaConsumer.execute('VERIFY_STATUS_LABEL');
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {
                 if (!message || !message.value) {
-                    console.warn('[Consumer - Generate Label Link] Mensagem vazia ou inválida:');
+                    console.warn('[Consumer - Verify Status Label] Mensagem vazia ou inválida:');
                     return;
                 }
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer - Generate Label Link] Mensagem recebida:');
+                    console.log('[Consumer - Verify Status Label] Mensagem recebida:');
 
                     if (!parsedMessage) {
-                        // console.warn('[Consumer - Payment] Itens do pedido estão ausentes ou inválidos.');
                         return;
                     }
 
                     // gerar etiqueta na melhor envio
-                    const response = await this.melhorEnvioProvider.generateLabelLinkToPrinting(parsedMessage.freightId)
-
-                    if (!response) {
-                        throw new AppError('Erro ao gerar link da etiqueta');
-                    }
-
-                    // atualizar pedido com status "LABEL_GENERATED"
-                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.LABEL_GENERATED)
-
-                    // salvar id da etique e link da etiqueta no banco de dados.
-                    await this.orderRepository.updateLabelDelivery(parsedMessage.orderId, parsedMessage.freightId, response.url)
-
-                    // buscar informações da etiqueta gerada
                     const responseShipmentTracking = await this.melhorEnvioProvider.getShipmentTracking(parsedMessage.freightId)
-                   
+
                     if (!responseShipmentTracking) {
                         throw new AppError('Erro ao buscar informações da etiqueta');
                     }
 
                     const objectTracking = Object.values(responseShipmentTracking)
 
-                    const infoToGenerateLabelLink: IGenerateLabelLink = {
-                        freightId: parsedMessage.freightId,
-                        orderId: parsedMessage.orderId
+                    if(objectTracking[0].status !== 'posted') {
+                        // esperar por 5 minutos durante 4 tentativas
+                        const isPosted = await this.verificarStatusAteGerado(objectTracking[0].id)
+
+                       if(isPosted){
+                        const infoToGenerateLabelLink: IGenerateLabelLink = {
+                            freightId: parsedMessage.freightId,
+                            orderId: parsedMessage.orderId
+                        }
+
+                        await this.kafkaProducer.execute('GENERATE_LABEL_LINK', infoToGenerateLabelLink)
+
+                        console.info('[Consumer - Verify Status Label] Status da etiqueta gerada: posted');
+                       }
                     }
-
-                    if(objectTracking[0].status === 'released') {
-                        // enviar para novo consumer de verificação de etiqueta gerada
-                        await this.kafkaProducer.execute('VERIFY_STATUS_LABEL', infoToGenerateLabelLink)
-
-                        return;
-                    }
-
-                    const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0].tracking}`
-                    
-                    await this.orderRepository.saveTrackingLink(parsedMessage.orderId, trackingLink)
-
-                    console.info('[Consumer - Generate Label Link] Frete Link gerado com sucesso');
+                 
                 } catch (error) {
-                    console.error('[Consumer - Generate Label Link ] Erro ao processar mensagem:', error);
+                    console.error('[Consumer - Verify Status Label ] Erro ao processar mensagem:', error);
                 }
             },
         });
     }
+
+    private async verificarStatusAteGerado(shipmentId: string, tentativas = 5) {
+        for (let i = 0; i < tentativas; i++) {
+           // gerar etiqueta na melhor envio
+           const responseShipmentTracking = await this.melhorEnvioProvider.getShipmentTracking(shipmentId)
+
+           if (!responseShipmentTracking) {
+               throw new AppError('Erro ao buscar informações da etiqueta');
+           }
+
+           const objectTracking = Object.values(responseShipmentTracking)
+
+      
+          if (objectTracking[0].status === 'posted' || objectTracking[0].status === 'generated') {
+            console.log(`✅ Status atualizado para: ${objectTracking[0].status}`);
+            return true;
+          }
+      
+          await new Promise((resolve) => setTimeout(resolve, 5 * 60 * 1000));
+        }
+      
+        console.log(`⚠️ Atenção! A etiqueta ${shipmentId} ainda não foi gerada.`);
+        // alterar status no banco com status pendente
+
+        return false
+      }
     
 }
 
-const generateLabelLinkMelhorEnvio = new GenerateLabelLinkMelhorEnvio();
-generateLabelLinkMelhorEnvio.execute();
+const verifyStatusLabelMelhorEnvio = new VerifyStatusLabelMelhorEnvio();
+verifyStatusLabelMelhorEnvio.execute();

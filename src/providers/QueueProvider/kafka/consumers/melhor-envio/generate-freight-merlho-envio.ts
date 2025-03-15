@@ -13,7 +13,7 @@ import { KafkaConsumerGenerateFreight } from "../../kafka-consumer-generate-frei
 import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
 
-interface IGenerateLabelLink {
+export interface IGenerateLabelLink {
     orderId: string;
     freightId: string;
 }
@@ -61,8 +61,6 @@ export class GenerateFreightMelhorEnvio {
 
                     // gerar etiqueta na melhor envio
                     const labelTracking = await this.melhorEnvioProvider.generateLabelTracking(parsedMessage.freightId)
-
-                    console.log(labelTracking)
 
                     const infoToGenerateLabelLink: IGenerateLabelLink = {
                         freightId: parsedMessage.freightId,

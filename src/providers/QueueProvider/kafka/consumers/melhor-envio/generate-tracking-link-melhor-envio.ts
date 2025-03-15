@@ -36,7 +36,7 @@ export class GenerateTrackingLinkMelhorEnvio {
     }
 
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_TRACKING_LINK');
+        const createdConsumer = await this.kafkaConsumer.execute('');
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {
@@ -72,25 +72,26 @@ export class GenerateTrackingLinkMelhorEnvio {
         });
     }
 
+    
     private async checkStatusLabel(orderId: string, shipmentId: string, tentativas = 5) {
         for (let i = 0; i < tentativas; i++) {
-            console.log(`[checkStatusLabel] Tentativa ${i + 1} de ${tentativas} para shipmentId: ${shipmentId}`);
+            console.log(`[Check Status Label] Tentativa ${i + 1} de ${tentativas} para shipmentId: ${shipmentId}`);
             const responseShipmentTracking = await this.melhorEnvioProvider.getShipmentTracking(shipmentId);
 
             if (!responseShipmentTracking) {
-                console.error('[checkStatusLabel] Erro ao buscar informações da etiqueta. Tentando novamente...');
+                console.error('[Check Status Label] Erro ao buscar informações da etiqueta. Tentando novamente...');
                 continue;
             }
 
             const objectTracking = Object.values(responseShipmentTracking);
-            console.log(`[checkStatusLabel] Status atual da etiqueta: ${objectTracking[0].status}`);
+            console.log(`[Check Status Label] Status atual da etiqueta: ${objectTracking[0].status}`);
             
             if (objectTracking[0].status === 'posted') {
                 await this.orderRepository.updateStatus(orderId, Status.TRACK_LINK_GENERATED);
                 return true;
             }
             
-            console.log('[checkStatusLabel] Aguardando 5 minutos antes da próxima tentativa...');
+            console.log('[Check Status Label] Aguardando 5 minutos antes da próxima tentativa...');
             await new Promise((resolve) => setTimeout(resolve, 5 * 60 * 1000));
         }
 

@@ -22,11 +22,9 @@ export class VerifyStatusLabelMelhorEnvio {
     private usersRepository: IUsersRepository;
     private melhorEnvioProvider: IMelhorEnvioProvider;
     private orderRepository: IOrderRepository;
-    private kafkaProducer: KafkaProducer;
 
     constructor() {
         this.kafkaConsumer = new KafkaConsumerGenerateTrackingLink();
-        this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
         this.usersRepository = new PrismaUsersRepository();
@@ -64,11 +62,6 @@ export class VerifyStatusLabelMelhorEnvio {
                      }
  
                      const objectTracking = Object.values(responseShipmentTracking)
- 
-                     const infoToGenerateLabelLink: IGenerateLabelLink = {
-                         freightId: parsedMessage.freightId,
-                         orderId: parsedMessage.orderId
-                     }
  
                      if(objectTracking[0].status !== 'posted') {
                         // esperar por 5 minutos durante 4 tentativas

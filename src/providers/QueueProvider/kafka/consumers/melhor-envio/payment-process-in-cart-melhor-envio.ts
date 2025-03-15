@@ -9,7 +9,7 @@ import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-reposi
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { KafkaProducer } from "../../kafka-producer";
-import { KafkaConsumerPayment } from "../../kafka-consumer-payment";
+import { KafkaConsumerPaymentToLabel } from "../../kafka-consumer-payment";
 import { Status } from "@prisma/client";
 import { AppError } from "@/usecases/errors/app-error";
 
@@ -22,7 +22,7 @@ interface IPaymentProcessInCartMelhorEnvio {
     freightId: string;
 }
 export class PaymentProcessInCartMelhorEnvio {
-    private kafkaConsumer: KafkaConsumerPayment;
+    private kafkaConsumer: KafkaConsumerPaymentToLabel;
     private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
@@ -31,7 +31,7 @@ export class PaymentProcessInCartMelhorEnvio {
     private orderRepository: IOrderRepository;
 
     constructor() {
-        this.kafkaConsumer = new KafkaConsumerPayment();
+        this.kafkaConsumer = new KafkaConsumerPaymentToLabel();
         this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();

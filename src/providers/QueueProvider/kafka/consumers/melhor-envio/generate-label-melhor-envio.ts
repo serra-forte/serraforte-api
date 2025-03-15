@@ -9,7 +9,7 @@ import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-reposi
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { KafkaProducer } from "../../kafka-producer";
-import { KafkaConsumerGenerateFreight } from "../../kafka-consumer-generate-label";
+import { KafkaConsumerGenerateLabel } from "../../kafka-consumer-generate-label";
 import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
 
@@ -18,7 +18,7 @@ export interface IGenerateLabelLink {
     freightId: string;
 }
 export class GenerateFreightMelhorEnvio {
-    private kafkaConsumer: KafkaConsumerGenerateFreight;
+    private kafkaConsumer: KafkaConsumerGenerateLabel;
     private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
@@ -27,7 +27,7 @@ export class GenerateFreightMelhorEnvio {
     private orderRepository: IOrderRepository;
 
     constructor() {
-        this.kafkaConsumer = new KafkaConsumerGenerateFreight();
+        this.kafkaConsumer = new KafkaConsumerGenerateLabel();
         this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();

@@ -26,8 +26,10 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       });
 
       if (response.status === 200) {
+        console.log(response.data)
         return response.data;
       }else{
+        console.log(response.data)
         return null
       }
     } catch (error: any) {
@@ -65,8 +67,10 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       });
 
       if (response.status === 200) {
+        console.log(response.data)
         return response.data;
       }else{
+        console.log(response.data)
         return null
       }
     } catch (error: any) {
@@ -105,12 +109,13 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       });
 
       if (response.status === 200) {
+        console.log(response.data)
         return response.data;
       }else{
+        console.log(response.data)
         return null
       }
     } catch (error: any) {
-      console.warn(JSON.stringify(error.response.data, null, 2))
       // * Renovar o token caso seja o problema de token expirado
       if (error instanceof AxiosError && error.response?.status === 401) {
         console.log('Token expirado, renovando...');

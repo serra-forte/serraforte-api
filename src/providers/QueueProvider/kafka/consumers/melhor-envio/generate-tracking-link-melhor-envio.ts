@@ -46,7 +46,6 @@ export class GenerateTrackingLinkMelhorEnvio {
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer - Generate Tracking Link] Mensagem recebida:', parsedMessage);
 
                     if (!parsedMessage) return;
 

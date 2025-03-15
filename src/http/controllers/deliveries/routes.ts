@@ -3,6 +3,7 @@ import { Authorize } from "../deliveries/melhor-envio/authorize/authorize-melhor
 import { Authenticate } from "../deliveries/melhor-envio/authenticate/authenticate-melhor-envio-controller";
 import { ShipmentCalculate } from "./melhor-envio/shipment-calculate/shipment-calculate-melhor-envio";
 import { verifyTokenJWT } from "@/http/middlewares/verify-token-jwt";
+import { WebHookGetStatusLabel } from "./melhor-envio/webhooks/get-status-label-controller";
 
 export async function deliveriesRoutes(fastifyApp: FastifyInstance) {
     // ===== Melhor Envio =====
@@ -19,4 +20,9 @@ export async function deliveriesRoutes(fastifyApp: FastifyInstance) {
             verifyTokenJWT        
         ],
     }, ShipmentCalculate)
+
+    // ===== Webhooks =====
+    fastifyApp.post('/melhor-envio/webhooks/get/status/label', {
+        onRequest: []
+    }, WebHookGetStatusLabel)
 }

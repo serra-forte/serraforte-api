@@ -55,47 +55,14 @@ export class GenerateTrackingLinkMelhorEnvio {
                     }
 
                     const objectTracking = Object.values(responseShipmentTracking);
-                    if (objectTracking[0].status !== 'posted') {
-                        const isPosted = await this.checkStatusLabel(parsedMessage.orderId, objectTracking[0].id);
-                        if (isPosted) {
-                            console.info('[Consumer - Generate Tracking Link] Status da etiqueta gerada: posted');
-                            const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0].tracking}`;
-                            await this.orderRepository.saveTrackingLink(parsedMessage.orderId, trackingLink);
-                        }
-                    }
+
+                    const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0].tracking}`;
+                    await this.orderRepository.saveTrackingLink(parsedMessage.orderId, trackingLink);
                 } catch (error) {
                     console.error('[Consumer - Generate Tracking Link] Erro ao processar mensagem:', error);
                 }
             },
         });
-    }
-
-    
-    private async checkStatusLabel(orderId: string, shipmentId: string, tentativas = 5) {
-        for (let i = 0; i < tentativas; i++) {
-            console.log(`[Check Status Label] Tentativa ${i + 1} de ${tentativas} para shipmentId: ${shipmentId}`);
-            const responseShipmentTracking = await this.melhorEnvioProvider.getShipmentTracking(shipmentId);
-
-            if (!responseShipmentTracking) {
-                console.error('[Check Status Label] Erro ao buscar informações da etiqueta. Tentando novamente...');
-                continue;
-            }
-
-            const objectTracking = Object.values(responseShipmentTracking);
-            console.log(`[Check Status Label] Status atual da etiqueta: ${objectTracking[0].status}`);
-            
-            if (objectTracking[0].status === 'posted') {
-                await this.orderRepository.updateStatus(orderId, Status.TRACK_LINK_GENERATED);
-                return true;
-            }
-            
-            console.log('[Check Status Label] Aguardando 5 minutos antes da próxima tentativa...');
-            await new Promise((resolve) => setTimeout(resolve, 5 * 60 * 1000));
-        }
-
-        console.warn(`⚠️ Atenção! A etiqueta ${shipmentId} ainda não foi gerada.`);
-        await this.orderRepository.updateStatus(orderId, Status.BROKE_GENERATED_LABEL);
-        return false;
     }
 }
 

@@ -38,6 +38,8 @@ export class WebHookGetStatusLabelUseCase {
         event,
         data,
     }: IRequestStatusLabel): Promise<void> {
+        console.log('Event:', event);
+        console.log('Data:', data);
         const delivery = await this.deleiveryRepository.findByFreightId(data.id)
 
         if (!delivery) {

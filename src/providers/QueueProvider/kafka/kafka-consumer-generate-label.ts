@@ -4,7 +4,7 @@ export class KafkaConsumerGenerateFreight {
     async execute(topic: string) {
         // criar consumer com um grupo de id para ficar escutando as mensagens
         const consumer = kafka.consumer({
-            groupId: 'APP_SERRAFORTE_GENERATE_FREIGHT',
+            groupId: 'APP_SERRAFORTE_GENERATE_LABEL',
         })
 
         // criar conexão com o consumer

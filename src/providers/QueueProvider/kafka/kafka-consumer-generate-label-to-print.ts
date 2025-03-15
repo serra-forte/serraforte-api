@@ -4,7 +4,7 @@ export class KafkaConsumerGenerateLabelLink {
     async execute(topic: string) {
         // criar consumer com um grupo de id para ficar escutando as mensagens
         const consumer = kafka.consumer({
-            groupId: 'APP_SERRAFORTE_GENERATE_LABEL_LINK',
+            groupId: 'APP_SERRAFORTE_GENERATE_LABEL_TO_PRINT',
         })
 
         // criar conexão com o consumer

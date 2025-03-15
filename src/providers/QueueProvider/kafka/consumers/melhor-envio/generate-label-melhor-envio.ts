@@ -9,7 +9,7 @@ import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-reposi
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { KafkaProducer } from "../../kafka-producer";
-import { KafkaConsumerGenerateFreight } from "../../kafka-consumer-generate-freight";
+import { KafkaConsumerGenerateFreight } from "../../kafka-consumer-generate-label";
 import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
 

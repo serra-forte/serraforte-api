@@ -4,7 +4,7 @@ export class KafkaConsumerPayment {
     async execute(topic: string) {
         // criar consumer com um grupo de id para ficar escutando as mensagens
         const consumer = kafka.consumer({
-            groupId: 'APP_SERRAFORTE_PAYMENT',
+            groupId: 'APP_SERRAFORTE_GENERATE_TRACKING_LINK',
         })
 
         // criar conexão com o consumer

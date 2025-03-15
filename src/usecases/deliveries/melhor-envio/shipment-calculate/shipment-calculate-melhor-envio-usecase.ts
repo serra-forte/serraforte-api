@@ -96,6 +96,10 @@ export class ShipmentCalculateDeliveriesUseCase {
             }
         }
 
+        const findLabel = await this.melhorEnvioProvider.getShipmentTracking('9e703ac2-2c97-4c28-88cf-e88e4925638c')
+
+        console.log(findLabel)
+
         return shipmentResults;
     }
 }

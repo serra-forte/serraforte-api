@@ -7,6 +7,7 @@ import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider'
 import { IUsersRepository } from '@/repositories/interfaces/interface-users-repository';
 
 export class MelhorEnvioProvider implements IMelhorEnvioProvider {
+  private accessToken: string | null = null;
   constructor(
     private railwayProvider: IRailwayProvider, 
     private mailProvider: IMailProvider,
@@ -230,6 +231,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
           { name: 'MELHOR_ENVIO_ACCESS_TOKEN', value: response.data.access_token }
         ]);
 
+        this.accessToken = response.data.access_token;
          // Atualizar as variáveis no processo atual
         //  env.MELHOR_ENVIO_REFRESH_TOKEN = response.data.refresh_token;
         //  env.MELHOR_ENVIO_ACCESS_TOKEN = response.data.access_token;

@@ -66,6 +66,13 @@ export class WebHookGetStatusLabelUseCase {
                     orderId: delivery.orderId
                 })
                 break;
+            case 'order.posted':
+                // Enviar mensagem para gerar link da etiqueta
+                await this.kafkaProducer.execute('GENERATE_TRACKING_LINK', {
+                    freightId: data.id,
+                    orderId: delivery.orderId
+                })
+                break;
             default:
                 console.log('Evento desconhecido:', event);
                 break;

@@ -156,7 +156,6 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
         return null
       }
     } catch (error: any) {
-      console.warn(JSON.stringify(error.response.data, null, 2))
       // * Renovar o token caso seja o problema de token expirado
       if (error instanceof AxiosError && error.response?.status === 401) {
         console.log('Token expirado, renovando...');

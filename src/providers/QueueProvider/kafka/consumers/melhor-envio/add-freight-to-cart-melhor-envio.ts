@@ -159,6 +159,7 @@ export class AddFreightToCartMelhorEnvio {
                         return;
                     }
 
+                    console.log(freightInCart)
                     // Atualizar status do pedido e informações relacionadas
                     await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);
 

@@ -10,7 +10,7 @@ export class KafkaConsumerGenerateFreight {
         // criar conexão com o consumer
         await consumer.connect()
         
-        console.info('Consumer generate freight connected. . .')
+        console.info('Consumer generate label connected. . .')
 
         // assianr para ficar escutando as mensagens do topico assinado
         await consumer.subscribe({ topic, fromBeginning: true })

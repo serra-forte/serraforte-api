@@ -11,12 +11,12 @@ import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repos
 import { KafkaProducer } from "../../kafka-producer";
 import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
-import { KafkaConsumerGenerateLabelLink } from "../../kafka-consumer-generate-label-to-print";
 import { env } from "@/env";
 import { IGenerateLabelLink } from "./generate-label-melhor-envio";
+import { KafkaConsumerGenerateTrackingLink } from "../../kafka-consumer-generate-tracking-link";
 
 export class VerifyStatusLabelMelhorEnvio {
-    private kafkaConsumer: KafkaConsumerGenerateLabelLink;
+    private kafkaConsumer: KafkaConsumerGenerateTrackingLink;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
     private usersRepository: IUsersRepository;
@@ -25,7 +25,7 @@ export class VerifyStatusLabelMelhorEnvio {
     private kafkaProducer: KafkaProducer;
 
     constructor() {
-        this.kafkaConsumer = new KafkaConsumerGenerateLabelLink();
+        this.kafkaConsumer = new KafkaConsumerGenerateTrackingLink();
         this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
@@ -44,13 +44,13 @@ export class VerifyStatusLabelMelhorEnvio {
         createdConsumer.run({
             eachMessage: async ({ message }) => {
                 if (!message || !message.value) {
-                    console.warn('[Consumer - Verify Status Label] Mensagem vazia ou inválida:');
+                    console.warn('[Consumer - Generate Tracking Link] Mensagem vazia ou inválida:');
                     return;
                 }
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer - Verify Status Label] Mensagem recebida:');
+                    console.log('[Consumer - Generate Tracking Link] Mensagem recebida:');
 
                     if (!parsedMessage) {
                         return;
@@ -75,9 +75,7 @@ export class VerifyStatusLabelMelhorEnvio {
                         const isPosted = await this.checkStatusLabel(parsedMessage.orderId,objectTracking[0].id)
 
                        if(isPosted){
-                        await this.kafkaProducer.execute('GENERATE_TRACKING_LINK', infoToGenerateLabelLink)
-
-                        console.info('[Consumer - Verify Status Label] Status da etiqueta gerada: posted');
+                        console.info('[Consumer - Generate Tracking Link] Status da etiqueta gerada: posted');
 
                         const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0].tracking}`
                      
@@ -86,7 +84,7 @@ export class VerifyStatusLabelMelhorEnvio {
                     }
                  
                 } catch (error) {
-                    console.error('[Consumer - Verify Status Label ] Erro ao processar mensagem:', error);
+                    console.error('[Consumer - Generate Tracking Link ] Erro ao processar mensagem:', error);
                 }
             },
         });

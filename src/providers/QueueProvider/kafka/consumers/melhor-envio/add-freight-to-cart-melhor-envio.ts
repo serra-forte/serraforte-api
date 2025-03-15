@@ -12,7 +12,7 @@ import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 import { IUserRelations } from "@/dtos/user-relations.dto";
 import { Box, Status } from "@prisma/client";
 import { KafkaProducer } from "../../kafka-producer";
-import { KafkaConsumerFreight } from "../../kafka-consumer-freight";
+import { KafkaConsumerFreight } from "../../kafka-consumer-add-freight-to-cart";
 
 interface IRelationBox {
     box: Box

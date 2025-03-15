@@ -10,7 +10,7 @@ export class KafkaConsumerGenerateLabelLink {
         // criar conexão com o consumer
         await consumer.connect()
         
-        console.info('Consumer generate label link connected. . .')
+        console.info('Consumer generate label to print connected. . .')
 
         // assianr para ficar escutando as mensagens do topico assinado
         await consumer.subscribe({ topic, fromBeginning: true })

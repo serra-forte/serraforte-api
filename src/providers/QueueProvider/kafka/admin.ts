@@ -20,7 +20,7 @@ export class KafkaAdmin{
             topics: [
                 {
                 topic,
-                numPartitions: 3,
+                numPartitions: 4,
                 replicationFactor: 1
             }]
          });

@@ -70,7 +70,7 @@ export class WebHookGetStatusLabelUseCase {
                 break;
             case 'order.posted':
                 // Enviar mensagem para gerar etiqueta
-                await this.kafkaProducer.execute('GENERATE_LABEL', {
+                await this.kafkaProducer.execute('GENERATE_TRACKING_LINK', {
                     freightId: data.id,
                     orderId: delivery.orderId
                 })

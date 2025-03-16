@@ -155,7 +155,7 @@ export class AddFreightToCartMelhorEnvio {
                             receipt: false,
                             reverse: false,
                             invoice: {
-                                key: "123456789"
+                                key: "35190812345678000123550010000000011234567890"
                             }
                         },
                         

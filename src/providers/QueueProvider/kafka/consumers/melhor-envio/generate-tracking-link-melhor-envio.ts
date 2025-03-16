@@ -58,6 +58,8 @@ export class GenerateTrackingLinkMelhorEnvio {
 
                     const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0].tracking}`;
                     await this.orderRepository.saveTrackingLink(parsedMessage.orderId, trackingLink);
+
+                    console.info('[Consumer - Generate Tracking Link] Link do frete gerado com sucesso');
                 } catch (error) {
                     console.error('[Consumer - Generate Tracking Link] Erro ao processar mensagem:', error);
                 }

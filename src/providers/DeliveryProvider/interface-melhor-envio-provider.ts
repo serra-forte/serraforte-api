@@ -129,12 +129,17 @@ export interface IRequestSendFreightToCart {
     width: number; 
   }
 
+  export interface Invoice{
+    key: string
+  }
+
   export interface IShippingOptions {
     insurance_value?: number; 
     receipt: boolean; 
     own_hand: boolean;
     reverse: boolean; 
     non_commercial: boolean; 
+    invoice?: Invoice;
   }
 
   export interface IResponseSendFreightToCart {

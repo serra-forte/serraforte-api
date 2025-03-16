@@ -61,18 +61,19 @@ export class WebHookGetStatusLabelUseCase {
                     orderId: delivery.orderId
                 })
                 break;
-            case 'order.generated':
-                // Enviar mensagem para gerar link da etiqueta
-                await this.kafkaProducer.execute('GENERATE_LABEL_TO_PRINT', {
-                    freightId: data.id,
-                    orderId: delivery.orderId
-                })
-                break;
+            // case 'order.generated':
+            //     // Enviar mensagem para gerar link da etiqueta
+            //     await this.kafkaProducer.execute('GENERATE_LABEL_TO_PRINT', {
+            //         freightId: data.id,
+            //         orderId: delivery.orderId
+            //     })
+            //     break;
             case 'order.posted':
                 // Enviar mensagem para gerar etiqueta
                 await this.kafkaProducer.execute('GENERATE_TRACKING_LINK', {
                     freightId: data.id,
-                    orderId: delivery.orderId
+                    orderId: delivery.orderId,
+                    self_tracking: data.self_tracking
                 })
                 break;
             default:

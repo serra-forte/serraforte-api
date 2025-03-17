@@ -48,7 +48,6 @@ export interface IRequestCreateOrderWithPix {
         id: number
         name: string
         price: number
-        delivery_time: number
         company: {
             id: number
             name: string
@@ -84,8 +83,6 @@ export class CreateOrderWithPixUsecase {
         private asaasProvider: IAsaasProvider,
         private mailProvider: IMailProvider,
         private discountCoupon: IDiscountCouponsRepository,
-        private melhorEnvioProvider: MelhorEnvioProvider,
-        private deliveryRepository: IDeliveryRepository
     ) {}
 
     async execute({

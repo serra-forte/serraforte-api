@@ -11,7 +11,15 @@ export async function CreateOrderWithAsaas(request: FastifyRequest, reply: Fasti
     try {
         const orderSchemaBody = z.object({
             billingType: z.enum(['CREDIT_CARD', 'PIX', 'BOLETO']),
-            freight: z.string(),
+            freight: z.object({
+                id: z.number(),
+                price: z.number().nonnegative(),
+                name: z.string(),
+                company: z.object({
+                    id: z.number(),
+                    name: z.string(),
+                })
+            }),
             creditCard: z.object({
                 holderName: z.string().optional(),
                 number: z.string().optional(),

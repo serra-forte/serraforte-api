@@ -18,7 +18,15 @@ import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementation
 
 export interface IRequestCreateOrderWithBoleto {
     userId: string
-    freight: string
+    freight: {
+        id: number
+        name: string
+        price: number
+        company: {
+            id: number
+            name: string
+        }
+    }
     remoteIp: string
     withdrawStore: boolean
     coupons?: {
@@ -57,7 +65,7 @@ export class CreateOrderWithBoletoUsecase {
         address,
         coupons,
         withdrawStore,
-        freight: freightName
+        freight
     }: IRequestCreateOrderWithBoleto): Promise<IOrderRelationsDTO> {
         // buscar usuario pelo id
         const findUserExist = await this.userRepository.findById(userId) as unknown as IUserRelations

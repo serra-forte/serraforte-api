@@ -22,7 +22,6 @@ export interface IRequestCreateOrderWithCreditCard {
         id: number
         name: string
         price: number
-        delivery_time: number
         company: {
             id: number
             name: string

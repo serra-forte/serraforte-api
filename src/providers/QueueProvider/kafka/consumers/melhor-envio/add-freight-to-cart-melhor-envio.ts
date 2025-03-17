@@ -77,26 +77,87 @@ export class AddFreightToCartMelhorEnvio {
                         return;
                     }
 
-                    let boxes = []
+                    // * Determinar qual tipo da transportadora porque se for Correio so pode enviar um volume por vez.
+                    if(order.delivery.companyName.includes('Correios')) {
+                        const boxToCorreios = order.boxes
+                        .map(relation => (relation as unknown as IRelationBox).box)
+                        .find(box => box.companyName === 'Correios');
 
-                    for(let relationWithBox of order.boxes){
-                        const {box} = relationWithBox as unknown as IRelationBox;
+                        if(!boxToCorreios) {
+                            throw new Error('Box not found')
+                        }
 
-                        boxes.push(box)
+                        for(let item of order.items) {
+
+                            const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
+                                from: {
+                                    name: shopkeeper.name,
+                                    phone: shopkeeper.phone,
+                                    email: shopkeeper.email,
+                                    document: shopkeeper.cpf as string,
+                                    state_register: '12345678910',
+                                    address: shopkeeper.address.street,
+                                    complement: shopkeeper.address.complement as string,
+                                    number: String(shopkeeper.address.num),
+                                    district: shopkeeper.address.neighborhood as string,
+                                    city: shopkeeper.address.city,
+                                    country_id: "BR", // Brasill
+                                    postal_code: shopkeeper.address.zipCode as string,
+                                    state_abbr: shopkeeper.address.state as string,
+                                    note: "order for delivery"
+                                },
+                                to: {
+                                    name: customer.name,
+                                    email: customer.email,
+                                    phone: customer.phone,
+                                    city: order.delivery.address.city as string,
+                                    state_abbr: order.delivery.address.state as string,
+                                    postal_code: order.delivery.address.zipCode as string,
+                                    address: order.delivery.address.street as string,
+                                    country_id: "BR", // Brasil
+                                    number: String(order.delivery.address.num),
+                                    complement: order.delivery.address.complement as string,
+                                    district: order.delivery.address.neighborhood as string,
+                                    state_register: '123456789',
+                                    document: customer.cpf as string,
+                                    note: "order for delivery"
+                                },
+                                service: Number(order.delivery.serviceId),
+                                products: [
+                                    {
+                                        quantity: Number(item.quantity),
+                                        name: item.name as string,
+                                        unitary_value: Number(item.price), 
+                                    }
+                                ],
+                                volumes: [
+                                    {
+                                        height: Number(boxToCorreios.height),
+                                        width: Number(boxToCorreios.width),
+                                        length: Number(boxToCorreios.length),
+                                        weight: Number(boxToCorreios.weight),
+                                    }
+                                ],
+                                options:{
+                                    insurance_value: order.items.reduce((acc, item) => acc + Number(item.price) * Number(item.quantity), 0),
+                                    non_commercial: true,
+                                    own_hand: false,
+                                    receipt: false,
+                                    reverse: false,
+                                    // invoice: {
+                                    //     key: "35190812345678000123550010000000011234567890"
+                                    // }
+                                },
+                                
+                            });
+
+                        }
+
                     }
 
-                    // * Determinar qual caixa vai ser usada
-                    // if(order.delivery.companyName.includes('Correios')) {
-                    //     // Correios
-                        // let rightBox = {}
-
-                        // for(let box of boxes) {
-                        //     rightBox = Object.assign({}, box)
-                        // }
-
-                    // }
-
-                    // * Determinar qual tipo da transportadora porque se for Correio so pode enviar um volume por vez.
+                   
+                    const boxToNotCorreios = order.boxes
+                    .map(relation => (relation as unknown as IRelationBox).box)
 
                     // Lógica de envio do frete
                     const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
@@ -140,7 +201,7 @@ export class AddFreightToCartMelhorEnvio {
                                 unitary_value: Number(item.price),
                             }
                         }),
-                        volumes: boxes.map(box => {
+                        volumes: boxToNotCorreios.map(box => {
                             return{
                                 length: Number(box.length),
                                 width: Number(box.width),

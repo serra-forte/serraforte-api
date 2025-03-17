@@ -13,7 +13,7 @@ export interface IOrderRelationsDTO{
     shoppingCart: ShoppingCart
     boxes: Box[]
     delivery: {
-        id: true,
+        id: string,
         orderId: string,
         userId: string,
         serviceId: string,

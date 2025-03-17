@@ -310,19 +310,12 @@ model Delivery {
   deliveryMan User?   @relation(fields: [userId], references: [id])
   userId      String?
 
-  serviceId Decimal? @map("service_id")
-  serviceName String? @map("service_name")
-
-  freightId String? @unique  @map("freight_id")
-  freightLink String? @map("freight_link")
-  trackingLink String? @map("tracking_link")
-  companyName String? @map("company_name")
-   
+  freights Freight[]
+  
   shippingDate     DateTime? @map("shipping_date") @db.Timestamptz()
   deliveryDate     DateTime? @map("delivery_date") @db.Timestamptz()
   longitude        Decimal?
   latitude         Decimal?
-  price            Decimal?
   receiverDocument String?
   receiverName     String?
   address          Address?
@@ -471,4 +464,22 @@ model BoxInProduct{
   boxId String
 
   @@map("boxes_in_products")
+}
+
+model Freight{
+  id          String  @id @default(uuid())
+
+  delivery Delivery @relation(fields: [deliveryId], references: [id])
+  deliveryId String
+
+  serviceId Decimal? @map("service_id")
+  serviceName String? @map("service_name")
+  price            Decimal?
+
+  freightId String? @unique  @map("freight_id")
+  freightLink String? @map("freight_link")
+  trackingLink String? @map("tracking_link")
+  companyName String? @map("company_name")
+
+  @@map("freights")
 }

@@ -15,6 +15,9 @@ import { KafkaProducer } from "../../kafka-producer";
 import { KafkaConsumerFreight } from "../../kafka-consumer-freight";
 import { IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
 import { PrismaDeliveryRepository } from "@/repositories/prisma/prisma-deliveries-repository";
+import { AppError } from "@/usecases/errors/app-error";
+import { IFreightsRepository } from "@/repositories/interfaces/interface-freights-repository";
+import { PrismaFreightRepository } from "@/repositories/prisma/prisma-freights-repository";
 
 interface IRelationBox {
     box: Box
@@ -28,6 +31,7 @@ export class AddFreightToCartMelhorEnvio {
     private melhorEnvioProvider: IMelhorEnvioProvider;
     private orderRepository: IOrderRepository;
     private deliveryProvider: IDeliveryRepository
+    private freightRespository:  IFreightsRepository
 
     constructor() {
         this.kafkaConsumer = new KafkaConsumerFreight();
@@ -41,6 +45,7 @@ export class AddFreightToCartMelhorEnvio {
         );
         this.orderRepository = new PrismaOrderRepository();
         this.deliveryProvider = new PrismaDeliveryRepository()
+        this.freightRespository = new PrismaFreightRepository()
     }
 
     async execute() {
@@ -78,13 +83,13 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     // * Determinar qual tipo da transportadora porque se for Correio so pode enviar um volume por vez.
-                    if(order.delivery.companyName.includes('Correios')) {
+                    if(order.delivery.companyName === 'Correios') {
                         const boxToCorreios = order.boxes
                         .map(relation => (relation as unknown as IRelationBox).box)
                         .find(box => box.companyName === 'Correios');
 
                         if(!boxToCorreios) {
-                            throw new Error('Box not found')
+                            throw new AppError('Box not found')
                         }
 
                         for(let item of order.items) {
@@ -151,7 +156,18 @@ export class AddFreightToCartMelhorEnvio {
                                 
                             });
 
+                            if(!freightInCart) {
+                                throw new AppError('Freight not added to cart')
+                            }
+
+                            await this.freightRespository.save(order.delivery.id, freightInCart.id);
+                            
+                            // Atualizar status do pedido e informações relacionadas
+                            await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);
                         }
+
+                        console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
+                        return
 
                     }
 
@@ -227,7 +243,7 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     // Adicionar frete ao pedido
-                    await this.deliveryProvider.save(order.id, freightInCart.id);
+                    await this.freightRespository.save(order.delivery.id, freightInCart.id);
                     
                     // Atualizar status do pedido e informações relacionadas
                     await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);

@@ -360,13 +360,16 @@ export class CreateOrderWithPixUsecase {
                 // description,
                 delivery: {
                     create: {
-                        serviceId: deliveryService[0].serviceId,
-                        serviceName: deliveryService[0].serviceName,
-                        deliveryDate: dateNow,
-                        price: deliveryService[0].price,
-                        companyName: deliveryService[0].companyName,
                         address: {
                             create: address ? address as Address : undefined
+                        },
+                        freights:{
+                            create:{
+                                companyName: freight.company.name,
+                                serviceId: freight.id,
+                                serviceName: freight.name,
+                                price: freight.price,
+                            }
                         }
                     }
                 },

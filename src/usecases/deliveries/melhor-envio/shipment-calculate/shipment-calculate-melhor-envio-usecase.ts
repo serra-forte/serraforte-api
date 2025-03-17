@@ -15,6 +15,10 @@ interface IResponseShipmentCalculate{
     name: string
     price: string
     delivery_time: number
+    company: {
+        id: number
+        name: string
+    }
 }
 export class ShipmentCalculateDeliveriesUseCase {
     constructor(
@@ -72,7 +76,8 @@ export class ShipmentCalculateDeliveriesUseCase {
                         id: freight.id,
                         name: freight.name,
                         price: freight.price,
-                        delivery_time: freight.delivery_time
+                        delivery_time: freight.delivery_time,
+                        company: freight.company
                     })
                 }
             } else {
@@ -89,7 +94,8 @@ export class ShipmentCalculateDeliveriesUseCase {
                             id: freight.id,
                             name: freight.name,
                             price: freight.price,
-                            delivery_time: freight.delivery_time
+                            delivery_time: freight.delivery_time,
+                            company: freight.company
                         })
                     }
                 }

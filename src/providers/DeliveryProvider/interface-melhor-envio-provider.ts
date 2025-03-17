@@ -87,7 +87,7 @@ export interface IResponseCalculateShipping {
     custom_delivery_range: IDeliveryRange;
     packages: IPackage[];
     additional_services?: IAdditionalServices | null;
-    company?: ICompany | null;
+    company: ICompany;
 }
 
 export interface IRequestSendFreightToCart {

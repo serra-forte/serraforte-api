@@ -18,7 +18,16 @@ import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementation
 
 export interface IRequestCreateOrderWithCreditCard {
     userId: string
-    freight: string
+    freight: {
+        id: number
+        name: string
+        price: number
+        delivery_time: number
+        company: {
+            id: number
+            name: string
+        }
+    }
     remoteIp: string
     installmentCount?: number | null,
     withdrawStore: boolean
@@ -77,7 +86,7 @@ export class CreateOrderWithCreditCardUsecase {
         address,
         withdrawStore,
         coupons,
-        freight:freightName
+        freight
     }: IRequestCreateOrderWithCreditCard): Promise<IOrderRelationsDTO> {
         // buscar usuario pelo id
         const findUserExist = await this.userRepository.findById(userId) as unknown as IUserRelations
@@ -230,35 +239,6 @@ export class CreateOrderWithCreditCardUsecase {
                 walletId: findShopKeeperExist.asaasWalletId,
                 fixedValue: totalShopKeeper
             })
-
-              // chamar melhor envio e enviar as dimentonses do produto para calcular o frete
-              const response = await this.melhorEnvioProvider.shipmentCalculate({
-                to: {
-                    postal_code: findUserExist.address.zipCode as string
-                },
-                from:{
-                    postal_code: findShopKeeperExist.address.zipCode as string
-                },
-                products: arrayShopKeeper.map(item => {
-                    return {
-                        height: Number(item.height),
-                        width: Number(item.width),
-                        length: Number(item.length),
-                        weight: Number(item.weight),
-                        quantity: Number(item.quantity),
-                        id: item.id,
-                        insurance_value: 0,
-                    }
-                })
-            })
-            
-            // buscar frete pelo nome dentro do response da melhor envio
-            const freightService = response.find(freightService => freightService.name === freightName)
-            
-            // validar se o frete foi encontrado
-            if(!freightService) {
-                throw new AppError("Frete não encontrado", 404)
-            }
 
             // converter o valor do frete para number
             const freightValue = Number(freightService.price)

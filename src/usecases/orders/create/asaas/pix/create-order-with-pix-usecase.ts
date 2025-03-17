@@ -20,6 +20,8 @@ interface IDeliveryService{
     serviceId: number
     serviceName: string
     shopkeeperId: string
+    price: number
+    companyName: string
 }
 interface IITemRelation{
     id: string
@@ -42,7 +44,16 @@ export interface IFreight{
 export interface IRequestCreateOrderWithPix {
     userId: string
     remoteIp: string
-    freight: string
+    freight: {
+        id: number
+        name: string
+        price: number
+        delivery_time: number
+        company: {
+            id: number
+            name: string
+        }
+    }
     withdrawStore: boolean
     coupons?: {
         code?: string | null
@@ -83,7 +94,7 @@ export class CreateOrderWithPixUsecase {
         address,
         withdrawStore,
         coupons,
-        freight:freightName
+        freight
     }: IRequestCreateOrderWithPix): Promise<IOrderRelationsDTO> {
         // buscar usuario pelo id
         const findUserExist = await this.userRepository.findById(userId) as unknown as IUserRelations
@@ -231,9 +242,6 @@ export class CreateOrderWithPixUsecase {
                 
             }
 
-            // aplicar calculo de desconto no total menos o desconto para cada lojista
-            totalShopKeeper = totalShopKeeper - paymentFeeDicount
-
             // adicionar total de cada lojista no arrayPaymentWalletToShopKeeper
             arrayToSplitToMembers.push({
                 userId: findShopKeeperExist.id,
@@ -241,52 +249,21 @@ export class CreateOrderWithPixUsecase {
                 fixedValue: totalShopKeeper
             })
 
-            // chamar melhor envio e enviar as dimentonses do produto para calcular o frete
-            const response = await this.melhorEnvioProvider.shipmentCalculate({
-            to: {
-                postal_code: findUserExist.address.zipCode as string
-            },
-            from:{
-                postal_code: findShopKeeperExist.address.zipCode as string
-            },
-            products: arrayShopKeeper.map(item => {
-                return {
-                    height: Number(item.height),
-                    width: Number(item.width),
-                    length: Number(item.length),
-                    weight: Number(item.weight),
-                    quantity: Number(item.quantity),
-                    id: item.id,
-                    insurance_value: 0,
-                }
-            })            
-        })
-        
-        
-        // buscar frete pelo nome dentro do response da melhor envio
-        const freightService = response.find(freightService => freightService.name === freightName)
-        
-        // validar se o frete foi encontrado
-        if(!freightService) {
-            throw new AppError("Frete não encontrado", 404)
-        }
+            deliveryService.push({
+                shopkeeperId: findShopKeeperExist.id,
+                serviceId: freight.id,
+                serviceName: freight.name,
+                companyName: freight.company.name,
+                price: freight.price
+            })
 
-        // converter o valor do frete para number
-        const freightValue = Number(freightService.price)
+            // adicionar o valor do frete ao total do pedido
+            total += freight.price
 
-        deliveryService.push({
-            shopkeeperId: findShopKeeperExist.id,
-            serviceId: freightService.id,
-            serviceName: freightName,
-        })
-
-        // adicionar o valor do frete ao total do pedido
-        total += freightValue
-
-        valuesToFreightPerShopkeeper.push({
-            userId: findShopKeeperExist.id,
-            freight: freightValue
-        })
+            valuesToFreightPerShopkeeper.push({
+                userId: findShopKeeperExist.id,
+                freight: freight.price
+            })
     }
 
         // calcular cupom de desconto
@@ -322,12 +299,6 @@ export class CreateOrderWithPixUsecase {
             value: total,
             description: 'Payment of order',
             remoteIp: String(remoteIp),
-            split: arrayToSplitToMembers.map(split =>{
-                return{
-                    fixedValue: split.fixedValue,
-                    walletId: split.walletId
-                } as AsaasPaymentWallet
-            }) ?? null
         }) as IAsaasPayment
         
         if (!paymentAsaas) {
@@ -392,10 +363,11 @@ export class CreateOrderWithPixUsecase {
                 // description,
                 delivery: {
                     create: {
-                        serviceId: deliveryService.find(service => service.shopkeeperId === itemsShopKeeper[0].userId)?.serviceId,
-                        serviceName: deliveryService.find(service => service.shopkeeperId === itemsShopKeeper[0].userId)?.serviceName,
+                        serviceId: deliveryService[0].serviceId,
+                        serviceName: deliveryService[0].serviceName,
                         deliveryDate: dateNow,
-                        price: valuesToFreightPerShopkeeper.find(item => item.userId === itemsShopKeeper[0].userId)?.freight,
+                        price: deliveryService[0].price,
+                        companyName: deliveryService[0].companyName,
                         address: {
                             create: address ? address as Address : undefined
                         }

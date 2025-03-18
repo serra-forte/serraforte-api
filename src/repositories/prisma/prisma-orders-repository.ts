@@ -4,35 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 
 export class PrismaOrderRepository implements IOrderRepository {
-    async saveTrackingLink(id: string, trackingCode: string): Promise<void> {
-        await prisma.order.update({
-            where: {
-                id
-            },
-            data: {
-                delivery:{
-                    update: {
-                        trackingLink: trackingCode
-                    }
-                },
-            }
-        })
-    }
-    async updateLabelDelivery(id: string, labelId?: string | null, labelUrl?: string | null): Promise<void> {
-        await prisma.order.update({
-            where: {
-                id
-            },
-            data: {
-                delivery:{
-                    update:{
-                        freightId: labelId,
-                        freightLink: labelUrl
-                    }
-                }
-            }
-        })
-    }
     async listByAsaasPaymentId(asaasPaymentId: string): Promise<IOrderRelationsDTO[]> {
         const orders = await prisma.order.findMany({
             where: {
@@ -65,14 +36,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select: {
                         id: true,
-                        serviceId: true,
-                        serviceName: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
-                        freightId: true,
-                        freightLink: true,
-                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -86,7 +52,6 @@ export class PrismaOrderRepository implements IOrderRepository {
                         },
                         latitude: true,
                         longitude: true,
-                        price: true,
                         createdAt: true,
                         address: true
                     }
@@ -186,14 +151,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select: {
                         id: true,
-                        serviceId: true,
-                        serviceName: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
-                        freightId: true,
-                        freightLink: true,
-                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -207,7 +167,6 @@ export class PrismaOrderRepository implements IOrderRepository {
                         },
                         latitude: true,
                         longitude: true,
-                        price: true,
                         createdAt: true,
                         address: true
                     }
@@ -269,14 +228,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
-                        serviceId: true,
-                        serviceName: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
-                        freightId: true,
-                        freightLink: true,
-                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -290,7 +244,6 @@ export class PrismaOrderRepository implements IOrderRepository {
                         },
                         latitude: true,
                         longitude: true,
-                        price: true,
                         createdAt: true,
                         address: true
                     }
@@ -336,14 +289,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
-                        serviceId: true,
-                        serviceName: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
-                        freightId: true,
-                        freightLink: true,
-                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -357,7 +305,6 @@ export class PrismaOrderRepository implements IOrderRepository {
                         },
                         latitude: true,
                         longitude: true,
-                        price: true,
                         createdAt: true,
                         address: true
                     }
@@ -422,14 +369,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
-                        serviceId: true,
-                        serviceName: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
-                        freightId: true,
-                        freightLink: true,
-                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -443,7 +385,6 @@ export class PrismaOrderRepository implements IOrderRepository {
                         },
                         latitude: true,
                         longitude: true,
-                        price: true,
                         createdAt: true,
                         address: true
                     }
@@ -506,14 +447,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
-                        serviceId: true,
-                        serviceName: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
-                        freightId: true,
-                        freightLink: true,
-                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -527,7 +463,6 @@ export class PrismaOrderRepository implements IOrderRepository {
                         },
                         latitude: true,
                         longitude: true,
-                        price: true,
                         createdAt: true,
                         address: true
                     }
@@ -571,14 +506,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
-                        serviceId: true,
-                        serviceName: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
-                        freightId: true,
-                        freightLink: true,
-                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -592,7 +522,6 @@ export class PrismaOrderRepository implements IOrderRepository {
                         },
                         latitude: true,
                         longitude: true,
-                        price: true,
                         createdAt: true,
                         address: true
                     }
@@ -639,14 +568,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
-                        serviceId: true,
-                        serviceName: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
-                        freightId: true,
-                        freightLink: true,
-                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -660,7 +584,6 @@ export class PrismaOrderRepository implements IOrderRepository {
                         },
                         latitude: true,
                         longitude: true,
-                        price: true,
                         createdAt: true,
                         address: true
                     }
@@ -723,14 +646,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
-                        serviceId: true,
-                        serviceName: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
-                        freightId: true,
-                        freightLink: true,
-                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -744,7 +662,6 @@ export class PrismaOrderRepository implements IOrderRepository {
                         },
                         latitude: true,
                         longitude: true,
-                        price: true,
                         createdAt: true,
                         address: true
                     }
@@ -805,14 +722,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
-                        serviceId: true,
-                        serviceName: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
-                        freightId: true,
-                        freightLink: true,
-                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -826,7 +738,6 @@ export class PrismaOrderRepository implements IOrderRepository {
                         },
                         latitude: true,
                         longitude: true,
-                        price: true,
                         createdAt: true,
                         address: true
                     }
@@ -874,14 +785,9 @@ export class PrismaOrderRepository implements IOrderRepository {
                 delivery: {
                     select:{
                         id: true,
-                        serviceId: true,
-                        serviceName: true,
                         orderId: true,
                         userId: true,
                         deliveryDate: true,
-                        freightId: true,
-                        freightLink: true,
-                        trackingLink: true,
                         shippingDate: true,
                         receiverDocument: true,
                         receiverName: true,
@@ -895,7 +801,6 @@ export class PrismaOrderRepository implements IOrderRepository {
                         },
                         latitude: true,
                         longitude: true,
-                        price: true,
                         createdAt: true,
                         address: true
                     }

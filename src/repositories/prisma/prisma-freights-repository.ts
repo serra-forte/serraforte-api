@@ -4,12 +4,9 @@ import { prisma } from "@/lib/prisma";
 
 export class PrismaFreightRepository implements IFreightsRepository {
     async save(deliveryId: string, {
-        companyName,
         freightId,
         freightLink,
         trackingLink,
-        serviceId,
-        serviceName
     }: ICreateFreight): Promise<void> {
         await prisma.freight.updateMany({
             where: {
@@ -19,9 +16,6 @@ export class PrismaFreightRepository implements IFreightsRepository {
                 freightId,
                 freightLink,
                 trackingLink,
-                serviceId,
-                serviceName,
-                companyName
             }
         })
     }

@@ -83,7 +83,7 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     // * Determinar qual tipo da transportadora porque se for Correio so pode enviar um volume por vez.
-                    if(order.delivery.freights[0].companyName === 'Correios') {
+                    if(order.delivery.serviceDelivery.companyName === 'Correios') {
                         const boxToCorreios = order.boxes
                         .map(relation => (relation as unknown as IRelationBox).box)
                         .find(box => box.companyName === 'Correios');
@@ -163,10 +163,7 @@ export class AddFreightToCartMelhorEnvio {
                             await this.freightRespository.create({
                                 freightId: freightInCart.id,
                                 deliveryId: order.delivery.id,
-                                serviceId: Number(order.delivery.serviceDelivery.serviceId),
-                                serviceName: order.delivery.serviceDelivery.serviceName,
-                                price: freightInCart.price,
-                                companyName: order.delivery.serviceDelivery.companyName
+                                price: freightInCart.price
                             });
                             
                             // Atualizar status do pedido e informações relacionadas
@@ -216,7 +213,7 @@ export class AddFreightToCartMelhorEnvio {
                             document: customer.cpf as string,
                             note: "order for delivery"
                         },
-                        service: Number(order.delivery.freights[0].serviceId),
+                        service: Number(order.delivery.serviceDelivery.serviceId),
                         products: order.items.map(item => {
                             return{
                                 quantity: Number(item.quantity),
@@ -253,10 +250,7 @@ export class AddFreightToCartMelhorEnvio {
                     await this.freightRespository.create({
                         freightId: freightInCart.id,
                         deliveryId: order.delivery.id,
-                        serviceId: Number(order.delivery.serviceDelivery.serviceId),
-                        serviceName: order.delivery.serviceDelivery.serviceName,
-                        price: freightInCart.price,
-                        companyName: order.delivery.serviceDelivery.companyName
+                        price: freightInCart.price
                     });
                     
                     // Atualizar status do pedido e informações relacionadas

@@ -292,14 +292,6 @@ export class CreateOrderWithPixUsecase {
                     address: {
                         create: address ? address as Address : undefined
                     },
-                    freights:{
-                        create:{
-                            companyName: freight.company.name,
-                            serviceId: freight.id,
-                            serviceName: freight.name,
-                            price: freight.price,
-                        }
-                    },
                     serviceDelivery:{
                         create:{
                             companyName: freight.company.name,

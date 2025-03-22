@@ -474,14 +474,11 @@ model Freight{
   delivery Delivery @relation(fields: [deliveryId], references: [id])
   deliveryId String
 
-  serviceId Decimal? @map("service_id")
-  serviceName String? @map("service_name")
   price            Decimal?
 
   freightId String? @unique  @map("freight_id")
   freightLink String? @map("freight_link")
   trackingLink String? @map("tracking_link")
-  companyName String? @map("company_name")
 
   @@map("freights")
 }

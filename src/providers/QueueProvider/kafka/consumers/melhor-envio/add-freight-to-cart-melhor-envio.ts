@@ -83,7 +83,7 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     // * Determinar qual tipo da transportadora porque se for Correio so pode enviar um volume por vez.
-                    if(order.delivery.companyName === 'Correios') {
+                    if(order.delivery.freights[0].companyName === 'Correios') {
                         const boxToCorreios = order.boxes
                         .map(relation => (relation as unknown as IRelationBox).box)
                         .find(box => box.companyName === 'Correios');
@@ -127,7 +127,7 @@ export class AddFreightToCartMelhorEnvio {
                                     document: customer.cpf as string,
                                     note: "order for delivery"
                                 },
-                                service: Number(order.delivery.serviceId),
+                                service: Number(order.delivery.serviceDelivery.serviceId),
                                 products: [
                                     {
                                         quantity: Number(item.quantity),
@@ -160,7 +160,14 @@ export class AddFreightToCartMelhorEnvio {
                                 throw new AppError('Freight not added to cart')
                             }
 
-                            await this.freightRespository.save(order.delivery.id, freightInCart.id);
+                            await this.freightRespository.create({
+                                freightId: freightInCart.id,
+                                deliveryId: order.delivery.id,
+                                serviceId: Number(order.delivery.serviceDelivery.serviceId),
+                                serviceName: order.delivery.serviceDelivery.serviceName,
+                                price: freightInCart.price,
+                                companyName: order.delivery.serviceDelivery.companyName
+                            });
                             
                             // Atualizar status do pedido e informações relacionadas
                             await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);
@@ -209,7 +216,7 @@ export class AddFreightToCartMelhorEnvio {
                             document: customer.cpf as string,
                             note: "order for delivery"
                         },
-                        service: Number(order.delivery.serviceId),
+                        service: Number(order.delivery.freights[0].serviceId),
                         products: order.items.map(item => {
                             return{
                                 quantity: Number(item.quantity),
@@ -243,7 +250,14 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     // Adicionar frete ao pedido
-                    await this.freightRespository.save(order.delivery.id, freightInCart.id);
+                    await this.freightRespository.create({
+                        freightId: freightInCart.id,
+                        deliveryId: order.delivery.id,
+                        serviceId: Number(order.delivery.serviceDelivery.serviceId),
+                        serviceName: order.delivery.serviceDelivery.serviceName,
+                        price: freightInCart.price,
+                        companyName: order.delivery.serviceDelivery.companyName
+                    });
                     
                     // Atualizar status do pedido e informações relacionadas
                     await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);

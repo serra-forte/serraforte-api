@@ -311,6 +311,8 @@ model Delivery {
   userId      String?
 
   freights Freight[]
+
+  serviceDelivery SeviceDelivery?
   
   shippingDate     DateTime? @map("shipping_date") @db.Timestamptz()
   deliveryDate     DateTime? @map("delivery_date") @db.Timestamptz()
@@ -482,4 +484,18 @@ model Freight{
   companyName String? @map("company_name")
 
   @@map("freights")
+}
+
+model SeviceDelivery{
+  id          String  @id @default(uuid())
+
+  delivery Delivery @relation(fields: [deliveryId], references: [id])
+  deliveryId String  @unique
+
+  serviceId Decimal? @map("service_id")
+  serviceName String? @map("service_name")
+  price            Decimal?
+  companyName String? @map("company_name")
+
+  @@map("service_deliveries")
 }

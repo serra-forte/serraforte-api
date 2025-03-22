@@ -41,6 +41,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         shippingDate: true,
                         receiverDocument: true,
+                        freights: true,
                         receiverName: true,
                         deliveryMan: {
                             select: {
@@ -156,6 +157,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         shippingDate: true,
                         receiverDocument: true,
+                        freights: true,
                         receiverName: true,
                         deliveryMan: {
                             select: {
@@ -233,6 +235,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         shippingDate: true,
                         receiverDocument: true,
+                        freights: true,
                         receiverName: true,
                         deliveryMan: {
                             select:{
@@ -294,6 +297,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         shippingDate: true,
                         receiverDocument: true,
+                        freights: true,
                         receiverName: true,
                         deliveryMan: {
                             select:{
@@ -374,6 +378,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         shippingDate: true,
                         receiverDocument: true,
+                        freights: true,
                         receiverName: true,
                         deliveryMan: {
                             select:{
@@ -452,6 +457,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         shippingDate: true,
                         receiverDocument: true,
+                        freights: true,
                         receiverName: true,
                         deliveryMan: {
                             select:{
@@ -511,6 +517,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         shippingDate: true,
                         receiverDocument: true,
+                        freights: true,
                         receiverName: true,
                         deliveryMan: {
                             select:{
@@ -573,6 +580,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         shippingDate: true,
                         receiverDocument: true,
+                        freights: true,
                         receiverName: true,
                         deliveryMan: {
                             select:{
@@ -609,7 +617,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 }[];
                 return {
                     ...order,
-                    total: Number(order.total) + Number(order.delivery.price),
+                    total: Number(order.total) + Number(order.delivery.freights.reduce((acc, freight) => acc + Number(freight.price), 0)),
                     boxes: boxFormated.map(box => box.box)
                 };
             }),
@@ -651,6 +659,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         shippingDate: true,
                         receiverDocument: true,
+                        freights: true,
                         receiverName: true,
                         deliveryMan: {
                             select:{
@@ -687,7 +696,7 @@ export class PrismaOrderRepository implements IOrderRepository {
             orders: orders.map(order => {
                 return{
                     ...order,
-                    total: Number(order.total) + Number(order.delivery.price)
+                    total: Number(order.total) + Number(order.delivery.freights.reduce((acc, freight) => acc + Number(freight.price), 0))
                 }
             }),
             totalPages
@@ -727,6 +736,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         shippingDate: true,
                         receiverDocument: true,
+                        freights: true,
                         receiverName: true,
                         deliveryMan: {
                             select:{
@@ -753,7 +763,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         
         return {
             ...order,
-            total: Number(order.total) + Number(order.delivery.price)
+            total: Number(order.total) + Number(order.delivery.freights.reduce((acc, freight) => acc + Number(freight.price), 0))
         }
     }
     async findByCode(code: string){
@@ -790,6 +800,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         deliveryDate: true,
                         shippingDate: true,
                         receiverDocument: true,
+                        freights: true,
                         receiverName: true,
                         deliveryMan: {
                             select:{

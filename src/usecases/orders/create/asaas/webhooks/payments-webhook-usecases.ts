@@ -64,7 +64,7 @@ export class PaymentWebHookUseCases {
       }
 
       // [x] buscar pedido pelo id
-      const findOrderExist = await this.orderRepository.findById(payment.orderId)
+      const findOrderExist = await this.orderRepository.findById(payment.orderId) as unknown as IOrderRelationsDTO
 
       // [x] validar se o pedido existe
       if (!findOrderExist) {
@@ -79,10 +79,9 @@ export class PaymentWebHookUseCases {
         id: findOrderExist.id,
         user: findOrderExist.user,
         delivery: {
-            serviceId: findOrderExist.delivery.serviceId,
-            serviceName: findOrderExist.delivery.serviceName,
             address: findOrderExist.delivery.address ? findOrderExist.delivery.address : undefined,
-            price: findOrderExist.delivery.price
+            freights: findOrderExist.delivery.freights,
+            serviceDelivery: findOrderExist.delivery.serviceDelivery
         },
         boxes: findOrderExist.boxes,
         payment: orders[0].payment,

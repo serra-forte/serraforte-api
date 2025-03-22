@@ -299,6 +299,14 @@ export class CreateOrderWithPixUsecase {
                             serviceName: freight.name,
                             price: freight.price,
                         }
+                    },
+                    serviceDelivery:{
+                        create:{
+                            companyName: freight.company.name,
+                            serviceId: freight.id,
+                            price: freight.price,
+                            serviceName: freight.name
+                        }
                     }
                 }
             },
@@ -384,9 +392,6 @@ export class CreateOrderWithPixUsecase {
                 shoppingCart: order.shoppingCart
             },
             delivery: {
-                serviceId: order.delivery.serviceId,
-                serviceName: order.delivery.serviceName,
-                price: order.delivery.price,
                 address: address ? address : undefined
             },
             boxes: order.boxes,

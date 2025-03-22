@@ -279,6 +279,8 @@ export class CreateOrderWithPixUsecase {
             }
         }while(!stopVerifyCode)
 
+            console.log(boxesFromDelivery)
+
         // criar pedido passando lista de itens para criar juntos
         const order = await this.orderRepository.create({
             userId: findUserExist.id,

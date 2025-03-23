@@ -23,11 +23,6 @@ interface IDeliveryService{
     price: number
     companyName: string
 }
-interface IBox{
-    id: string
-    boxId: string
-    productId: string
-}
 interface IITemRelation{
     id: string
     productId: string
@@ -124,7 +119,7 @@ export class CreateOrderWithPixUsecase {
         }
 
         // Inicialize um objeto para agrupar os itens por lojista (user.id)
-        let boxesFromDelivery: BoxInProduct[] = [];
+        let boxesFromDelivery: Box[] = [];
 
         // Array para calcular o total de cada lojista e entregador
         let arrayToSplitToMembers: AsaasPaymentWallet[] = [];
@@ -146,7 +141,7 @@ export class CreateOrderWithPixUsecase {
                     throw new AppError("Estoque insuficiente", 400);
                 }
 
-                boxesFromDelivery = product.boxes as unknown as BoxInProduct[]
+                boxesFromDelivery = product.boxes
             }
         }
 
@@ -284,8 +279,8 @@ export class CreateOrderWithPixUsecase {
             }
         }while(!stopVerifyCode)
 
-            console.log(boxesFromDelivery)
 
+        const boxInProduct = boxesFromDelivery as unknown as BoxInProduct[]
         // criar pedido passando lista de itens para criar juntos
         const order = await this.orderRepository.create({
             userId: findUserExist.id,
@@ -329,7 +324,7 @@ export class CreateOrderWithPixUsecase {
             },
             boxes: {
                 createMany: {
-                    data: boxesFromDelivery.map(box => {
+                    data: boxInProduct.map(box => {
                         return {
                             boxId: box.boxId,
                         }

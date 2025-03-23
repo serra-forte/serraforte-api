@@ -108,7 +108,7 @@ fastifyApp.register(tokensRoutes, {
 })
 
 fastifyApp.register(reviewsRoutes, {
-  prefix: 'tokens',
+  prefix: 'reviews',
 })
 
 // Registrar o helper equals sem usar 'this'

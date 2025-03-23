@@ -81,7 +81,7 @@ export class AddFreightToCartMelhorEnvio {
                         console.error('[Consumer - Freight] Cliente não encontrado ou endereço inválido.');
                         return;
                     }
-
+                    console.log(order.boxes)
                     // * Determinar qual tipo da transportadora porque se for Correio so pode enviar um volume por vez.
                     if(order.delivery.serviceDelivery.companyName === 'Correios') {
                         const boxToCorreios = order.boxes

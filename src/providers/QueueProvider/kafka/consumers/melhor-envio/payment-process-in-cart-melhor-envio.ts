@@ -12,13 +12,15 @@ import { KafkaProducer } from "../../kafka-producer";
 import { KafkaConsumerPaymentToLabel } from "../../kafka-consumer-payment";
 import { Status } from "@prisma/client";
 import { AppError } from "@/usecases/errors/app-error";
+import { IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
+import { PrismaDeliveryRepository } from "@/repositories/prisma/prisma-deliveries-repository";
 
 interface IInfoGenerateLabelFreight {
     orderId: string;
     freightId: string;
 }
 interface IPaymentProcessInCartMelhorEnvio {
-    orderId: string;
+    deliveryId: string;
     freightId: string;
 }
 export class PaymentProcessInCartMelhorEnvio {
@@ -29,7 +31,7 @@ export class PaymentProcessInCartMelhorEnvio {
     private usersRepository: IUsersRepository;
     private melhorEnvioProvider: IMelhorEnvioProvider;
     private orderRepository: IOrderRepository;
-
+    private deliveryRepository: IDeliveryRepository;
     constructor() {
         this.kafkaConsumer = new KafkaConsumerPaymentToLabel();
         this.kafkaProducer = new KafkaProducer();
@@ -42,6 +44,7 @@ export class PaymentProcessInCartMelhorEnvio {
             this.usersRepository
         );
         this.orderRepository = new PrismaOrderRepository();
+        this.deliveryRepository = new PrismaDeliveryRepository()
     }
 
     async execute() {
@@ -71,8 +74,15 @@ export class PaymentProcessInCartMelhorEnvio {
                         throw new AppError('Erro ao processar pagamento');
                     }
 
+                    // buscar a entrega correspondente ao frete
+                    const delivery = await this.deliveryRepository.findById(messageReceived.deliveryId)
+
+                    if (!delivery) {
+                        throw new AppError('Entrega nao encontrada', 404);
+                    }
+
                     // atualizar pedido com status "AWAITING_LABEL_GENERATE"
-                    await this.orderRepository.updateStatus(messageReceived.orderId, Status.AWAITING_LABEL_GENERATE)
+                    await this.orderRepository.updateStatus(delivery.orderId, Status.AWAITING_LABEL_GENERATE)
 
                     console.info('[Consumer - Payment] Pagamento processado com sucesso');
                 } catch (error) {

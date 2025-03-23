@@ -1,8 +1,17 @@
-import { Prisma } from "@prisma/client";
+import { Freight, Prisma } from "@prisma/client";
 import { ICreateFreight, IFreightsRepository } from "../interfaces/interface-freights-repository";
 import { prisma } from "@/lib/prisma";
 
 export class PrismaFreightRepository implements IFreightsRepository {
+    async findByFreightId(id: string): Promise<Freight | null> {
+        const freight = await prisma.freight.findUnique({
+            where: {
+                freightId: id
+            }
+        })
+
+        return freight
+    }
     async save(deliveryId: string, {
         freightId,
         freightLink,

@@ -1,5 +1,6 @@
 import { KafkaProducer } from "@/providers/QueueProvider/kafka/kafka-producer";
 import { IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
+import { IFreightsRepository } from "@/repositories/interfaces/interface-freights-repository";
 import { AppError } from "@/usecases/errors/app-error";
 import { ApiError } from "@google-cloud/storage";
 
@@ -31,7 +32,7 @@ interface IRequestStatusLabel{
 export class WebHookGetStatusLabelUseCase {
     constructor(
         private kafkaProducer: KafkaProducer,
-        private deleiveryRepository: IDeliveryRepository
+        private freightRepository: IFreightsRepository
     ) {}
 
     async execute({
@@ -40,7 +41,7 @@ export class WebHookGetStatusLabelUseCase {
     }: IRequestStatusLabel): Promise<void> {
         console.log('Event:', event);
         console.log('Data:', data);
-        const delivery = await this.deleiveryRepository.findByFreightId(data.id)
+        const delivery = await this.freightRepository.findByFreightId(data.id)
 
         if (!delivery) {
             throw new AppError('Frete nao encontrado', 404);
@@ -51,28 +52,28 @@ export class WebHookGetStatusLabelUseCase {
                 // Enviar mensagem para o Kafka para processar o pagamento
                 await this.kafkaProducer.execute('PAYMENT_PROCESS_IN_CART',  {
                     freightId: data.id,
-                    orderId: delivery.orderId
+                    deliveryId: delivery.deliveryId
                 })
                 break;
             case 'order.released':
                 // Enviar mensagem para gerar etiqueta
                 await this.kafkaProducer.execute('GENERATE_LABEL', {
                     freightId: data.id,
-                    orderId: delivery.orderId
+                     deliveryId: delivery.deliveryId
                 })
                 break;
             // case 'order.generated':
             //     // Enviar mensagem para gerar link da etiqueta
             //     await this.kafkaProducer.execute('GENERATE_LABEL_TO_PRINT', {
             //         freightId: data.id,
-            //         orderId: delivery.orderId
+            //          deliveryId: delivery.deliveryId
             //     })
             //     break;
             case 'order.posted':
                 // Enviar mensagem para gerar etiqueta
                 await this.kafkaProducer.execute('GENERATE_TRACKING_LINK', {
                     freightId: data.id,
-                    orderId: delivery.orderId,
+                    deliveryId: delivery.deliveryId,
                     self_tracking: data.self_tracking
                 })
                 break;

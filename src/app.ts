@@ -23,6 +23,7 @@ import { boxesRoutes } from "./http/controllers/boxes/routes";
 import { envRoutes } from "./http/controllers/envs/routes";
 import handlebars from "handlebars";
 import { tokensRoutes } from "./http/controllers/tokens/routes";
+import { reviewsRoutes } from "./http/controllers/reviews/routes";
 
 export const fastifyApp = fastify()
 
@@ -103,6 +104,10 @@ fastifyApp.register(envRoutes, {
 })
 
 fastifyApp.register(tokensRoutes, {
+  prefix: 'tokens',
+})
+
+fastifyApp.register(reviewsRoutes, {
   prefix: 'tokens',
 })
 

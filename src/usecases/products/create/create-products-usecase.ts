@@ -58,13 +58,6 @@ export class CreateProductsUseCase {
             throw new AppError('Usuario não encontrado', 404)
         }
 
-        // validar se o usuario e um lojista
-        if(findUserExists){
-            if(findUserExists.role !== 'SHOPKEEPER'){
-                throw new AppError('Lojista invalido', 401)
-            }
-        }
-
         // buscar produto pelo nome
         const productAlreadyExists = await this.productsRepository.findByName(name)
 

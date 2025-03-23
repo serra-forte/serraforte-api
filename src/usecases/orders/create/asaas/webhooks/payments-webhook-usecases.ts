@@ -79,6 +79,7 @@ export class PaymentWebHookUseCases {
         id: findOrderExist.id,
         user: findOrderExist.user,
         delivery: {
+            id: findOrderExist.delivery.id,
             address: findOrderExist.delivery.address ? findOrderExist.delivery.address : undefined,
             freights: findOrderExist.delivery.freights,
             serviceDelivery: findOrderExist.delivery.serviceDelivery

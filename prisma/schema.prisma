@@ -288,10 +288,10 @@ model Address {
   delivery   Delivery? @relation(fields: [deliveryId], references: [id])
   deliveryId String?   @unique
 
-  street       String
+  street       String?
   num          Decimal?
-  city         String
-  state        String
+  city         String?
+  state        String?
   neighborhood String?
   country      String
   zipCode      String?

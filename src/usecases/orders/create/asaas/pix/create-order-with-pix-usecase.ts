@@ -8,7 +8,7 @@ import { IProductsRepository, IResponseFindProductWithReviews } from "@/reposito
 import { IShoppingCartRepository } from "@/repositories/interfaces/interface-shopping-cart-repository";
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository";
 import { AppError } from "@/usecases/errors/app-error";
-import { Address, Box, CartItem, Item, PaymentMethod, User } from "@prisma/client";
+import { Address, Box, BoxInProduct, CartItem, Item, PaymentMethod, User } from "@prisma/client";
 import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider';
 import { IOrderRelationsDTO } from '@/dtos/order-relations.dto';
 import { IUserRelations } from '@/dtos/user-relations.dto';
@@ -22,6 +22,11 @@ interface IDeliveryService{
     shopkeeperId: string
     price: number
     companyName: string
+}
+interface IBox{
+    id: string
+    boxId: string
+    productId: string
 }
 interface IITemRelation{
     id: string
@@ -119,7 +124,7 @@ export class CreateOrderWithPixUsecase {
         }
 
         // Inicialize um objeto para agrupar os itens por lojista (user.id)
-        let boxesFromDelivery: Box[] = [];
+        let boxesFromDelivery: BoxInProduct[] = [];
 
         // Array para calcular o total de cada lojista e entregador
         let arrayToSplitToMembers: AsaasPaymentWallet[] = [];
@@ -141,7 +146,7 @@ export class CreateOrderWithPixUsecase {
                     throw new AppError("Estoque insuficiente", 400);
                 }
 
-                boxesFromDelivery = product.boxes
+                boxesFromDelivery = product.boxes as unknown as BoxInProduct[]
             }
         }
 
@@ -326,7 +331,7 @@ export class CreateOrderWithPixUsecase {
                 createMany: {
                     data: boxesFromDelivery.map(box => {
                         return {
-                            boxId: box.id,
+                            boxId: box.boxId,
                         }
                     })
                 }

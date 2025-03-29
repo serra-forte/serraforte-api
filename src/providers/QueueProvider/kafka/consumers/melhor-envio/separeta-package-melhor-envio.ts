@@ -55,6 +55,8 @@ export class SeparatePackageMelhorEnvio {
 
                     const order = parsedMessage as IOrderRelationsDTO;
 
+                    console.log(order);
+
                     const limits = {
                         'Jadlog': { maxWeight: 120, maxSide: 80, maxSum: Infinity }, // Sem limite na soma das dimensões
                         'Correios': { maxWeight: 30, maxSide: 80, maxSum: 200 }, // Soma das dimensões ≤ 200 cm

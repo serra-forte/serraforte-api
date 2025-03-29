@@ -98,78 +98,58 @@ export class SeparatePackageMelhorEnvio {
                         const height = Number(item.height);
                         const name = item.name as string;
                         const price = Number(item.price);
-                        
-                        let remainingQuantity = quantity; // Quantidade total do item a ser distribuída
+                        const total = quantity * price;
                     
-                        while (remainingQuantity > 0) { // Continua enquanto houver itens a serem alocados
-                            let maxFitInCurrentPackage = remainingQuantity; // Quantidade máxima possível nesse pacote
-                            
-                            // Simula a adição do item ao pacote atual para verificar os limites
-                            let newTotalWeight = currentPackage.totalWeight + (weight * maxFitInCurrentPackage);
+                        for (let i = 0; i < quantity; i++) { // Adiciona um item por vez para validar os limites corretamente
+                            let newTotalWeight = currentPackage.totalWeight + weight;
                             let newHeight = Math.max(currentPackage.dimensions.height, height);
                             let newWidth = Math.max(currentPackage.dimensions.width, width);
-                            let newLength = currentPackage.dimensions.length + (length * maxFitInCurrentPackage);
+                            let newLength = currentPackage.dimensions.length + length;
                             let newSumDimensions = newHeight + newWidth + newLength;
                     
                             const exceedsWeight = newTotalWeight > maxWeight;
                             const exceedsSide = newHeight > maxSide || newWidth > maxSide || newLength > maxSide;
                             const exceedsSum = maxSum !== Infinity && newSumDimensions > maxSum;
                     
-                            // Se o item não cabe inteiro, reduz a quantidade para o que cabe no pacote atual
-                            while ((exceedsWeight || exceedsSide || exceedsSum) && maxFitInCurrentPackage > 0) {
-                                maxFitInCurrentPackage--;
-                                newTotalWeight = currentPackage.totalWeight + (weight * maxFitInCurrentPackage);
-                                newLength = currentPackage.dimensions.length + (length * maxFitInCurrentPackage);
-                                newSumDimensions = newHeight + newWidth + newLength;
-                            }
-                    
-                            if (maxFitInCurrentPackage === 0) {
-                                // Se nem um único item couber, cria um novo pacote
-                                packages.push({ ...currentPackage });
+                            if (exceedsWeight || exceedsSide || exceedsSum) {
+                                // Se o pacote atual atingiu o limite, armazena e cria um novo
+                                packages.push({ ...currentPackage, total });
                     
                                 currentPackage = { 
                                     items: [], 
                                     totalWeight: 0, 
                                     dimensions: { height: 0, width: 0, length: 0 },
-                                    companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
                                     shopkeeperId: order.items[0].userId as string,
-                                    clientId: order.user.id,
-                                    address: order.delivery.address as Address,
-                                    serviceId: Number(order.delivery.serviceDelivery.serviceId),
                                     total: 0,
-                                    deliveryId: order.delivery.id,
-                                    orderId: order.id
                                 };
-                    
-                                maxFitInCurrentPackage = remainingQuantity; // Tenta alocar tudo no novo pacote
-                            } else {
-                                // Adiciona o item ao pacote com a quantidade máxima permitida
-                                currentPackage.items.push({
-                                    name,
-                                    quantity: maxFitInCurrentPackage, // Adiciona a quantidade máxima possível no pacote atual
-                                    height,
-                                    width,
-                                    length,
-                                    price,
-                                    weight,
-                                });
-                    
-                                currentPackage.totalWeight += weight * maxFitInCurrentPackage;
-                                currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
-                                currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
-                                currentPackage.dimensions.length += length * maxFitInCurrentPackage;
-                    
-                                remainingQuantity -= maxFitInCurrentPackage; // Atualiza a quantidade restante para alocar
                             }
+                    
+                            // Adiciona o item ao novo pacote
+                            currentPackage.items.push({
+                                name,
+                                quantity: 1,  // Adicionando um por um para respeitar os limites
+                                height,
+                                width,
+                                length,
+                                price,
+                                weight,
+                            });
+                    
+                            currentPackage.totalWeight += weight;
+                            currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
+                            currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
+                            currentPackage.dimensions.length += length;
                         }
                     }
-                    
                     
                     
                     // Adiciona o último pacote se houver itens
                     if (currentPackage.items.length > 0) {
                         packages.push(currentPackage);
                     }
+                    
+                    
+                    
                     await this.kafkaProducer.execute('ADD_FREIGHT_TO_CART', {packages});
                 } catch (error) {
                     console.error('[Consumer - Separate Package] Erro ao processar mensagem:', error);

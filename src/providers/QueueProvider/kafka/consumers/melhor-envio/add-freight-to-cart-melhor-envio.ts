@@ -68,24 +68,102 @@ export class AddFreightToCartMelhorEnvio {
                         return;
                     }
 
-                    const packages = parsedMessage as Package;
-                    console.log(packages)
+                    const packages = parsedMessage as Package[];
 
-
-                    const shopkeeper = await this.usersRepository.findById(packages.shopkeeperId) as unknown as IUserRelations;
+                    const shopkeeper = await this.usersRepository.findById(packages[0].shopkeeperId) as unknown as IUserRelations;
                     if (!shopkeeper || !shopkeeper.address) {
                         console.error('[Consumer - Freight] Lojista não encontrado ou endereço inválido.');
                         return;
                     }
 
-                    const customer = await this.usersRepository.findById(packages.clientId) as unknown as IUserRelations;
-                    if (!customer || !customer.address) {
-                        console.error('[Consumer - Freight] Cliente não encontrado ou endereço inválido.');
-                        return;
-                    }
+                    for(let itemPackage of packages) {
+                        const customer = await this.usersRepository.findById(itemPackage.clientId) as unknown as IUserRelations;
+                        if (!customer || !customer.address) {
+                            console.error('[Consumer - Freight] Cliente não encontrado ou endereço inválido.');
+                            return;
+                        }
 
-                    if(packages.companyName === 'Correios') {
-                        for(let item of packages.items) {
+                        if(itemPackage.companyName === 'Correios') {
+                            for(let item of itemPackage.items) {
+                                const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
+                                    from: {
+                                        name: shopkeeper.name,
+                                        phone: shopkeeper.phone,
+                                        email: shopkeeper.email,
+                                        document: shopkeeper.cpf as string,
+                                        state_register: '12345678910',
+                                        address: shopkeeper.address.street as string,
+                                        complement: shopkeeper.address.complement as string,
+                                        number: String(shopkeeper.address.num),
+                                        district: shopkeeper.address.neighborhood as string,
+                                        city: shopkeeper.address.city as string,
+                                        country_id: "BR", // Brasill
+                                        postal_code: shopkeeper.address.zipCode as string,
+                                        state_abbr: shopkeeper.address.state as string,
+                                        note: "order for delivery"
+                                    },
+                                    to: {
+                                        name: customer.name,
+                                        email: customer.email,
+                                        phone: customer.phone,
+                                        city: itemPackage.address.city as string,
+                                        state_abbr: itemPackage.address.state as string,
+                                        postal_code: itemPackage.address.zipCode as string,
+                                        address: itemPackage.address.street as string,
+                                        country_id: "BR", // Brasil
+                                        number: String(itemPackage.address.num),
+                                        complement: itemPackage.address.complement as string,
+                                        district: itemPackage.address.neighborhood as string,
+                                        state_register: '123456789',
+                                        document: customer.cpf as string,
+                                        note: "order for delivery"
+                                    },
+                                    service: itemPackage.serviceId,
+                                    products: [
+                                        {
+                                            name: item.name,
+                                            quantity: Number(item.quantity),
+                                            unitary_value: Number(item.price)
+                                        }
+                                    ],
+                                    volumes: [
+                                        {
+                                            width: item.width,
+                                            height: item.height,
+                                            length: item.length,
+                                            weight: item.weight
+                                        }
+                                    ],
+                                    options:{
+                                        insurance_value: itemPackage.total,
+                                        non_commercial: true,
+                                        own_hand: false,
+                                        receipt: false,
+                                        reverse: false,
+                                        // invoice: {
+                                        //     key: "35190812345678000123550010000000011234567890"
+                                        // }
+                                    },
+                                });
+    
+                                if(!freightInCart) {
+                                    throw new AppError('Freight not added to cart')
+                                }
+    
+                                await this.freightRespository.create({
+                                    freightId: freightInCart.id,
+                                    deliveryId: itemPackage.deliveryId,
+                                    price: freightInCart.price
+                                });
+                                
+                                // Atualizar status do pedido e informações relacionadas
+                                await this.orderRepository.updateStatus(itemPackage.orderId, Status.AWAITING_LABEL_PAYMENT_PROCESS);
+                            }
+    
+                            console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
+                            return
+    
+                        }else{
                             const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
                                 from: {
                                     name: shopkeeper.name,
@@ -107,36 +185,36 @@ export class AddFreightToCartMelhorEnvio {
                                     name: customer.name,
                                     email: customer.email,
                                     phone: customer.phone,
-                                    city: packages.address.city as string,
-                                    state_abbr: packages.address.state as string,
-                                    postal_code: packages.address.zipCode as string,
-                                    address: packages.address.street as string,
+                                    city: itemPackage.address.city as string,
+                                    state_abbr: itemPackage.address.state as string,
+                                    postal_code: itemPackage.address.zipCode as string,
+                                    address: itemPackage.address.street as string,
                                     country_id: "BR", // Brasil
-                                    number: String(packages.address.num),
-                                    complement: packages.address.complement as string,
-                                    district: packages.address.neighborhood as string,
+                                    number: String(itemPackage.address.num),
+                                    complement: itemPackage.address.complement as string,
+                                    district: itemPackage.address.neighborhood as string,
                                     state_register: '123456789',
                                     document: customer.cpf as string,
                                     note: "order for delivery"
                                 },
-                                service: packages.serviceId,
-                                products: [
-                                    {
-                                        name: item.name,
+                                service: itemPackage.serviceId,
+                                products: itemPackage.items.map(item => {
+                                    return{
                                         quantity: Number(item.quantity),
-                                        unitary_value: Number(item.price)
+                                        name: item.name as string,
+                                        unitary_value: Number(item.price),
                                     }
-                                ],
-                                volumes: [
-                                    {
+                                }),
+                                volumes: itemPackage.items.map(item => {
+                                    return({
                                         width: item.width,
                                         height: item.height,
                                         length: item.length,
                                         weight: item.weight
-                                    }
-                                ],
+                                    })
+                                }),
                                 options:{
-                                    insurance_value: packages.total,
+                                    insurance_value: itemPackage.total,
                                     non_commercial: true,
                                     own_hand: false,
                                     receipt: false,
@@ -147,104 +225,24 @@ export class AddFreightToCartMelhorEnvio {
                                 },
                                 
                             });
-
+                            
                             if(!freightInCart) {
-                                throw new AppError('Freight not added to cart')
+                                console.error('[Consumer - Freight] Erro ao adicionar frete ao carrinho.');
+                                return;
                             }
 
+                            // Adicionar frete ao pedido
                             await this.freightRespository.create({
                                 freightId: freightInCart.id,
-                                deliveryId: packages.deliveryId,
+                                deliveryId: itemPackage.deliveryId,
                                 price: freightInCart.price
                             });
                             
                             // Atualizar status do pedido e informações relacionadas
-                            await this.orderRepository.updateStatus(packages.orderId, Status.AWAITING_LABEL_PAYMENT_PROCESS);
+                            await this.orderRepository.updateStatus(itemPackage.orderId, Status.AWAITING_LABEL_PAYMENT_PROCESS);
+
                         }
-
-                        console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
-                        return
-
                     }
-
-                    // Lógica de envio do frete
-                    const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
-                        from: {
-                            name: shopkeeper.name,
-                            phone: shopkeeper.phone,
-                            email: shopkeeper.email,
-                            document: shopkeeper.cpf as string,
-                            state_register: '12345678910',
-                            address: shopkeeper.address.street as string,
-                            complement: shopkeeper.address.complement as string,
-                            number: String(shopkeeper.address.num),
-                            district: shopkeeper.address.neighborhood as string,
-                            city: shopkeeper.address.city as string,
-                            country_id: "BR", // Brasill
-                            postal_code: shopkeeper.address.zipCode as string,
-                            state_abbr: shopkeeper.address.state as string,
-                            note: "order for delivery"
-                        },
-                        to: {
-                            name: customer.name,
-                            email: customer.email,
-                            phone: customer.phone,
-                            city: packages.address.city as string,
-                            state_abbr: packages.address.state as string,
-                            postal_code: packages.address.zipCode as string,
-                            address: packages.address.street as string,
-                            country_id: "BR", // Brasil
-                            number: String(packages.address.num),
-                            complement: packages.address.complement as string,
-                            district: packages.address.neighborhood as string,
-                            state_register: '123456789',
-                            document: customer.cpf as string,
-                            note: "order for delivery"
-                        },
-                        service: packages.serviceId,
-                        products: packages.items.map(item => {
-                            return{
-                                quantity: Number(item.quantity),
-                                name: item.name as string,
-                                unitary_value: Number(item.price),
-                            }
-                        }),
-                        volumes: packages.items.map(item => {
-                            return({
-                                width: item.width,
-                                height: item.height,
-                                length: item.length,
-                                weight: item.weight
-                            })
-                        }),
-                        options:{
-                            insurance_value: packages.total,
-                            non_commercial: true,
-                            own_hand: false,
-                            receipt: false,
-                            reverse: false,
-                            // invoice: {
-                            //     key: "35190812345678000123550010000000011234567890"
-                            // }
-                        },
-                        
-                    });
-                    if(!freightInCart) {
-                        console.error('[Consumer - Freight] Erro ao adicionar frete ao carrinho.');
-                        return;
-                    }
-
-                    // Adicionar frete ao pedido
-                    await this.freightRespository.create({
-                        freightId: freightInCart.id,
-                        deliveryId: packages.deliveryId,
-                        price: freightInCart.price
-                    });
-                    
-                    // Atualizar status do pedido e informações relacionadas
-                    await this.orderRepository.updateStatus(packages.orderId, Status.AWAITING_LABEL_PAYMENT_PROCESS);
-
-                    console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
                 } catch (error) {
                     console.error('[Consumer - Freight] Erro ao processar mensagem:', error);
                 }

@@ -98,6 +98,7 @@ export class SeparatePackageMelhorEnvio {
                     const height = Number(item.height);
                     const name = item.name as string;
                     const price = Number(item.price);
+                    const total = quantity * price;
                     for (let i = 0; i < quantity; i++) {
                         let newTotalWeight = currentPackage.totalWeight + weight;
                         let newHeight = Math.max(currentPackage.dimensions.height, height);
@@ -120,7 +121,7 @@ export class SeparatePackageMelhorEnvio {
                                 clientId: order.user.id,
                                 address: order.delivery.address as Address,
                                 serviceId: Number(order.delivery.serviceDelivery.serviceId),
-                                total: Number(order.total),
+                                total,
                                 deliveryId: order.delivery.id,
                                 orderId: order.id
                             }); 
@@ -133,7 +134,7 @@ export class SeparatePackageMelhorEnvio {
                                 clientId: order.user.id,
                                 address: order.delivery.address as Address,
                                 serviceId: Number(order.delivery.serviceDelivery.serviceId),
-                                total: Number(order.total),
+                                total,
                                 deliveryId: order.delivery.id,
                                 orderId: order.id
                             };

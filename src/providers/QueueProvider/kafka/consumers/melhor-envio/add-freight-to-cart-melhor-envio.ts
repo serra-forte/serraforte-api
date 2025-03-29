@@ -18,6 +18,7 @@ import { PrismaDeliveryRepository } from "@/repositories/prisma/prisma-deliverie
 import { AppError } from "@/usecases/errors/app-error";
 import { IFreightsRepository } from "@/repositories/interfaces/interface-freights-repository";
 import { PrismaFreightRepository } from "@/repositories/prisma/prisma-freights-repository";
+import { Package } from "./separeta-package-melhor-envio";
 
 interface IRelationBox {
     box: Box
@@ -67,32 +68,25 @@ export class AddFreightToCartMelhorEnvio {
                         return;
                     }
 
-                    const order = parsedMessage as IOrderRelationsDTO;
+                    
+                    const packages = parsedMessage as Package;
+                    console.log(packages)
 
-                    const shopkeeper = await this.usersRepository.findById(order.items[0].userId as string) as unknown as IUserRelations;
+
+                    const shopkeeper = await this.usersRepository.findById(packages.shopkeeperId) as unknown as IUserRelations;
                     if (!shopkeeper || !shopkeeper.address) {
                         console.error('[Consumer - Freight] Lojista não encontrado ou endereço inválido.');
                         return;
                     }
 
-                    const customer = await this.usersRepository.findById(order.user.id as string) as unknown as IUserRelations;
+                    const customer = await this.usersRepository.findById(packages.clientId) as unknown as IUserRelations;
                     if (!customer || !customer.address) {
                         console.error('[Consumer - Freight] Cliente não encontrado ou endereço inválido.');
                         return;
                     }
 
-                    console.log(order.boxes)
-                    
-                    if(order.delivery.serviceDelivery.companyName === 'Correios') {
-                        const boxToCorreios = order.boxes
-                        .map(relation => (relation as unknown as IRelationBox).box)
-                        .find(box => box.companyName === 'Correios');
-
-                        if(!boxToCorreios) {
-                            throw new AppError('Box not found')
-                        }
-
-                        for(let item of order.items) {
+                    if(packages.companyName === 'Correios') {
+                        for(let item of packages.items) {
                             const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
                                 from: {
                                     name: shopkeeper.name,
@@ -114,36 +108,36 @@ export class AddFreightToCartMelhorEnvio {
                                     name: customer.name,
                                     email: customer.email,
                                     phone: customer.phone,
-                                    city: order.delivery.address.city as string,
-                                    state_abbr: order.delivery.address.state as string,
-                                    postal_code: order.delivery.address.zipCode as string,
-                                    address: order.delivery.address.street as string,
+                                    city: packages.address.city as string,
+                                    state_abbr: packages.address.state as string,
+                                    postal_code: packages.address.zipCode as string,
+                                    address: packages.address.street as string,
                                     country_id: "BR", // Brasil
-                                    number: String(order.delivery.address.num),
-                                    complement: order.delivery.address.complement as string,
-                                    district: order.delivery.address.neighborhood as string,
+                                    number: String(packages.address.num),
+                                    complement: packages.address.complement as string,
+                                    district: packages.address.neighborhood as string,
                                     state_register: '123456789',
                                     document: customer.cpf as string,
                                     note: "order for delivery"
                                 },
-                                service: Number(order.delivery.serviceDelivery.serviceId),
+                                service: packages.serviceId,
                                 products: [
                                     {
+                                        name: item.name,
                                         quantity: Number(item.quantity),
-                                        name: item.name as string,
-                                        unitary_value: Number(item.price), 
+                                        unitary_value: Number(item.price)
                                     }
                                 ],
                                 volumes: [
                                     {
-                                        height: Number(boxToCorreios.height),
-                                        width: Number(boxToCorreios.width),
-                                        length: Number(boxToCorreios.length),
-                                        weight: Number(boxToCorreios.weight),
+                                        width: item.width,
+                                        height: item.height,
+                                        length: item.length,
+                                        weight: item.weight
                                     }
                                 ],
                                 options:{
-                                    insurance_value: order.items.reduce((acc, item) => acc + Number(item.price) * Number(item.quantity), 0),
+                                    insurance_value: packages.total,
                                     non_commercial: true,
                                     own_hand: false,
                                     receipt: false,
@@ -161,22 +155,18 @@ export class AddFreightToCartMelhorEnvio {
 
                             await this.freightRespository.create({
                                 freightId: freightInCart.id,
-                                deliveryId: order.delivery.id,
+                                deliveryId: packages.deliveryId,
                                 price: freightInCart.price
                             });
                             
                             // Atualizar status do pedido e informações relacionadas
-                            await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);
+                            await this.orderRepository.updateStatus(packages.orderId, Status.AWAITING_LABEL_PAYMENT_PROCESS);
                         }
 
                         console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
                         return
 
                     }
-
-                   
-                    const boxToNotCorreios = order.boxes
-                    .map(relation => (relation as unknown as IRelationBox).box)
 
                     // Lógica de envio do frete
                     const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
@@ -200,36 +190,36 @@ export class AddFreightToCartMelhorEnvio {
                             name: customer.name,
                             email: customer.email,
                             phone: customer.phone,
-                            city: order.delivery.address.city as string,
-                            state_abbr: order.delivery.address.state as string,
-                            postal_code: order.delivery.address.zipCode as string,
-                            address: order.delivery.address.street as string,
+                            city: packages.address.city as string,
+                            state_abbr: packages.address.state as string,
+                            postal_code: packages.address.zipCode as string,
+                            address: packages.address.street as string,
                             country_id: "BR", // Brasil
-                            number: String(order.delivery.address.num),
-                            complement: order.delivery.address.complement as string,
-                            district: order.delivery.address.neighborhood as string,
+                            number: String(packages.address.num),
+                            complement: packages.address.complement as string,
+                            district: packages.address.neighborhood as string,
                             state_register: '123456789',
                             document: customer.cpf as string,
                             note: "order for delivery"
                         },
-                        service: Number(order.delivery.serviceDelivery.serviceId),
-                        products: order.items.map(item => {
+                        service: packages.serviceId,
+                        products: packages.items.map(item => {
                             return{
                                 quantity: Number(item.quantity),
                                 name: item.name as string,
                                 unitary_value: Number(item.price),
                             }
                         }),
-                        volumes: boxToNotCorreios.map(box => {
-                            return{
-                                length: Number(box.length),
-                                width: Number(box.width),
-                                height: Number(box.height),
-                                weight: Number(box.weight),
-                            }
+                        volumes: packages.items.map(item => {
+                            return({
+                                width: item.width,
+                                height: item.height,
+                                length: item.length,
+                                weight: item.weight
+                            })
                         }),
                         options:{
-                            insurance_value: order.items.reduce((acc, item) => acc + Number(item.price) * Number(item.quantity), 0),
+                            insurance_value: packages.total,
                             non_commercial: true,
                             own_hand: false,
                             receipt: false,
@@ -248,12 +238,12 @@ export class AddFreightToCartMelhorEnvio {
                     // Adicionar frete ao pedido
                     await this.freightRespository.create({
                         freightId: freightInCart.id,
-                        deliveryId: order.delivery.id,
+                        deliveryId: packages.deliveryId,
                         price: freightInCart.price
                     });
                     
                     // Atualizar status do pedido e informações relacionadas
-                    await this.orderRepository.updateStatus(order.id, Status.AWAITING_LABEL_PAYMENT_PROCESS);
+                    await this.orderRepository.updateStatus(packages.orderId, Status.AWAITING_LABEL_PAYMENT_PROCESS);
 
                     console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
                 } catch (error) {

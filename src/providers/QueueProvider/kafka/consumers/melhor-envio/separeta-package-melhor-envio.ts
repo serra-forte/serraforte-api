@@ -1,7 +1,7 @@
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
-import { Box, CartItem, Item } from "@prisma/client";
+import { Address, Box, CartItem, Item } from "@prisma/client";
 import { KafkaProducer } from "../../kafka-producer";
 import { KafkaConsumerSeparetePackage } from "../../kafka-consumer-separete-package";
 
@@ -10,17 +10,27 @@ interface IRelationBox {
 }
 
 type OrderItem = {
+    name: string;
     quantity: number;
     height: number;
     width: number;
     length: number;
     weight: number;
+    price: number;
   };
   
-  type Package = {
+  export type Package = {
     items: OrderItem[];
     totalWeight: number;
     dimensions: { height: number; width: number; length: number };
+    companyName: string;
+    shopkeeperId: string;
+    clientId: string;
+    address: Address;
+    serviceId: number;
+    total: number
+    deliveryId: string
+    orderId: string
   };
 
 export class SeparatePackageMelhorEnvio {
@@ -56,8 +66,8 @@ export class SeparatePackageMelhorEnvio {
                     const order = parsedMessage as IOrderRelationsDTO;
 
                     const limits = {
-                        'Jadlog': { maxWeight: 120, maxSide: 80, maxSum: Infinity }, // Sem limite na soma das dimensões
-                        'Correios': { maxWeight: 30, maxSide: 80, maxSum: 200 }, // Soma das dimensões ≤ 200 cm
+                        'Jadlog': { maxWeight: 120, maxSide: 80, maxSum: Infinity },
+                        'Correios': { maxWeight: 30, maxSide: 80, maxSum: 200 },
                       };
 
                     const service = order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios';
@@ -65,7 +75,19 @@ export class SeparatePackageMelhorEnvio {
                     const { maxWeight, maxSide, maxSum } = limits[service];
                 
                     let packages: Package[] = [];
-                    let currentPackage: Package = { items: [], totalWeight: 0, dimensions: { height: 0, width: 0, length: 0 } };
+                    let currentPackage: Package = { 
+                        items: [], 
+                        totalWeight: 0, 
+                        dimensions: { height: 0, width: 0, length: 0 }, 
+                        companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
+                        shopkeeperId: order.items[0].userId as string,
+                        clientId: order.user.id,
+                        address: order.delivery.address as Address,
+                        serviceId: Number(order.delivery.serviceDelivery.serviceId),
+                        total: Number(order.total),
+                        deliveryId: order.delivery.id,
+                        orderId: order.id
+                    };
                 
 
                     for (let item of order.items) {
@@ -74,6 +96,8 @@ export class SeparatePackageMelhorEnvio {
                     const length = Number(item.length);
                     const width = Number(item.width);
                     const height = Number(item.height);
+                    const name = item.name as string;
+                    const price = Number(item.price);
                     for (let i = 0; i < quantity; i++) {
                         let newTotalWeight = currentPackage.totalWeight + weight;
                         let newHeight = Math.max(currentPackage.dimensions.height, height);
@@ -81,18 +105,50 @@ export class SeparatePackageMelhorEnvio {
                         let newLength = currentPackage.dimensions.length + length;
                         let newSumDimensions = newHeight + newWidth + newLength;
                 
-                        // Verifica se ultrapassa os limites
+                       
                         const exceedsWeight = newTotalWeight > maxWeight;
                         const exceedsSide = newHeight > maxSide || newWidth > maxSide || newLength > maxSide;
                         const exceedsSum = maxSum !== Infinity && newSumDimensions > maxSum;
                 
                         if (exceedsWeight || exceedsSide || exceedsSum) {
-                        packages.push(currentPackage); // Salva o pacote atual
-                        currentPackage = { items: [], totalWeight: 0, dimensions: { height: 0, width: 0, length: 0 } }; // Novo pacote
+                            packages.push({
+                                items: currentPackage.items,
+                                totalWeight: currentPackage.totalWeight,
+                                dimensions: { height: currentPackage.dimensions.height, width: currentPackage.dimensions.width, length: currentPackage.dimensions.length },
+                                companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
+                                shopkeeperId: order.items[0].userId as string,
+                                clientId: order.user.id,
+                                address: order.delivery.address as Address,
+                                serviceId: Number(order.delivery.serviceDelivery.serviceId),
+                                total: Number(order.total),
+                                deliveryId: order.delivery.id,
+                                orderId: order.id
+                            }); 
+                            currentPackage = { 
+                                items: [], 
+                                totalWeight: 0, 
+                                dimensions: { height: 0, width: 0, length: 0 }, 
+                                companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
+                                shopkeeperId: order.items[0].userId as string,
+                                clientId: order.user.id,
+                                address: order.delivery.address as Address,
+                                serviceId: Number(order.delivery.serviceDelivery.serviceId),
+                                total: Number(order.total),
+                                deliveryId: order.delivery.id,
+                                orderId: order.id
+                            };
                         }
                 
-                        // Adiciona o item ao pacote
-                        currentPackage.items.push({ height, width, length, weight, quantity:1 });
+                       
+                        currentPackage.items.push({ 
+                            height, 
+                            width, 
+                            length, 
+                            name, 
+                            price, 
+                            weight, 
+                            quantity:1 
+                        });
                         currentPackage.totalWeight += weight;
                         currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
                         currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
@@ -105,9 +161,7 @@ export class SeparatePackageMelhorEnvio {
                         packages.push(currentPackage);
                     }
                     
-                    console.log(packages)
-
-                    // await this.kafkaProducer.execute('ADD_FREIGHT_TO_CART', package);
+                    await this.kafkaProducer.execute('ADD_FREIGHT_TO_CART', packages);
                 } catch (error) {
                     console.error('[Consumer - Separate Package] Erro ao processar mensagem:', error);
                 }

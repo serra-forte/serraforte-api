@@ -174,7 +174,6 @@ export class SeparatePackageMelhorEnvio {
                                     currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
                                     currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
                                     currentPackage.dimensions.length += length;
-                                    currentPackage.total += total;
                                 }
                                 
                                 remainingQuantity = 0; // Todos os itens foram alocados

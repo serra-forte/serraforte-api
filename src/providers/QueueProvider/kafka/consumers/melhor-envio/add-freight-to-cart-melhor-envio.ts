@@ -63,14 +63,11 @@ export class AddFreightToCartMelhorEnvio {
                     const parsedMessage = JSON.parse(message.value.toString());
                     console.log('[Consumer - Freight] Mensagem recebida:');
 
-                    console.log(parsedMessage)
-
-                    if (!parsedMessage.items || !Array.isArray(parsedMessage.items) || parsedMessage.items.length === 0) {
-                        // console.warn('[Consumer - Freight] Itens do pedido estão ausentes ou inválidos.');
+                    if (!parsedMessage.packages || !Array.isArray(parsedMessage.packages) || parsedMessage.packages.length === 0) {
+                        console.warn('[Consumer - Freight] Pacotes estão ausentes ou inválidos.');
                         return;
                     }
 
-                    
                     const packages = parsedMessage as Package;
                     console.log(packages)
 

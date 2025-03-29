@@ -40,13 +40,13 @@ export class SeparatePackageMelhorEnvio {
         createdConsumer.run({
             eachMessage: async ({ message }) => {
                 if (!message || !message.value) {
-                    console.warn('[Consumer - S] Mensagem vazia ou inválida:', message);
+                    console.warn('[Consumer - Separate Package] Mensagem vazia ou inválida:', message);
                     return;
                 }
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer - Freight] Mensagem recebida:');
+                    console.log('[Consumer - Separate Package] Mensagem recebida:');
 
                     if (!parsedMessage.items || !Array.isArray(parsedMessage.items) || parsedMessage.items.length === 0) {
                         // console.warn('[Consumer - Freight] Itens do pedido estão ausentes ou inválidos.');
@@ -111,7 +111,7 @@ export class SeparatePackageMelhorEnvio {
 
                     // await this.kafkaProducer.execute('ADD_FREIGHT_TO_CART', package);
                 } catch (error) {
-                    console.error('[Consumer - Freight] Erro ao processar mensagem:', error);
+                    console.error('[Consumer - Separate Package] Erro ao processar mensagem:', error);
                 }
             },
         });

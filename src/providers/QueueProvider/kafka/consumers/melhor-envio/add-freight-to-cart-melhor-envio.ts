@@ -68,7 +68,7 @@ export class AddFreightToCartMelhorEnvio {
                         return;
                     }
 
-                    const packages = parsedMessage as Package[];
+                    const packages = parsedMessage.packages as Package[];
 
                     console.dir(packages[0].shopkeeperId, { depth: 3 })
 

@@ -23,14 +23,14 @@ type OrderItem = {
     items: OrderItem[];
     totalWeight: number;
     dimensions: { height: number; width: number; length: number };
-    companyName: string;
+    companyName?: string | null;
     shopkeeperId: string;
-    clientId: string;
-    address: Address;
-    serviceId: number;
-    total: number
-    deliveryId: string
-    orderId: string
+    clientId?: string | null;
+    address?: Address | null;
+    serviceId?: number | null;
+    total: number;
+    deliveryId?: string | null;
+    orderId?: string | null;
   };
 
 export class SeparatePackageMelhorEnvio {
@@ -111,6 +111,7 @@ export class SeparatePackageMelhorEnvio {
                                 weight, 
                                 quantity: 1
                             });
+
                             currentPackage.totalWeight += weight;
                             currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
                             currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
@@ -150,16 +151,10 @@ export class SeparatePackageMelhorEnvio {
                                 // Inicia um novo pacote
                                 currentPackage = { 
                                     items: [], // Novo pacote começa vazio
-                                    totalWeight: weight, // Adiciona o item atual
-                                    dimensions: { height, width, length }, 
-                                    companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
+                                    totalWeight: 0, // Adiciona o item atual
+                                    dimensions: { height: 0, width: 0, length: 0 }, 
                                     shopkeeperId: order.items[0].userId as string,
-                                    clientId: order.user.id,
-                                    address: order.delivery.address as Address,
-                                    serviceId: Number(order.delivery.serviceDelivery.serviceId),
                                     total,
-                                    deliveryId: order.delivery.id,
-                                    orderId: order.id
                                 };
                     
                                 // Adiciona o item ao novo pacote

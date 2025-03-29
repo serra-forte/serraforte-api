@@ -70,7 +70,7 @@ export class AddFreightToCartMelhorEnvio {
 
                     const packages = parsedMessage as Package[];
 
-                    console.dir(packages)
+                    console.dir(packages[0].shopkeeperId, { depth: 3 })
 
                     const shopkeeper = await this.usersRepository.findById(packages[0].shopkeeperId) as unknown as IUserRelations;
                     if (!shopkeeper || !shopkeeper.address) {

@@ -91,76 +91,100 @@ export class SeparatePackageMelhorEnvio {
                 
 
                     for (let item of order.items) {
-                    const quantity = Number(item.quantity);
-                    const weight = Number(item.weight);
-                    const length = Number(item.length);
-                    const width = Number(item.width);
-                    const height = Number(item.height);
-                    const name = item.name as string;
-                    const price = Number(item.price);
-                    const total = quantity * price;
-                    for (let i = 0; i < quantity; i++) {
-                        let newTotalWeight = currentPackage.totalWeight + weight;
-                        let newHeight = Math.max(currentPackage.dimensions.height, height);
-                        let newWidth = Math.max(currentPackage.dimensions.width, width);
-                        let newLength = currentPackage.dimensions.length + length;
-                        let newSumDimensions = newHeight + newWidth + newLength;
-                
-                       
-                        const exceedsWeight = newTotalWeight > maxWeight;
-                        const exceedsSide = newHeight > maxSide || newWidth > maxSide || newLength > maxSide;
-                        const exceedsSum = maxSum !== Infinity && newSumDimensions > maxSum;
-                
-                        if (exceedsWeight || exceedsSide || exceedsSum) {
-                            packages.push({
-                                items: currentPackage.items,
-                                totalWeight: currentPackage.totalWeight,
-                                dimensions: { height: currentPackage.dimensions.height, width: currentPackage.dimensions.width, length: currentPackage.dimensions.length },
-                                companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
-                                shopkeeperId: order.items[0].userId as string,
-                                clientId: order.user.id,
-                                address: order.delivery.address as Address,
-                                serviceId: Number(order.delivery.serviceDelivery.serviceId),
-                                total,
-                                deliveryId: order.delivery.id,
-                                orderId: order.id
-                            }); 
-                            currentPackage = { 
-                                items: currentPackage.items,
-                                totalWeight: total, 
-                                dimensions: { height: currentPackage.dimensions.height, width: currentPackage.dimensions.width, length: currentPackage.dimensions.length }, 
-                                companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
-                                shopkeeperId: order.items[0].userId as string,
-                                clientId: order.user.id,
-                                address: order.delivery.address as Address,
-                                serviceId: Number(order.delivery.serviceDelivery.serviceId),
-                                total,
-                                deliveryId: order.delivery.id,
-                                orderId: order.id
-                            };
+                        const quantity = Number(item.quantity);
+                        const weight = Number(item.weight);
+                        const length = Number(item.length);
+                        const width = Number(item.width);
+                        const height = Number(item.height);
+                        const name = item.name as string;
+                        const price = Number(item.price);
+                        const total = quantity * price;
+                    
+                        for (let i = 0; i < quantity; i++) {
+                            // Adiciona o item ao pacote
+                            currentPackage.items.push({ 
+                                height, 
+                                width, 
+                                length, 
+                                name, 
+                                price, 
+                                weight, 
+                                quantity: 1
+                            });
+                            currentPackage.totalWeight += weight;
+                            currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
+                            currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
+                            currentPackage.dimensions.length += length;
+                    
+                            // Verificação dos limites após adicionar o item
+                            let newTotalWeight = currentPackage.totalWeight;
+                            let newHeight = currentPackage.dimensions.height;
+                            let newWidth = currentPackage.dimensions.width;
+                            let newLength = currentPackage.dimensions.length;
+                            let newSumDimensions = newHeight + newWidth + newLength;
+                    
+                            const exceedsWeight = newTotalWeight > maxWeight;
+                            const exceedsSide = newHeight > maxSide || newWidth > maxSide || newLength > maxSide;
+                            const exceedsSum = maxSum !== Infinity && newSumDimensions > maxSum;
+                    
+                            if (exceedsWeight || exceedsSide || exceedsSum) {
+                                // Adiciona o pacote atual à lista e cria um novo pacote
+                                packages.push({
+                                    items: currentPackage.items,
+                                    totalWeight: currentPackage.totalWeight,
+                                    dimensions: { 
+                                        height: currentPackage.dimensions.height, 
+                                        width: currentPackage.dimensions.width, 
+                                        length: currentPackage.dimensions.length 
+                                    },
+                                    companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
+                                    shopkeeperId: order.items[0].userId as string,
+                                    clientId: order.user.id,
+                                    address: order.delivery.address as Address,
+                                    serviceId: Number(order.delivery.serviceDelivery.serviceId),
+                                    total,
+                                    deliveryId: order.delivery.id,
+                                    orderId: order.id
+                                });
+                    
+                                // Inicia um novo pacote
+                                currentPackage = { 
+                                    items: [], // Novo pacote começa vazio
+                                    totalWeight: weight, // Adiciona o item atual
+                                    dimensions: { height, width, length }, 
+                                    companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
+                                    shopkeeperId: order.items[0].userId as string,
+                                    clientId: order.user.id,
+                                    address: order.delivery.address as Address,
+                                    serviceId: Number(order.delivery.serviceDelivery.serviceId),
+                                    total,
+                                    deliveryId: order.delivery.id,
+                                    orderId: order.id
+                                };
+                    
+                                // Adiciona o item ao novo pacote
+                                currentPackage.items.push({ 
+                                    height, 
+                                    width, 
+                                    length, 
+                                    name, 
+                                    price, 
+                                    weight, 
+                                    quantity: 1
+                                });
+                                currentPackage.totalWeight += weight;
+                                currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
+                                currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
+                                currentPackage.dimensions.length += length;
+                            }
                         }
-                
-                       
-                        currentPackage.items.push({ 
-                            height, 
-                            width, 
-                            length, 
-                            name, 
-                            price, 
-                            weight, 
-                            quantity
-                        });
-                        currentPackage.totalWeight += weight;
-                        currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
-                        currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
-                        currentPackage.dimensions.length += length;
                     }
-                    }
-                
+                    
                     // Adiciona o último pacote se houver itens
                     if (currentPackage.items.length > 0) {
                         packages.push(currentPackage);
                     }
+                    
                     
                     await this.kafkaProducer.execute('ADD_FREIGHT_TO_CART', {packages});
                 } catch (error) {

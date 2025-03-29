@@ -86,7 +86,6 @@ export class AddFreightToCartMelhorEnvio {
 
                         if(itemPackage.companyName === 'Correios') {
                             for(let item of itemPackage.items) {
-                                console.dir(item, { depth: 1 })
                                 const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
                                     from: {
                                         name: shopkeeper.name,

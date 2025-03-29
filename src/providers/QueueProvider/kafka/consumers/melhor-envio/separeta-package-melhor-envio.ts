@@ -126,9 +126,9 @@ export class SeparatePackageMelhorEnvio {
                                 orderId: order.id
                             }); 
                             currentPackage = { 
-                                items: [], 
-                                totalWeight: 0, 
-                                dimensions: { height: 0, width: 0, length: 0 }, 
+                                items: currentPackage.items,
+                                totalWeight: total, 
+                                dimensions: { height: currentPackage.dimensions.height, width: currentPackage.dimensions.width, length: currentPackage.dimensions.length }, 
                                 companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
                                 shopkeeperId: order.items[0].userId as string,
                                 clientId: order.user.id,
@@ -148,7 +148,7 @@ export class SeparatePackageMelhorEnvio {
                             name, 
                             price, 
                             weight, 
-                            quantity:1 
+                            quantity
                         });
                         currentPackage.totalWeight += weight;
                         currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);

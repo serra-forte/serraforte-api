@@ -77,6 +77,7 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     for(let itemPackage of packages) {
+                        console.dir(itemPackage, { depth: 1 })
                         const customer = await this.usersRepository.findById(itemPackage.clientId) as unknown as IUserRelations;
                         if (!customer || !customer.address) {
                             console.error('[Consumer - Freight] Cliente não encontrado ou endereço inválido.');

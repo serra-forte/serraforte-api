@@ -128,6 +128,7 @@ export class SeparatePackageMelhorEnvio {
                             const exceedsSide = newHeight > maxSide || newWidth > maxSide || newLength > maxSide;
                             const exceedsSum = maxSum !== Infinity && newSumDimensions > maxSum;
                     
+                            console.log(exceedsWeight, exceedsSide, exceedsSum);
                             if (exceedsWeight || exceedsSide || exceedsSum) {
                                 // Adiciona o pacote atual à lista e cria um novo pacote
                                 packages.push({

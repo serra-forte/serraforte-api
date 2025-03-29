@@ -68,21 +68,21 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     const order = parsedMessage as IOrderRelationsDTO;
-                    // Buscar lojista pelo ID do primeiro item
+
                     const shopkeeper = await this.usersRepository.findById(order.items[0].userId as string) as unknown as IUserRelations;
                     if (!shopkeeper || !shopkeeper.address) {
                         console.error('[Consumer - Freight] Lojista não encontrado ou endereço inválido.');
                         return;
                     }
 
-                    // Buscar cliente pelo ID do pedido
                     const customer = await this.usersRepository.findById(order.user.id as string) as unknown as IUserRelations;
                     if (!customer || !customer.address) {
                         console.error('[Consumer - Freight] Cliente não encontrado ou endereço inválido.');
                         return;
                     }
+
                     console.log(order.boxes)
-                    // * Determinar qual tipo da transportadora porque se for Correio so pode enviar um volume por vez.
+                    
                     if(order.delivery.serviceDelivery.companyName === 'Correios') {
                         const boxToCorreios = order.boxes
                         .map(relation => (relation as unknown as IRelationBox).box)
@@ -93,7 +93,6 @@ export class AddFreightToCartMelhorEnvio {
                         }
 
                         for(let item of order.items) {
-
                             const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
                                 from: {
                                     name: shopkeeper.name,
@@ -101,11 +100,11 @@ export class AddFreightToCartMelhorEnvio {
                                     email: shopkeeper.email,
                                     document: shopkeeper.cpf as string,
                                     state_register: '12345678910',
-                                    address: shopkeeper.address.street,
+                                    address: shopkeeper.address.street as string,
                                     complement: shopkeeper.address.complement as string,
                                     number: String(shopkeeper.address.num),
                                     district: shopkeeper.address.neighborhood as string,
-                                    city: shopkeeper.address.city,
+                                    city: shopkeeper.address.city as string,
                                     country_id: "BR", // Brasill
                                     postal_code: shopkeeper.address.zipCode as string,
                                     state_abbr: shopkeeper.address.state as string,
@@ -187,11 +186,11 @@ export class AddFreightToCartMelhorEnvio {
                             email: shopkeeper.email,
                             document: shopkeeper.cpf as string,
                             state_register: '12345678910',
-                            address: shopkeeper.address.street,
+                            address: shopkeeper.address.street as string,
                             complement: shopkeeper.address.complement as string,
                             number: String(shopkeeper.address.num),
                             district: shopkeeper.address.neighborhood as string,
-                            city: shopkeeper.address.city,
+                            city: shopkeeper.address.city as string,
                             country_id: "BR", // Brasill
                             postal_code: shopkeeper.address.zipCode as string,
                             state_abbr: shopkeeper.address.state as string,

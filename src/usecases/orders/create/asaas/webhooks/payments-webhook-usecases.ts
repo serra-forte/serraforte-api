@@ -246,7 +246,7 @@ export class PaymentWebHookUseCases {
         }
 
         // chamar producer para enviar endOrder para o consumer enviar um frete para o carrinho da melhor envio
-        await this.kafkaProducer.execute('ADD_FREIGHT_TO_CART', endOrder)
+        await this.kafkaProducer.execute('SEPARETE_PACKAGE', endOrder)
       }      
     }
   }

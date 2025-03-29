@@ -100,21 +100,34 @@ export class SeparatePackageMelhorEnvio {
                         const price = Number(item.price);
                         const total = quantity * price;
                     
-                        // Verifica se o item já existe no pacote
-                        const existingItemIndex = currentPackage.items.findIndex(existingItem => existingItem.name === name);
+                        for (let i = 0; i < quantity; i++) { // Adiciona um item por vez para validar os limites corretamente
+                            let newTotalWeight = currentPackage.totalWeight + weight;
+                            let newHeight = Math.max(currentPackage.dimensions.height, height);
+                            let newWidth = Math.max(currentPackage.dimensions.width, width);
+                            let newLength = currentPackage.dimensions.length + length;
+                            let newSumDimensions = newHeight + newWidth + newLength;
                     
-                        // Se o item já estiver no pacote, apenas acumula a quantidade e o peso
-                        if (existingItemIndex !== -1) {
-                            currentPackage.items[existingItemIndex].quantity += quantity;  // Acumula a quantidade
-                            currentPackage.totalWeight += weight * quantity;  // Acumula o peso total
-                            currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
-                            currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
-                            currentPackage.dimensions.length += length * quantity; // Acumula o comprimento
-                        } else {
-                            // Se o item não existir no pacote, adiciona um novo item
+                            const exceedsWeight = newTotalWeight > maxWeight;
+                            const exceedsSide = newHeight > maxSide || newWidth > maxSide || newLength > maxSide;
+                            const exceedsSum = maxSum !== Infinity && newSumDimensions > maxSum;
+                    
+                            if (exceedsWeight || exceedsSide || exceedsSum) {
+                                // Se o pacote atual atingiu o limite, armazena e cria um novo
+                                packages.push({ ...currentPackage });
+                    
+                                currentPackage = { 
+                                    items: [], 
+                                    totalWeight: 0, 
+                                    dimensions: { height: 0, width: 0, length: 0 },
+                                    shopkeeperId: order.items[0].userId as string,
+                                    total: 0,
+                                };
+                            }
+                    
+                            // Adiciona o item ao novo pacote
                             currentPackage.items.push({
                                 name,
-                                quantity,  // Quantidade do item
+                                quantity: 1,  // Adicionando um por um para respeitar os limites
                                 height,
                                 width,
                                 length,
@@ -122,60 +135,13 @@ export class SeparatePackageMelhorEnvio {
                                 weight,
                             });
                     
-                            // Acumula o peso e as dimensões do pacote
-                            currentPackage.totalWeight += weight * quantity;
+                            currentPackage.totalWeight += weight;
                             currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
                             currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
-                            currentPackage.dimensions.length += length * quantity;
-                        }
-                    
-                        // Verifica se o pacote excede os limites de peso, tamanho ou soma das dimensões
-                        let newTotalWeight = currentPackage.totalWeight;
-                        let newHeight = currentPackage.dimensions.height;
-                        let newWidth = currentPackage.dimensions.width;
-                        let newLength = currentPackage.dimensions.length;
-                        let newSumDimensions = newHeight + newWidth + newLength;
-                    
-                        const exceedsWeight = newTotalWeight > maxWeight;
-                        const exceedsSide = newHeight > maxSide || newWidth > maxSide || newLength > maxSide;
-                        const exceedsSum = maxSum !== Infinity && newSumDimensions > maxSum;
-                    
-                        if (exceedsWeight || exceedsSide || exceedsSum) {
-                            // Adiciona o pacote atual à lista de pacotes
-                            packages.push({
-                                items: currentPackage.items,  // Lista de itens
-                                totalWeight: currentPackage.totalWeight,
-                                dimensions: { 
-                                    height: currentPackage.dimensions.height, 
-                                    width: currentPackage.dimensions.width, 
-                                    length: currentPackage.dimensions.length 
-                                },
-                                companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
-                                shopkeeperId: order.items[0].userId as string,
-                                clientId: order.user.id,
-                                address: order.delivery.address as Address,
-                                serviceId: Number(order.delivery.serviceDelivery.serviceId),
-                                total,
-                                deliveryId: order.delivery.id,
-                                orderId: order.id
-                            });
-                    
-                            // Cria um novo pacote
-                            currentPackage = { 
-                                items: [], 
-                                totalWeight: 0, 
-                                dimensions: { height: 0, width: 0, length: 0 },
-                                companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
-                                shopkeeperId: order.items[0].userId as string,
-                                clientId: order.user.id,
-                                address: order.delivery.address as Address,
-                                serviceId: Number(order.delivery.serviceDelivery.serviceId),
-                                total: 0,
-                                deliveryId: order.delivery.id,
-                                orderId: order.id
-                            };
+                            currentPackage.dimensions.length += length;
                         }
                     }
+                    
                     
                     // Adiciona o último pacote se houver itens
                     if (currentPackage.items.length > 0) {

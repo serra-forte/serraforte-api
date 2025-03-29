@@ -12,6 +12,8 @@ import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
 import { env } from "@/env";
 import { KafkaConsumerGenerateTrackingLink } from "../../kafka-consumer-generate-tracking-link";
+import { IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
+import { PrismaDeliveryRepository } from "@/repositories/prisma/prisma-deliveries-repository";
 
 export class GenerateTrackingLinkMelhorEnvio {
     private kafkaConsumer: KafkaConsumerGenerateTrackingLink;
@@ -20,6 +22,7 @@ export class GenerateTrackingLinkMelhorEnvio {
     private usersRepository: IUsersRepository;
     private melhorEnvioProvider: IMelhorEnvioProvider;
     private orderRepository: IOrderRepository;
+    private deliveryRepository: IDeliveryRepository
 
     constructor() {
         this.kafkaConsumer = new KafkaConsumerGenerateTrackingLink();
@@ -32,6 +35,7 @@ export class GenerateTrackingLinkMelhorEnvio {
             this.usersRepository
         );
         this.orderRepository = new PrismaOrderRepository();
+        this.deliveryRepository = new PrismaDeliveryRepository()
     }
 
     async execute() {
@@ -56,8 +60,17 @@ export class GenerateTrackingLinkMelhorEnvio {
 
                     const objectTracking = Object.values(responseShipmentTracking);
                     console.log(objectTracking)
-                    const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0].tracking}/${parsedMessage.self_tracking}`;
-                    // await this.orderRepository.saveTrackingLink(parsedMessage.orderId, trackingLink);
+                    
+                    // const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0].tracking}/${parsedMessage.self_tracking}`;
+                    
+                    const delivery = await this.deliveryRepository.findById(parsedMessage.deliveryId)
+
+                    if (!delivery) {
+                        throw new AppError('Entrega nao encontrada', 404);
+                    }
+
+                    
+                    // await this.orderRepository.saveTrackingLink(delivery.orderId, trackingLink);
 
                     console.info('[Consumer - Generate Tracking Link] Link do frete gerado com sucesso');
                 } catch (error) {

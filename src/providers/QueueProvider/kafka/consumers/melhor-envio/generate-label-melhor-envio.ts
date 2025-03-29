@@ -8,9 +8,11 @@ import { MailProvider } from "@/providers/MailProvider/implementations/provider-
 import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
-import { KafkaProducer } from "../../kafka-producer";
 import { KafkaConsumerGenerateLabel } from "../../kafka-consumer-generate-label";
 import { Status } from "@prisma/client";
+import { IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
+import { PrismaDeliveryRepository } from "@/repositories/prisma/prisma-deliveries-repository";
+import { AppError } from "@/usecases/errors/app-error";
 
 export interface IGenerateLabelLink {
     orderId: string;
@@ -18,16 +20,15 @@ export interface IGenerateLabelLink {
 }
 export class GenerateFreightMelhorEnvio {
     private kafkaConsumer: KafkaConsumerGenerateLabel;
-    private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
     private usersRepository: IUsersRepository;
     private melhorEnvioProvider: IMelhorEnvioProvider;
     private orderRepository: IOrderRepository;
+    private deliveryRepository: IDeliveryRepository
 
     constructor() {
         this.kafkaConsumer = new KafkaConsumerGenerateLabel();
-        this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
         this.usersRepository = new PrismaUsersRepository();
@@ -37,6 +38,7 @@ export class GenerateFreightMelhorEnvio {
             this.usersRepository
         );
         this.orderRepository = new PrismaOrderRepository();
+        this.deliveryRepository = new PrismaDeliveryRepository()
     }
 
     async execute() {
@@ -61,8 +63,15 @@ export class GenerateFreightMelhorEnvio {
                     // gerar etiqueta na melhor envio
                     await this.melhorEnvioProvider.generateLabel(parsedMessage.freightId)
 
+
+                    const delivery = await this.deliveryRepository.findById(parsedMessage.deliveryId)
+
+                    if (!delivery) {
+                        throw new AppError('Entrega nao encontrada', 404);
+                    }
+
                     // atualizar pedido com status "AWAITING_LABEL_LINK"
-                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.AWAITING_LABEL_LINK)
+                    await this.orderRepository.updateStatus(delivery.orderId, Status.AWAITING_LABEL_LINK)
 
                     console.info('[Consumer - Generate Label] Frete gerado com sucesso');
                 } catch (error) {

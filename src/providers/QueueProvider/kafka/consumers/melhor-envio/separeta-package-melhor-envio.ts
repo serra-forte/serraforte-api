@@ -143,6 +143,7 @@ export class SeparatePackageMelhorEnvio {
                     }
                     
                     
+                    
                     // Adiciona o último pacote se houver itens
                     if (currentPackage.items.length > 0) {
                         packages.push(currentPackage);

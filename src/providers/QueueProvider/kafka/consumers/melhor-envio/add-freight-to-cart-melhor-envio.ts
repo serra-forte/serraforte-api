@@ -31,7 +31,6 @@ export class AddFreightToCartMelhorEnvio {
     private usersRepository: IUsersRepository;
     private melhorEnvioProvider: IMelhorEnvioProvider;
     private orderRepository: IOrderRepository;
-    private deliveryProvider: IDeliveryRepository
     private freightRespository:  IFreightsRepository
 
     constructor() {
@@ -45,7 +44,6 @@ export class AddFreightToCartMelhorEnvio {
             this.usersRepository
         );
         this.orderRepository = new PrismaOrderRepository();
-        this.deliveryProvider = new PrismaDeliveryRepository()
         this.freightRespository = new PrismaFreightRepository()
     }
 
@@ -69,7 +67,7 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     const packages = parsedMessage.packages as Package[];
-
+                    console.log(packages);
                     const shopkeeper = await this.usersRepository.findById(packages[0].shopkeeperId) as unknown as IUserRelations;
                     if (!shopkeeper || !shopkeeper.address) {
                         console.error('[Consumer - Freight] Lojista não encontrado ou endereço inválido.');
@@ -77,7 +75,6 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     for(let itemPackage of packages) {
-                        console.dir(itemPackage, { depth: 1 })
                         const customer = await this.usersRepository.findById(itemPackage.clientId as string) as unknown as IUserRelations;
                         if (!customer || !customer.address) {
                             console.error('[Consumer - Freight] Cliente não encontrado ou endereço inválido.');

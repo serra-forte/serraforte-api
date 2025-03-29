@@ -188,7 +188,7 @@ export class SeparatePackageMelhorEnvio {
                     }
                     
                     console.log(packages);
-                    // await this.kafkaProducer.execute('ADD_FREIGHT_TO_CART', {packages});
+                    await this.kafkaProducer.execute('ADD_FREIGHT_TO_CART', {packages});
                 } catch (error) {
                     console.error('[Consumer - Separate Package] Erro ao processar mensagem:', error);
                 }

@@ -98,94 +98,80 @@ export class SeparatePackageMelhorEnvio {
                         const height = Number(item.height);
                         const name = item.name as string;
                         const price = Number(item.price);
-                        const total = quantity * price;
                     
-                        for (let item of order.items) {
-                            const quantity = Number(item.quantity);
-                            const weight = Number(item.weight);
-                            const length = Number(item.length);
-                            const width = Number(item.width);
-                            const height = Number(item.height);
-                            const name = item.name as string;
-                            const price = Number(item.price);
-                            const total = quantity * price;
-                        
-                            let remainingQuantity = quantity;
-                        
-                            while (remainingQuantity > 0) {
-                                for (let i = 0; i < remainingQuantity; i++) {
-                                    let newTotalWeight = currentPackage.totalWeight + weight;
-                                    let newHeight = Math.max(currentPackage.dimensions.height, height);
-                                    let newWidth = Math.max(currentPackage.dimensions.width, width);
-                                    let newLength = currentPackage.dimensions.length + length;
-                                    let newSumDimensions = newHeight + newWidth + newLength;
-                        
-                                    const exceedsWeight = newTotalWeight > maxWeight;
-                                    const exceedsSide = newHeight > maxSide || newWidth > maxSide || newLength > maxSide;
-                                    const exceedsSum = maxSum !== Infinity && newSumDimensions > maxSum;
-                        
-                                    if (exceedsWeight || exceedsSide || exceedsSum) {
-                                        // Salva o pacote atual e inicia um novo
-                                        packages.push({
-                                            items: currentPackage.items,
-                                            totalWeight: currentPackage.totalWeight,
-                                            dimensions: { 
-                                                height: currentPackage.dimensions.height, 
-                                                width: currentPackage.dimensions.width, 
-                                                length: currentPackage.dimensions.length 
-                                            },
-                                            companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
-                                            shopkeeperId: order.items[0].userId as string,
-                                            clientId: order.user.id,
-                                            address: order.delivery.address as Address,
-                                            serviceId: Number(order.delivery.serviceDelivery.serviceId),
-                                            total,
-                                            deliveryId: order.delivery.id,
-                                            orderId: order.id
-                                        });
-                        
-                                        currentPackage = { 
-                                            items: [], 
-                                            totalWeight: 0, 
-                                            dimensions: { height: 0, width: 0, length: 0 },
-                                            shopkeeperId: order.items[0].userId as string,
-                                            total: 0,
-                                        };
-                                    }
-                        
-                                    // Verifica se o item já está no pacote
-                                    const existingItemIndex = currentPackage.items.findIndex(existingItem => existingItem.name === name);
-                        
-                                    if (existingItemIndex !== -1) {
-                                        currentPackage.items[existingItemIndex].quantity += 1;
-                                    } else {
-                                        currentPackage.items.push({
-                                            name,
-                                            quantity: 1,
-                                            height,
-                                            width,
-                                            length,
-                                            price,
-                                            weight,
-                                        });
-                                    }
-                        
-                                    currentPackage.totalWeight += weight;
-                                    currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
-                                    currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
-                                    currentPackage.dimensions.length += length;
-                                }
-                                
-                                remainingQuantity = 0; // Todos os itens foram alocados
+                        for (let i = 0; i < quantity; i++) { 
+                            let newTotalWeight = currentPackage.totalWeight + weight;
+                            let newHeight = Math.max(currentPackage.dimensions.height, height);
+                            let newWidth = Math.max(currentPackage.dimensions.width, width);
+                            let newLength = currentPackage.dimensions.length + length;
+                            let newSumDimensions = newHeight + newWidth + newLength;
+                    
+                            const exceedsWeight = newTotalWeight > maxWeight;
+                            const exceedsSide = newHeight > maxSide || newWidth > maxSide || newLength > maxSide;
+                            const exceedsSum = maxSum !== Infinity && newSumDimensions > maxSum;
+                    
+                            if (exceedsWeight || exceedsSide || exceedsSum) {
+                                // Salva o pacote antes de criar um novo
+                                packages.push({
+                                    items: currentPackage.items,
+                                    totalWeight: currentPackage.totalWeight,
+                                    dimensions: { 
+                                        height: currentPackage.dimensions.height, 
+                                        width: currentPackage.dimensions.width, 
+                                        length: currentPackage.dimensions.length 
+                                    },
+                                    companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
+                                    shopkeeperId: order.items[0].userId as string,
+                                    clientId: order.user.id,
+                                    address: order.delivery.address as Address,
+                                    serviceId: Number(order.delivery.serviceDelivery.serviceId),
+                                    total: currentPackage.items.reduce((sum, item) => sum + item.price * item.quantity, 0), // Soma total dos itens no pacote
+                                    deliveryId: order.delivery.id,
+                                    orderId: order.id
+                                });
+                    
+                                // Criando um novo pacote
+                                currentPackage = { 
+                                    items: [], 
+                                    totalWeight: 0, 
+                                    dimensions: { height: 0, width: 0, length: 0 },
+                                    total: 0,
+                                    shopkeeperId: order.items[0].userId as string,
+                                };
                             }
+                    
+                            // Verifica se o item já existe no pacote
+                            const existingItemIndex = currentPackage.items.findIndex(existingItem => existingItem.name === name);
+                    
+                            if (existingItemIndex !== -1) {
+                                currentPackage.items[existingItemIndex].quantity += 1; 
+                            } else {
+                                currentPackage.items.push({
+                                    name,
+                                    quantity: 1,
+                                    height,
+                                    width,
+                                    length,
+                                    price,
+                                    weight
+                                });
+                            }
+                    
+                            currentPackage.totalWeight += weight;
+                            currentPackage.dimensions.height = Math.max(currentPackage.dimensions.height, height);
+                            currentPackage.dimensions.width = Math.max(currentPackage.dimensions.width, width);
+                            currentPackage.dimensions.length += length;
                         }
-                        
-                        // Adiciona o último pacote caso tenha itens restantes
-                        if (currentPackage.items.length > 0) {
-                            packages.push(currentPackage);
-                        }
-                        
                     }
+                    
+                    // Adiciona o último pacote caso ainda tenha itens
+                    if (currentPackage.items.length > 0) {
+                        packages.push({
+                            ...currentPackage,
+                            total: currentPackage.items.reduce((sum, item) => sum + item.price * item.quantity, 0) // Soma final do pacote
+                        });
+                    }
+                    
                     
                     console.log(packages);
                     await this.kafkaProducer.execute('ADD_FREIGHT_TO_CART', {packages});

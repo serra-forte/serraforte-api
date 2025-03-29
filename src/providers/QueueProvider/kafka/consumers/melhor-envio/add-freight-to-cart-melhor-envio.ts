@@ -78,7 +78,7 @@ export class AddFreightToCartMelhorEnvio {
 
                     for(let itemPackage of packages) {
                         console.dir(itemPackage, { depth: 1 })
-                        const customer = await this.usersRepository.findById(itemPackage.clientId) as unknown as IUserRelations;
+                        const customer = await this.usersRepository.findById(itemPackage.clientId as string) as unknown as IUserRelations;
                         if (!customer || !customer.address) {
                             console.error('[Consumer - Freight] Cliente não encontrado ou endereço inválido.');
                             return;
@@ -107,19 +107,19 @@ export class AddFreightToCartMelhorEnvio {
                                         name: customer.name,
                                         email: customer.email,
                                         phone: customer.phone,
-                                        city: itemPackage.address.city as string,
-                                        state_abbr: itemPackage.address.state as string,
-                                        postal_code: itemPackage.address.zipCode as string,
-                                        address: itemPackage.address.street as string,
+                                        city: itemPackage.address?.city as string,
+                                        state_abbr: itemPackage.address?.state as string,
+                                        postal_code: itemPackage.address?.zipCode as string,
+                                        address: itemPackage.address?.street as string,
                                         country_id: "BR", // Brasil
-                                        number: String(itemPackage.address.num),
-                                        complement: itemPackage.address.complement as string,
-                                        district: itemPackage.address.neighborhood as string,
+                                        number: String(itemPackage.address?.num),
+                                        complement: itemPackage.address?.complement as string,
+                                        district: itemPackage.address?.neighborhood as string,
                                         state_register: '123456789',
                                         document: customer.cpf as string,
                                         note: "order for delivery"
                                     },
-                                    service: itemPackage.serviceId,
+                                    service: itemPackage.serviceId as number,
                                     products: [
                                         {
                                             name: item.name,
@@ -153,12 +153,12 @@ export class AddFreightToCartMelhorEnvio {
     
                                 await this.freightRespository.create({
                                     freightId: freightInCart.id,
-                                    deliveryId: itemPackage.deliveryId,
+                                    deliveryId: itemPackage.deliveryId as string,
                                     price: freightInCart.price
                                 });
                                 
                                 // Atualizar status do pedido e informações relacionadas
-                                await this.orderRepository.updateStatus(itemPackage.orderId, Status.AWAITING_LABEL_PAYMENT_PROCESS);
+                                await this.orderRepository.updateStatus(itemPackage.orderId as string, Status.AWAITING_LABEL_PAYMENT_PROCESS);
                             }
     
                             console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
@@ -186,19 +186,19 @@ export class AddFreightToCartMelhorEnvio {
                                     name: customer.name,
                                     email: customer.email,
                                     phone: customer.phone,
-                                    city: itemPackage.address.city as string,
-                                    state_abbr: itemPackage.address.state as string,
-                                    postal_code: itemPackage.address.zipCode as string,
-                                    address: itemPackage.address.street as string,
+                                    city: itemPackage.address?.city as string,
+                                    state_abbr: itemPackage.address?.state as string,
+                                    postal_code: itemPackage.address?.zipCode as string,
+                                    address: itemPackage.address?.street as string,
                                     country_id: "BR", // Brasil
-                                    number: String(itemPackage.address.num),
-                                    complement: itemPackage.address.complement as string,
-                                    district: itemPackage.address.neighborhood as string,
+                                    number: String(itemPackage.address?.num),
+                                    complement: itemPackage.address?.complement as string,
+                                    district: itemPackage.address?.neighborhood as string,
                                     state_register: '123456789',
                                     document: customer.cpf as string,
                                     note: "order for delivery"
                                 },
-                                service: itemPackage.serviceId,
+                                service: itemPackage.serviceId as number,
                                 products: itemPackage.items.map(item => {
                                     return{
                                         quantity: Number(item.quantity),
@@ -235,12 +235,12 @@ export class AddFreightToCartMelhorEnvio {
                             // Adicionar frete ao pedido
                             await this.freightRespository.create({
                                 freightId: freightInCart.id,
-                                deliveryId: itemPackage.deliveryId,
+                                deliveryId: itemPackage.deliveryId as string,
                                 price: freightInCart.price
                             });
                             
                             // Atualizar status do pedido e informações relacionadas
-                            await this.orderRepository.updateStatus(itemPackage.orderId, Status.AWAITING_LABEL_PAYMENT_PROCESS);
+                            await this.orderRepository.updateStatus(itemPackage.orderId as string, Status.AWAITING_LABEL_PAYMENT_PROCESS);
 
                         }
                     }

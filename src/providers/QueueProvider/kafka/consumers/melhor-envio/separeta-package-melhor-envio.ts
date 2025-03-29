@@ -26,7 +26,7 @@ type OrderItem = {
     companyName?: string | null;
     shopkeeperId: string;
     clientId?: string | null;
-    address?: Address | null;
+    address?: Address;
     serviceId?: number | null;
     total: number;
     deliveryId?: string | null;

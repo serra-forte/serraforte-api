@@ -72,8 +72,7 @@ export class AddFreightToCartMelhorEnvio {
                         console.error('[Consumer - Freight] Lojista não encontrado ou endereço inválido.');
                         return;
                     }
-
-                    for(let itemPackage of packages) {
+                    await Promise.all(packages.map(async (itemPackage) => {
                         const customer = await this.usersRepository.findById(itemPackage.clientId as string) as unknown as IUserRelations;
                         if (!customer || !customer.address) {
                             console.error('[Consumer - Freight] Cliente não encontrado ou endereço inválido.');
@@ -81,7 +80,6 @@ export class AddFreightToCartMelhorEnvio {
                         }
 
                         if(itemPackage.companyName === 'Correios') {
-                            console.log(itemPackage.items.length)
                             for(let item of itemPackage.items) {
                                 const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
                                     from: {
@@ -157,14 +155,14 @@ export class AddFreightToCartMelhorEnvio {
                                 if(!createdFreight) {
                                     throw new AppError('Freight not added to cart')
                                 }
+
+                                console.log(createdFreight)
                                 
                                 // Atualizar status do pedido e informações relacionadas
                                 await this.orderRepository.updateStatus(itemPackage.orderId as string, Status.AWAITING_LABEL_PAYMENT_PROCESS);
                             }
     
                             console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
-                            return
-    
                         }else{
                             const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
                                 from: {
@@ -244,7 +242,8 @@ export class AddFreightToCartMelhorEnvio {
                             await this.orderRepository.updateStatus(itemPackage.orderId as string, Status.AWAITING_LABEL_PAYMENT_PROCESS);
 
                         }
-                    }
+                        
+                    }))
                 } catch (error) {
                     console.error('[Consumer - Freight] Erro ao processar mensagem:', error);
                 }

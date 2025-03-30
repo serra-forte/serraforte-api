@@ -48,7 +48,7 @@ export class WebHookGetStatusLabelUseCase {
         }
 
         switch (event) {
-            case 'order.created':
+            case 'order.createdd':
                 // Enviar mensagem para o Kafka para processar o pagamento
                 await this.kafkaProducer.execute('PAYMENT_PROCESS_IN_CART',  {
                     freightId: data.id,

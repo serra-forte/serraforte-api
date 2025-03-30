@@ -73,7 +73,6 @@ export class AddFreightToCartMelhorEnvio {
                         return;
                     }
                     await Promise.all(packages.map(async (itemPackage) => {
-                        console.log(itemPackage);
                         const customer = await this.usersRepository.findById(itemPackage.clientId as string) as unknown as IUserRelations;
                         
                         if (!customer) {
@@ -158,8 +157,6 @@ export class AddFreightToCartMelhorEnvio {
                                     throw new AppError('Freight not added to cart')
                                 }
 
-                                console.log(createdFreight)
-                                
                                 // Atualizar status do pedido e informações relacionadas
                                 await this.orderRepository.updateStatus(itemPackage.orderId as string, Status.AWAITING_LABEL_PAYMENT_PROCESS);
                             }

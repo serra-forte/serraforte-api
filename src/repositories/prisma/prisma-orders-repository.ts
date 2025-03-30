@@ -764,7 +764,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         
         return {
             ...order,
-            total: Number(order.total) + Number(order.delivery.freights.reduce((acc, freight) => acc + Number(freight.price), 0))
+            total: Number(order.total)
         }
     }
     async findByCode(code: string){

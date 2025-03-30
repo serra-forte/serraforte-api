@@ -67,9 +67,14 @@ export class WebHookGetStatusLabelUseCase {
                 break;
 
             case 'order.posted':{
-                await this.freightRepository.save(data.id, {
+               const savedFreight = await this.freightRepository.save( {
+                    freightId: data.id,
                     trackingLink: data.tracking_url
                 })
+
+                if (!savedFreight) {
+                    throw new AppError('Erro ao salvar frete');
+                }
 
                 const delivery = await this.deliveryRepository.findById(freight.deliveryId)
 
@@ -77,8 +82,7 @@ export class WebHookGetStatusLabelUseCase {
                     throw new AppError('Entrega nao encontrada', 404);
                 }
 
-
-                await this.orderRepository.updateStatus(delivery.orderId, 'AWAITING_TRACK_LINK')
+                await this.orderRepository.updateStatus(delivery.orderId, 'LABEL_GENERATED')
             }
             default:
                 console.log('Evento desconhecido:', event);

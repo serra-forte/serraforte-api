@@ -12,14 +12,14 @@ export class PrismaFreightRepository implements IFreightsRepository {
 
         return freight
     }
-    async save(deliveryId: string, {
+    async save({
         freightId,
         freightLink,
         trackingLink,
-    }: ICreateFreight): Promise<void> {
-        await prisma.freight.updateMany({
+    }: ICreateFreight): Promise<Freight> {
+        const freight = await prisma.freight.update({
             where: {
-                deliveryId
+                freightId: freightId as string
             },
             data:{
                 freightId,
@@ -27,6 +27,8 @@ export class PrismaFreightRepository implements IFreightsRepository {
                 trackingLink,
             }
         })
+
+        return freight
     }
     async create(data: Prisma.FreightUncheckedCreateInput): Promise<Freight> {
         const freight = await prisma.freight.create({data})

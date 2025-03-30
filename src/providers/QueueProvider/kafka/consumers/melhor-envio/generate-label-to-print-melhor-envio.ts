@@ -64,9 +64,12 @@ export class GenerateLabelLinkMelhorEnvio {
                         throw new AppError('Erro ao gerar link da etiqueta');
                     }
 
+                    console.log(response)
+
                     await this.orderRepository.updateStatus(parsedMessage.orderId, Status.AWAITING_TRACK_LINK)
 
-                    await this.freightRespository.save(parsedMessage.freightId, {
+                    await this.freightRespository.save({
+                        freightId: parsedMessage.freightId,
                         freightLink: response.url
                     })
 

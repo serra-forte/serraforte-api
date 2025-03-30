@@ -73,175 +73,177 @@ export class AddFreightToCartMelhorEnvio {
                         return;
                     }
                     await Promise.all(packages.map(async (itemPackage) => {
+                        console.log(itemPackage);
                         const customer = await this.usersRepository.findById(itemPackage.clientId as string) as unknown as IUserRelations;
-                        if (!customer || !customer.address) {
+                        
+                        if (!customer) {
                             console.error('[Consumer - Freight] Cliente não encontrado ou endereço inválido.');
                             return;
                         }
 
-                        if(itemPackage.companyName === 'Correios') {
-                            for(let item of itemPackage.items) {
-                                const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
-                                    from: {
-                                        name: shopkeeper.name,
-                                        phone: shopkeeper.phone,
-                                        email: shopkeeper.email,
-                                        document: shopkeeper.cpf as string,
-                                        state_register: '12345678910',
-                                        address: shopkeeper.address.street as string,
-                                        complement: shopkeeper.address.complement as string,
-                                        number: String(shopkeeper.address.num),
-                                        district: shopkeeper.address.neighborhood as string,
-                                        city: shopkeeper.address.city as string,
-                                        country_id: "BR", // Brasill
-                                        postal_code: shopkeeper.address.zipCode as string,
-                                        state_abbr: shopkeeper.address.state as string,
-                                        note: "order for delivery"
-                                    },
-                                    to: {
-                                        name: customer.name,
-                                        email: customer.email,
-                                        phone: customer.phone,
-                                        city: itemPackage.address?.city as string,
-                                        state_abbr: itemPackage.address?.state as string,
-                                        postal_code: itemPackage.address?.zipCode as string,
-                                        address: itemPackage.address?.street as string,
-                                        country_id: "BR", // Brasil
-                                        number: String(itemPackage.address?.num),
-                                        complement: itemPackage.address?.complement as string,
-                                        district: itemPackage.address?.neighborhood as string,
-                                        state_register: '123456789',
-                                        document: customer.cpf as string,
-                                        note: "order for delivery"
-                                    },
-                                    service: itemPackage.serviceId as number,
-                                    products: [
-                                        {
-                                            name: item.name,
-                                            quantity: Number(item.quantity),
-                                            unitary_value: Number(item.price)
-                                        }
-                                    ],
-                                    volumes: [
-                                        {
-                                            width: item.width,
-                                            height: item.height,
-                                            length: item.length,
-                                            weight: item.weight
-                                        }
-                                    ],
-                                    options:{
-                                        insurance_value: itemPackage.total,
-                                        non_commercial: true,
-                                        own_hand: false,
-                                        receipt: false,
-                                        reverse: false,
-                                        // invoice: {
-                                        //     key: "35190812345678000123550010000000011234567890"
-                                        // }
-                                    },
-                                });
+                        // if(itemPackage.companyName === 'Correios') {
+                        //     for(let item of itemPackage.items) {
+                        //         const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
+                        //             from: {
+                        //                 name: shopkeeper.name,
+                        //                 phone: shopkeeper.phone,
+                        //                 email: shopkeeper.email,
+                        //                 document: shopkeeper.cpf as string,
+                        //                 state_register: '12345678910',
+                        //                 address: shopkeeper.address.street as string,
+                        //                 complement: shopkeeper.address.complement as string,
+                        //                 number: String(shopkeeper.address.num),
+                        //                 district: shopkeeper.address.neighborhood as string,
+                        //                 city: shopkeeper.address.city as string,
+                        //                 country_id: "BR", // Brasill
+                        //                 postal_code: shopkeeper.address.zipCode as string,
+                        //                 state_abbr: shopkeeper.address.state as string,
+                        //                 note: "order for delivery"
+                        //             },
+                        //             to: {
+                        //                 name: customer.name,
+                        //                 email: customer.email,
+                        //                 phone: customer.phone,
+                        //                 city: itemPackage.address?.city as string,
+                        //                 state_abbr: itemPackage.address?.state as string,
+                        //                 postal_code: itemPackage.address?.zipCode as string,
+                        //                 address: itemPackage.address?.street as string,
+                        //                 country_id: "BR", // Brasil
+                        //                 number: String(itemPackage.address?.num),
+                        //                 complement: itemPackage.address?.complement as string,
+                        //                 district: itemPackage.address?.neighborhood as string,
+                        //                 state_register: '123456789',
+                        //                 document: customer.cpf as string,
+                        //                 note: "order for delivery"
+                        //             },
+                        //             service: itemPackage.serviceId as number,
+                        //             products: [
+                        //                 {
+                        //                     name: item.name,
+                        //                     quantity: Number(item.quantity),
+                        //                     unitary_value: Number(item.price)
+                        //                 }
+                        //             ],
+                        //             volumes: [
+                        //                 {
+                        //                     width: item.width,
+                        //                     height: item.height,
+                        //                     length: item.length,
+                        //                     weight: item.weight
+                        //                 }
+                        //             ],
+                        //             options:{
+                        //                 insurance_value: itemPackage.total,
+                        //                 non_commercial: true,
+                        //                 own_hand: false,
+                        //                 receipt: false,
+                        //                 reverse: false,
+                        //                 // invoice: {
+                        //                 //     key: "35190812345678000123550010000000011234567890"
+                        //                 // }
+                        //             },
+                        //         });
     
-                                if(!freightInCart) {
-                                    throw new AppError('Freight not added to cart')
-                                }
+                        //         if(!freightInCart) {
+                        //             throw new AppError('Freight not added to cart')
+                        //         }
     
-                              const createdFreight =  await this.freightRespository.create({
-                                    freightId: freightInCart.id,
-                                    deliveryId: itemPackage.deliveryId as string,
-                                    price: freightInCart.price
-                                });
+                        //       const createdFreight =  await this.freightRespository.create({
+                        //             freightId: freightInCart.id,
+                        //             deliveryId: itemPackage.deliveryId as string,
+                        //             price: freightInCart.price
+                        //         });
 
-                                if(!createdFreight) {
-                                    throw new AppError('Freight not added to cart')
-                                }
+                        //         if(!createdFreight) {
+                        //             throw new AppError('Freight not added to cart')
+                        //         }
 
-                                console.log(createdFreight)
+                        //         console.log(createdFreight)
                                 
-                                // Atualizar status do pedido e informações relacionadas
-                                await this.orderRepository.updateStatus(itemPackage.orderId as string, Status.AWAITING_LABEL_PAYMENT_PROCESS);
-                            }
+                        //         // Atualizar status do pedido e informações relacionadas
+                        //         await this.orderRepository.updateStatus(itemPackage.orderId as string, Status.AWAITING_LABEL_PAYMENT_PROCESS);
+                        //     }
     
-                            console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
-                        }else{
-                            const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
-                                from: {
-                                    name: shopkeeper.name,
-                                    phone: shopkeeper.phone,
-                                    email: shopkeeper.email,
-                                    document: shopkeeper.cpf as string,
-                                    state_register: '12345678910',
-                                    address: shopkeeper.address.street as string,
-                                    complement: shopkeeper.address.complement as string,
-                                    number: String(shopkeeper.address.num),
-                                    district: shopkeeper.address.neighborhood as string,
-                                    city: shopkeeper.address.city as string,
-                                    country_id: "BR", // Brasill
-                                    postal_code: shopkeeper.address.zipCode as string,
-                                    state_abbr: shopkeeper.address.state as string,
-                                    note: "order for delivery"
-                                },
-                                to: {
-                                    name: customer.name,
-                                    email: customer.email,
-                                    phone: customer.phone,
-                                    city: itemPackage.address?.city as string,
-                                    state_abbr: itemPackage.address?.state as string,
-                                    postal_code: itemPackage.address?.zipCode as string,
-                                    address: itemPackage.address?.street as string,
-                                    country_id: "BR", // Brasil
-                                    number: String(itemPackage.address?.num),
-                                    complement: itemPackage.address?.complement as string,
-                                    district: itemPackage.address?.neighborhood as string,
-                                    state_register: '123456789',
-                                    document: customer.cpf as string,
-                                    note: "order for delivery"
-                                },
-                                service: itemPackage.serviceId as number,
-                                products: itemPackage.items.map(item => {
-                                    return{
-                                        quantity: Number(item.quantity),
-                                        name: item.name as string,
-                                        unitary_value: Number(item.price),
-                                    }
-                                }),
-                                volumes: itemPackage.items.map(item => {
-                                    return({
-                                        width: item.width,
-                                        height: item.height,
-                                        length: item.length,
-                                        weight: item.weight
-                                    })
-                                }),
-                                options:{
-                                    insurance_value: itemPackage.total,
-                                    non_commercial: true,
-                                    own_hand: false,
-                                    receipt: false,
-                                    reverse: false,
-                                    // invoice: {
-                                    //     key: "35190812345678000123550010000000011234567890"
-                                    // }
-                                },
+                        //     console.info('[Consumer - Freight] Frete adicionado ao carrinho com sucesso.');
+                        // }else{
+                        //     const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
+                        //         from: {
+                        //             name: shopkeeper.name,
+                        //             phone: shopkeeper.phone,
+                        //             email: shopkeeper.email,
+                        //             document: shopkeeper.cpf as string,
+                        //             state_register: '12345678910',
+                        //             address: shopkeeper.address.street as string,
+                        //             complement: shopkeeper.address.complement as string,
+                        //             number: String(shopkeeper.address.num),
+                        //             district: shopkeeper.address.neighborhood as string,
+                        //             city: shopkeeper.address.city as string,
+                        //             country_id: "BR", // Brasill
+                        //             postal_code: shopkeeper.address.zipCode as string,
+                        //             state_abbr: shopkeeper.address.state as string,
+                        //             note: "order for delivery"
+                        //         },
+                        //         to: {
+                        //             name: customer.name,
+                        //             email: customer.email,
+                        //             phone: customer.phone,
+                        //             city: itemPackage.address?.city as string,
+                        //             state_abbr: itemPackage.address?.state as string,
+                        //             postal_code: itemPackage.address?.zipCode as string,
+                        //             address: itemPackage.address?.street as string,
+                        //             country_id: "BR", // Brasil
+                        //             number: String(itemPackage.address?.num),
+                        //             complement: itemPackage.address?.complement as string,
+                        //             district: itemPackage.address?.neighborhood as string,
+                        //             state_register: '123456789',
+                        //             document: customer.cpf as string,
+                        //             note: "order for delivery"
+                        //         },
+                        //         service: itemPackage.serviceId as number,
+                        //         products: itemPackage.items.map(item => {
+                        //             return{
+                        //                 quantity: Number(item.quantity),
+                        //                 name: item.name as string,
+                        //                 unitary_value: Number(item.price),
+                        //             }
+                        //         }),
+                        //         volumes: itemPackage.items.map(item => {
+                        //             return({
+                        //                 width: item.width,
+                        //                 height: item.height,
+                        //                 length: item.length,
+                        //                 weight: item.weight
+                        //             })
+                        //         }),
+                        //         options:{
+                        //             insurance_value: itemPackage.total,
+                        //             non_commercial: true,
+                        //             own_hand: false,
+                        //             receipt: false,
+                        //             reverse: false,
+                        //             // invoice: {
+                        //             //     key: "35190812345678000123550010000000011234567890"
+                        //             // }
+                        //         },
                                 
-                            });
+                        //     });
                             
-                            if(!freightInCart) {
-                                console.error('[Consumer - Freight] Erro ao adicionar frete ao carrinho.');
-                                return;
-                            }
+                        //     if(!freightInCart) {
+                        //         console.error('[Consumer - Freight] Erro ao adicionar frete ao carrinho.');
+                        //         return;
+                        //     }
 
-                            // Adicionar frete ao pedido
-                            await this.freightRespository.create({
-                                freightId: freightInCart.id,
-                                deliveryId: itemPackage.deliveryId as string,
-                                price: freightInCart.price
-                            });
+                        //     // Adicionar frete ao pedido
+                        //     await this.freightRespository.create({
+                        //         freightId: freightInCart.id,
+                        //         deliveryId: itemPackage.deliveryId as string,
+                        //         price: freightInCart.price
+                        //     });
                             
-                            // Atualizar status do pedido e informações relacionadas
-                            await this.orderRepository.updateStatus(itemPackage.orderId as string, Status.AWAITING_LABEL_PAYMENT_PROCESS);
+                        //     // Atualizar status do pedido e informações relacionadas
+                        //     await this.orderRepository.updateStatus(itemPackage.orderId as string, Status.AWAITING_LABEL_PAYMENT_PROCESS);
 
-                        }
+                        // }
                         
                     }))
                 } catch (error) {

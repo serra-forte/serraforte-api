@@ -292,7 +292,6 @@ export class CreateOrderWithPixUsecase {
             // description,
             delivery: {
                 create: {
-                    price: freight.price,
                     address: {
                         create: address ? address as Address : undefined
                     },

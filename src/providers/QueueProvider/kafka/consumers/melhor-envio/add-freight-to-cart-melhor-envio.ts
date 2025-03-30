@@ -67,7 +67,6 @@ export class AddFreightToCartMelhorEnvio {
                     }
 
                     const packages = parsedMessage.packages as Package[];
-                    console.log(packages);
                     const shopkeeper = await this.usersRepository.findById(packages[0].shopkeeperId) as unknown as IUserRelations;
                     if (!shopkeeper || !shopkeeper.address) {
                         console.error('[Consumer - Freight] Lojista não encontrado ou endereço inválido.');
@@ -149,7 +148,7 @@ export class AddFreightToCartMelhorEnvio {
                                     throw new AppError('Freight not added to cart')
                                 }
     
-                                console.log(freightInCart);
+                                console.log(freightInCart.id);
                                 await this.freightRespository.create({
                                     freightId: freightInCart.id,
                                     deliveryId: itemPackage.deliveryId as string,

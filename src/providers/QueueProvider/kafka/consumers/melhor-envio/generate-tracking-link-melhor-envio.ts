@@ -64,7 +64,7 @@ export class GenerateTrackingLinkMelhorEnvio {
 
                     const objectTracking = Object.values(responseShipmentTracking);
                     
-                    const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0].tracking}/${parsedMessage.self_tracking}`;
+                    const trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${objectTracking[0]}`;
                     
                     const delivery = await this.deliveryRepository.findById(parsedMessage.deliveryId)
 

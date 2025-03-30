@@ -82,6 +82,7 @@ export class AddFreightToCartMelhorEnvio {
                         }
 
                         if(itemPackage.companyName === 'Correios') {
+                            console.log(itemPackage)
                             for(let item of itemPackage.items) {
                                 const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
                                     from: {
@@ -148,6 +149,7 @@ export class AddFreightToCartMelhorEnvio {
                                     throw new AppError('Freight not added to cart')
                                 }
     
+                                console.log(freightInCart.id);
                                 await this.freightRespository.create({
                                     freightId: freightInCart.id,
                                     deliveryId: itemPackage.deliveryId as string,

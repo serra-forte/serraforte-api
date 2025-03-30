@@ -149,7 +149,7 @@ export class AddFreightToCartMelhorEnvio {
                                     throw new AppError('Freight not added to cart')
                                 }
     
-                                console.log(freightInCart.id);
+                                console.log(freightInCart);
                                 await this.freightRespository.create({
                                     freightId: freightInCart.id,
                                     deliveryId: itemPackage.deliveryId as string,

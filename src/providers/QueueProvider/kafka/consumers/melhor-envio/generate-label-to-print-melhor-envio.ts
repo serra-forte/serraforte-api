@@ -64,8 +64,6 @@ export class GenerateLabelLinkMelhorEnvio {
                         throw new AppError('Erro ao gerar link da etiqueta');
                     }
 
-                    console.log(response)
-
                     await this.freightRespository.save({
                         freightId: parsedMessage.freightId,
                         freightLink: response.url

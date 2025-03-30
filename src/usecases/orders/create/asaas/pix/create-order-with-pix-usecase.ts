@@ -282,7 +282,6 @@ export class CreateOrderWithPixUsecase {
 
         const boxInProduct = boxesFromDelivery as unknown as BoxInProduct[]
 
-        console.log(boxInProduct)
         // criar pedido passando lista de itens para criar juntos
         const order = await this.orderRepository.create({
             userId: findUserExist.id,
@@ -293,6 +292,7 @@ export class CreateOrderWithPixUsecase {
             // description,
             delivery: {
                 create: {
+                    price: freight.price,
                     address: {
                         create: address ? address as Address : undefined
                     },

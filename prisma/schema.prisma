@@ -314,6 +314,7 @@ model Delivery {
 
   serviceDelivery SeviceDelivery?
   
+  price            Decimal?
   shippingDate     DateTime? @map("shipping_date") @db.Timestamptz()
   deliveryDate     DateTime? @map("delivery_date") @db.Timestamptz()
   longitude        Decimal?

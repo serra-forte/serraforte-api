@@ -22,7 +22,6 @@ export class PrismaFreightRepository implements IFreightsRepository {
                 freightId: freightId as string
             },
             data:{
-                freightId,
                 freightLink,
                 trackingLink,
             }

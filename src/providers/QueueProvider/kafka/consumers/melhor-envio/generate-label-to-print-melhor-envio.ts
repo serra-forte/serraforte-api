@@ -12,19 +12,20 @@ import { KafkaProducer } from "../../kafka-producer";
 import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
 import { KafkaConsumerGenerateLabelToPrint } from "../../kafka-consumer-generate-label-to-print";
+import { IFreightsRepository } from "@/repositories/interfaces/interface-freights-repository";
+import { PrismaFreightRepository } from "@/repositories/prisma/prisma-freights-repository";
 
 export class GenerateLabelLinkMelhorEnvio {
     private kafkaConsumer: KafkaConsumerGenerateLabelToPrint;
-    private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
     private usersRepository: IUsersRepository;
     private melhorEnvioProvider: IMelhorEnvioProvider;
     private orderRepository: IOrderRepository;
+    private freightRespository:  IFreightsRepository
 
     constructor() {
         this.kafkaConsumer = new KafkaConsumerGenerateLabelToPrint();
-        this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
         this.usersRepository = new PrismaUsersRepository();
@@ -34,6 +35,7 @@ export class GenerateLabelLinkMelhorEnvio {
             this.usersRepository
         );
         this.orderRepository = new PrismaOrderRepository();
+        this.freightRespository = new PrismaFreightRepository()
     }
 
     async execute() {
@@ -62,8 +64,11 @@ export class GenerateLabelLinkMelhorEnvio {
                         throw new AppError('Erro ao gerar link da etiqueta');
                     }
 
-                    // atualizar pedido com status "LABEL_GENERATED"
                     await this.orderRepository.updateStatus(parsedMessage.orderId, Status.AWAITING_TRACK_LINK)
+
+                    await this.freightRespository.save(parsedMessage.freightId, {
+                        freightLink: response.url
+                    })
 
                     console.info('[Consumer - Generate Label Link] Link do frete gerado com sucesso');
                 } catch (error) {

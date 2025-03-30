@@ -13,6 +13,7 @@ import { Status } from "@prisma/client";
 import { IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
 import { PrismaDeliveryRepository } from "@/repositories/prisma/prisma-deliveries-repository";
 import { AppError } from "@/usecases/errors/app-error";
+import { KafkaProducer } from "../../kafka-producer";
 
 export interface IGenerateLabelLink {
     orderId: string;
@@ -20,6 +21,7 @@ export interface IGenerateLabelLink {
 }
 export class GenerateFreightMelhorEnvio {
     private kafkaConsumer: KafkaConsumerGenerateLabel;
+    private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
     private usersRepository: IUsersRepository;
@@ -29,6 +31,7 @@ export class GenerateFreightMelhorEnvio {
 
     constructor() {
         this.kafkaConsumer = new KafkaConsumerGenerateLabel();
+        this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
         this.usersRepository = new PrismaUsersRepository();
@@ -72,6 +75,12 @@ export class GenerateFreightMelhorEnvio {
 
                     // atualizar pedido com status "AWAITING_LABEL_LINK"
                     await this.orderRepository.updateStatus(delivery.orderId, Status.AWAITING_LABEL_LINK)
+
+                    // Enviar mensagem para gerar link da etiqueta
+                    await this.kafkaProducer.execute('GENERATE_LABEL_TO_PRINT', {
+                        freightId: parsedMessage.freightId,
+                        orderId: delivery.orderId
+                    })
 
                     console.info('[Consumer - Generate Label] Frete gerado com sucesso');
                 } catch (error) {

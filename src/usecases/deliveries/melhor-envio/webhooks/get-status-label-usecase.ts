@@ -1,6 +1,7 @@
 import { KafkaProducer } from "@/providers/QueueProvider/kafka/kafka-producer";
 import { IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
 import { IFreightsRepository } from "@/repositories/interfaces/interface-freights-repository";
+import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { AppError } from "@/usecases/errors/app-error";
 import { ApiError } from "@google-cloud/storage";
 
@@ -32,7 +33,9 @@ interface IRequestStatusLabel{
 export class WebHookGetStatusLabelUseCase {
     constructor(
         private kafkaProducer: KafkaProducer,
-        private freightRepository: IFreightsRepository
+        private freightRepository: IFreightsRepository,
+        private deliveryRepository: IDeliveryRepository,
+        private orderRepository: IOrderRepository
     ) {}
 
     async execute({
@@ -41,9 +44,9 @@ export class WebHookGetStatusLabelUseCase {
     }: IRequestStatusLabel): Promise<void> {
         console.log('Event:', event);
         console.log('Data:', data);
-        const delivery = await this.freightRepository.findByFreightId(data.id)
+        const freight = await this.freightRepository.findByFreightId(data.id)
 
-        if (!delivery) {
+        if (!freight) {
             throw new AppError('Frete nao encontrado', 404);
         }
 
@@ -52,34 +55,34 @@ export class WebHookGetStatusLabelUseCase {
                 // Enviar mensagem para o Kafka para processar o pagamento
                 await this.kafkaProducer.execute('PAYMENT_PROCESS_IN_CART',  {
                     freightId: data.id,
-                    deliveryId: delivery.deliveryId
+                    deliveryId: freight.deliveryId
                 })
                 break;
             case 'order.released':
                 // Enviar mensagem para gerar etiqueta
                 await this.kafkaProducer.execute('GENERATE_LABEL', {
                     freightId: data.id,
-                    deliveryId: delivery.deliveryId
+                    deliveryId: freight.deliveryId
                 })
                 break;
-            // case 'order.generated':
-            //     // Enviar mensagem para gerar link da etiqueta
-            //     await this.kafkaProducer.execute('GENERATE_LABEL_TO_PRINT', {
-            //         freightId: data.id,
-            //          deliveryId: delivery.deliveryId
-            //     })
-            //     break;
-            case 'order.posted':
-                // Enviar mensagem para gerar etiqueta
-                await this.kafkaProducer.execute('GENERATE_TRACKING_LINK', {
-                    freightId: data.id,
-                    deliveryId: delivery.deliveryId,
-                    self_tracking: data.self_tracking
+
+            case 'order.posted':{
+                await this.freightRepository.save(data.id, {
+                    trackingLink: data.tracking_url
                 })
-                break;
+
+                const delivery = await this.deliveryRepository.findById(freight.deliveryId)
+
+                if (!delivery) {
+                    throw new AppError('Entrega nao encontrada', 404);
+                }
+
+
+                await this.orderRepository.updateStatus(delivery.orderId, 'AWAITING_TRACK_LINK')
+            }
             default:
                 console.log('Evento desconhecido:', event);
-                break;
+            break;
         }
     }
 }

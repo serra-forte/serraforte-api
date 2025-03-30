@@ -739,6 +739,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                         freights: true,
                         receiverName: true,
                         serviceDelivery: true,
+                        price: true,
                         deliveryMan: {
                             select:{
                                 id: true,

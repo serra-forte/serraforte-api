@@ -1,4 +1,4 @@
-import { Delivery } from "@prisma/client";
+import { Delivery, Prisma } from "@prisma/client";
 
 export interface IConfirmDelivery{
     id: string
@@ -24,8 +24,6 @@ export interface IDeliveryRepository {
     confirmShipment(data: IConfirmShipment): Promise<void>
     confirmDelivery(data: IConfirmDelivery): Promise<void>
     chooseDeliveryMan(data: IChooseDeliveryMan): Promise<void>
-    addServiceIdToDelivery(serviceId: string, deliveryId: string): Promise<void>
-    findByFreightId(id: string): Promise<Delivery | null>
-    save(orderId:string, freightId: string): Promise<void>
+    save(orderId:string, data: Prisma.DeliveryUncheckedUpdateInput): Promise<void>
 
 }

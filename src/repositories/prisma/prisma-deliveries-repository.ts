@@ -1,35 +1,14 @@
 import { IChooseDeliveryMan, IConfirmDelivery, IConfirmShipment, IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
 import { prisma } from '@/lib/prisma'
-import { Delivery } from "@prisma/client";
+import { Delivery, Prisma } from "@prisma/client";
 
 export class PrismaDeliveryRepository implements IDeliveryRepository{
-    async findByFreightId(id: string): Promise<Delivery | null> {
-        const delivery = await prisma.delivery.findUnique({
-            where: {
-                freightId: id
-            }
-        })
-
-        return delivery
-    }
-    async save(orderId:string, freightId: string): Promise<void> {
+    async save(orderId:string, data: Prisma.DeliveryUncheckedUpdateInput): Promise<void> {
         await prisma.delivery.update({
            where: {
             orderId
            },
-           data: {
-            freightId
-           }
-        })
-    }
-    async addServiceIdToDelivery(serviceId: string, deliveryId: string): Promise<void> {
-        await prisma.delivery.update({
-            where: {
-                id: deliveryId
-            },
-            data: {
-                serviceId
-            }
+           data
         })
     }
     async chooseDeliveryMan({

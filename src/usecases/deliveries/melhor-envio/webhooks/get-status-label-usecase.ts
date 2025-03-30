@@ -82,7 +82,12 @@ export class WebHookGetStatusLabelUseCase {
                     throw new AppError('Entrega nao encontrada', 404);
                 }
 
-                await this.orderRepository.updateStatus(delivery.orderId, 'LABEL_GENERATED')
+                // Enviar mensagem para gerar link da etiqueta
+                await this.kafkaProducer.execute('GENERATE_LABEL_TO_PRINT', {
+                    freightId: data.id,
+                    orderId: delivery.orderId
+                })
+
             }
             default:
                 console.log('Evento desconhecido:', event);

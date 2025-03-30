@@ -66,12 +66,12 @@ export class GenerateLabelLinkMelhorEnvio {
 
                     console.log(response)
 
-                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.AWAITING_TRACK_LINK)
-
                     await this.freightRespository.save({
                         freightId: parsedMessage.freightId,
                         freightLink: response.url
                     })
+
+                    await this.orderRepository.updateStatus(parsedMessage.orderId, Status.LABEL_GENERATED)
 
                     console.info('[Consumer - Generate Label Link] Link do frete gerado com sucesso');
                 } catch (error) {

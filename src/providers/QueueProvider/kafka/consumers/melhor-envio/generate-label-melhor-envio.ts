@@ -76,12 +76,6 @@ export class GenerateFreightMelhorEnvio {
                     // atualizar pedido com status "AWAITING_LABEL_LINK"
                     await this.orderRepository.updateStatus(delivery.orderId, Status.AWAITING_LABEL_LINK)
 
-                    // Enviar mensagem para gerar link da etiqueta
-                    await this.kafkaProducer.execute('GENERATE_LABEL_TO_PRINT', {
-                        freightId: parsedMessage.freightId,
-                        orderId: delivery.orderId
-                    })
-
                     console.info('[Consumer - Generate Label] Frete encaminhado para geração de etiqueta');
                 } catch (error) {
                     console.error('[Consumer - Generate Label ] Erro ao processar mensagem:', error);

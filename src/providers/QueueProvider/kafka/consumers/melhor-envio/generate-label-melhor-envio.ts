@@ -82,7 +82,7 @@ export class GenerateFreightMelhorEnvio {
                         orderId: delivery.orderId
                     })
 
-                    console.info('[Consumer - Generate Label] Frete gerado com sucesso');
+                    console.info('[Consumer - Generate Label] Frete encaminhado para geração de etiqueta');
                 } catch (error) {
                     console.error('[Consumer - Generate Label ] Erro ao processar mensagem:', error);
                 }

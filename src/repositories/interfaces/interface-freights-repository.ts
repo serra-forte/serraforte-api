@@ -22,7 +22,7 @@ export interface IFreightRelationsDTO {
 }
 
 export interface IFreightsRepository {
-    create(data: Prisma.FreightUncheckedCreateInput): Promise<void>;
+    create(data: Prisma.FreightUncheckedCreateInput): Promise<Freight>;
     save(deliveryId: string, data: ICreateFreight): Promise<void>
     findByFreightId(id: string): Promise<Freight | null>
 }

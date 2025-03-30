@@ -28,11 +28,9 @@ export class PrismaFreightRepository implements IFreightsRepository {
             }
         })
     }
-    async create(data: Prisma.FreightUncheckedCreateInput): Promise<void> {
-        console.log('CRIOU ETIQUETA NO BANCO')
-        console.log(data)
-        await prisma.freight.create({
-            data
-        })
+    async create(data: Prisma.FreightUncheckedCreateInput): Promise<Freight> {
+        const freight = await prisma.freight.create({data})
+
+        return freight
     }
 }

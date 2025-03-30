@@ -148,12 +148,15 @@ export class AddFreightToCartMelhorEnvio {
                                     throw new AppError('Freight not added to cart')
                                 }
     
-                                console.log(freightInCart.id);
-                                await this.freightRespository.create({
+                              const createdFreight =  await this.freightRespository.create({
                                     freightId: freightInCart.id,
                                     deliveryId: itemPackage.deliveryId as string,
                                     price: freightInCart.price
                                 });
+
+                                if(!createdFreight) {
+                                    throw new AppError('Freight not added to cart')
+                                }
                                 
                                 // Atualizar status do pedido e informações relacionadas
                                 await this.orderRepository.updateStatus(itemPackage.orderId as string, Status.AWAITING_LABEL_PAYMENT_PROCESS);

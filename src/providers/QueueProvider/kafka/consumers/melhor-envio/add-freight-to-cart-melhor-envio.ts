@@ -82,7 +82,7 @@ export class AddFreightToCartMelhorEnvio {
                         }
 
                         if(itemPackage.companyName === 'Correios') {
-                            console.log(itemPackage)
+                            console.log(itemPackage.items.length)
                             for(let item of itemPackage.items) {
                                 const freightInCart = await this.melhorEnvioProvider.addFreightToCart({
                                     from: {

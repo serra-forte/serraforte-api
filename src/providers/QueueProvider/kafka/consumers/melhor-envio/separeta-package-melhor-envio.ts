@@ -132,17 +132,17 @@ export class SeparatePackageMelhorEnvio {
                     
                                 // Criando um novo pacote
                                 currentPackage = { 
-                                    items: [], 
-                                    totalWeight: 0, 
-                                    dimensions: { height: 0, width: 0, length: 0 },
-                                    companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
-                                    shopkeeperId: order.items[0].userId as string,
-                                    clientId: order.user.id,
-                                    address: order.delivery.address as Address,
-                                    serviceId: Number(order.delivery.serviceDelivery.serviceId),
-                                    total: currentPackage.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-                                    deliveryId: order.delivery.id,
-                                    orderId: order.id
+                                items: [], 
+                                totalWeight: 0, 
+                                dimensions: { height: 0, width: 0, length: 0 },
+                                companyName: order.delivery.serviceDelivery.companyName as 'Jadlog' | 'Correios',
+                                shopkeeperId: order.items[0].userId as string,
+                                clientId: order.user.id,
+                                address: order.delivery.address as Address,
+                                serviceId: Number(order.delivery.serviceDelivery.serviceId),
+                                total: currentPackage.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+                                deliveryId: order.delivery.id,
+                                orderId: order.id
                                 };
                             }
                     

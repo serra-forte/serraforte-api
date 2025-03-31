@@ -13,47 +13,6 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
     private mailProvider: IMailProvider,
     private usersRepository: IUsersRepository
   ) {}
-  async getShipmentTracking(orderId: string): Promise<ITrackingResponse | null> {
-    try {
-      const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/shipment/tracking`, {
-        orders: [orderId],
-      }, {
-        headers: {
-          'Authorization': `Bearer ${process.env.MELHOR_ENVIO_ACCESS_TOKEN}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json', 
-          'User-Agent': 'Serra Forte/kaiomoreira.dev@gmail.com',
-        },
-      });
-
-      if (response.status === 200) {
-        console.log(response.data)
-        return response.data;
-      }else{
-        console.log(response.data)
-        return null
-      }
-    } catch (error: any) {
-      // * Renovar o token caso seja o problema de token expirado
-      if (error instanceof AxiosError && error.response?.status === 401) {
-        console.log('Token expirado, renovando...');
-        // Tenta renovar o tokenn
-        try {
-          const response = await this.refreshToken();
-          console.log('Token renovado com sucesso');
-
-          if(response.access_token){
-            // Após renovar o token, tenta novamente calcular o frete
-            return this.getShipmentTracking(orderId);
-          }
-        } catch (refreshError) {
-          console.error('Erro ao renovar o token:', refreshError);
-          // throw refreshError;
-        }
-      }
-      throw error;
-    }
-  }
   async generateLabelLinkToPrinting(orderId: string): Promise<IResponseGenerateLabelLinkToPrinting | null> {
     try {
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/shipment/print`, {

@@ -454,5 +454,4 @@ export interface IMelhorEnvioProvider {
     paymentToFreight(orderId: string): Promise<IPurchaseResponse | null>
     generateLabel(orderId: string): Promise<IResponseGenerateLabel | null>
     generateLabelLinkToPrinting(orderId: string): Promise<IResponseGenerateLabelLinkToPrinting | null>
-    getShipmentTracking(orderId: string): Promise<ITrackingResponse | null>
 }

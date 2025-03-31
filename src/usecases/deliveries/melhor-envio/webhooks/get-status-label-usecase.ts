@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import { KafkaProducer } from "@/providers/QueueProvider/kafka/kafka-producer";
 import { IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
 import { IFreightsRepository } from "@/repositories/interfaces/interface-freights-repository";
@@ -67,9 +68,15 @@ export class WebHookGetStatusLabelUseCase {
                 break;
 
             case 'order.posted':{
-               const savedFreight = await this.freightRepository.save( {
+                let trackingLink = data.tracking_url
+
+                if(!trackingLink){
+                    trackingLink = `${env.MELHOR_ENVIO_TRANCKING_LINK}/${data.self_tracking}`
+                }
+
+                const savedFreight = await this.freightRepository.save( {
                     freightId: data.id,
-                    trackingLink: data.tracking_url
+                    trackingLink
                 })
 
                 if (!savedFreight) {
@@ -87,6 +94,8 @@ export class WebHookGetStatusLabelUseCase {
                     freightId: data.id,
                     orderId: delivery.orderId
                 })
+
+                
 
             }
             default:

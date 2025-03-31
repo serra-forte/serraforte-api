@@ -31,7 +31,7 @@ export class MailProvider implements IMailProvider{
             const htmlTemplate = compileTemplate({name, link, email, variables});
 
             const msg = {
-                to: '4codesolutionss@gmail.com', // Para 
+                to: email, // Para 
                 from: '4codesolutionss@gmail.com', // De 
                 subject: subject, // Assunto
                 html: htmlTemplate,

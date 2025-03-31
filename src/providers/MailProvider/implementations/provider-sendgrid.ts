@@ -32,7 +32,7 @@ export class MailProvider implements IMailProvider{
 
             const msg = {
                 to: email, // Para 
-                from: 'serra.forte@maissi.com.br', // De 
+                from: '4codesolutionss@gmail.com', // De 
                 subject: subject, // Assunto
                 html: htmlTemplate,
               };

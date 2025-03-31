@@ -94,9 +94,6 @@ export class WebHookGetStatusLabelUseCase {
                     freightId: data.id,
                     orderId: delivery.orderId
                 })
-
-                
-
             }
             default:
                 console.log('Evento desconhecido:', event);

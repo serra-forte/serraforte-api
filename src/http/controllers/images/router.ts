@@ -8,7 +8,6 @@ import { ListImage } from "./list/list-images-controller";
 
 export async function imageRoutes(fastifyApp: FastifyInstance) {
     fastifyApp.addHook('onRequest', verifyTokenJWT)
-    // fastifyApp.addHook('onRequest', verifyUserRole('ADMIN', 'SUPER'))
     
     // upload de imagens
     fastifyApp.post('/', UploadImage)

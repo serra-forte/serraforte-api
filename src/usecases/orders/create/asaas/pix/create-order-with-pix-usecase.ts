@@ -164,8 +164,8 @@ export class CreateOrderWithPixUsecase {
             companyName: freight.company.name,
             price: freight.price
         })
-        console.log(freight.price)
         total += freight.price
+        console.log(freight.price)
 
         
         if(coupons && coupons.length > 0) {
@@ -212,7 +212,6 @@ export class CreateOrderWithPixUsecase {
                     // atualizar quantidade do cupom
                     await this.discountCoupon.decrementQuantity(findCoupomExist.id)
 
-                    console.log(discountCoupomValue)
                     // aplicar o calculo de desconto do cupom
                     total = total - discountCoupomValue
                 }
@@ -244,6 +243,8 @@ export class CreateOrderWithPixUsecase {
 
         // verificar se o usuario tem um idCostumerPayment se não tiver retorna o new customer criado anteriormente
         const idCostumerPayment = String(newCustomer)
+
+        console.log(total)
 
         // criar cobrança do tipo pix no asaas
         const paymentAsaas = await this.asaasProvider.createPayment({

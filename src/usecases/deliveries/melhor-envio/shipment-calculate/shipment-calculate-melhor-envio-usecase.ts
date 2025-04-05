@@ -66,9 +66,13 @@ export class ShipmentCalculateDeliveriesUseCase {
             })) as IProduct[],
         });
 
-console.log(shipmentCalculate)
         if (shipmentResults.length === 0) {
             for(const freight of shipmentCalculate) {
+
+                if(freight.error){
+                    continue 
+                }
+
                 shipmentResults.push({
                     id: freight.id,
                     name: freight.name,

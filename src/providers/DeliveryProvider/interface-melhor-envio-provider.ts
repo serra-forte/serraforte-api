@@ -77,6 +77,7 @@ export interface ICompany {
 export interface IResponseCalculateShipping {
     id: number;
     name: string;
+    error?: string | null;
     price: string;
     custom_price: string;
     discount: string;

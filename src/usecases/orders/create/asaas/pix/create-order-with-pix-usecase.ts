@@ -156,6 +156,17 @@ export class CreateOrderWithPixUsecase {
         if(!findShopKeeperExist) {
             throw new AppError("Lojista não encontrado", 404)
         }
+
+        deliveryService.push({
+            shopkeeperId: findShopKeeperExist.id,
+            serviceId: freight.id,
+            serviceName: freight.name,
+            companyName: freight.company.name,
+            price: freight.price
+        })
+        console.log(freight.price)
+        total += freight.price
+
         
         if(coupons && coupons.length > 0) {
             // filtrar cupom de desconto pelo id do lojista no array de cupons
@@ -201,23 +212,14 @@ export class CreateOrderWithPixUsecase {
                     // atualizar quantidade do cupom
                     await this.discountCoupon.decrementQuantity(findCoupomExist.id)
 
+                    console.log(discountCoupomValue)
                     // aplicar o calculo de desconto do cupom
                     total = total - discountCoupomValue
                 }
             }
             
         }
-        deliveryService.push({
-            shopkeeperId: findShopKeeperExist.id,
-            serviceId: freight.id,
-            serviceName: freight.name,
-            companyName: freight.company.name,
-            price: freight.price
-        })
-
-        // adicionar o valor do frete ao total do pedido
-        total += freight.price
-
+        
         // calcular cupom de desconto
         // criar pagamento na asaas
         let newCustomer = ''

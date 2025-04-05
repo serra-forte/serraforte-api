@@ -17,7 +17,6 @@ export async function ShipmentCalculate(request: FastifyRequest, reply:FastifyRe
         
         const freights = await authenticateMelhorEnvioUseCase.execute({
             to,
-            userId: request.user.id
         })
         
         return reply.status(200).send(freights)

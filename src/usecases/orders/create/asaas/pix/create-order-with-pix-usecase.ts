@@ -165,8 +165,6 @@ export class CreateOrderWithPixUsecase {
             price: freight.price
         })
         total += freight.price
-        console.log(freight.price)
-
         
         if(coupons && coupons.length > 0) {
             // filtrar cupom de desconto pelo id do lojista no array de cupons
@@ -243,8 +241,6 @@ export class CreateOrderWithPixUsecase {
 
         // verificar se o usuario tem um idCostumerPayment se não tiver retorna o new customer criado anteriormente
         const idCostumerPayment = String(newCustomer)
-
-        console.log(total)
 
         // criar cobrança do tipo pix no asaas
         const paymentAsaas = await this.asaasProvider.createPayment({

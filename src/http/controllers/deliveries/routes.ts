@@ -8,17 +8,18 @@ import { WebHookGetStatusLabel } from "./melhor-envio/webhooks/get-status-label-
 export async function deliveriesRoutes(fastifyApp: FastifyInstance) {
     // ===== Melhor Envio =====
     fastifyApp.post('/melhor-envio/authorize', {
-        onRequest: []
+        onRequest: [
+            verifyTokenJWT
+        ]
     }, Authorize)
 
     fastifyApp.post('/melhor-envio/authenticate', {
-        onRequest: []
+        onRequest: [
+            verifyTokenJWT
+        ]
     }, Authenticate)
 
     fastifyApp.post('/melhor-envio/shipment-calculate/checkout', {
-        onRequest: [
-            verifyTokenJWT        
-        ],
     }, ShipmentCalculate)
 
     // ===== Webhooks =====

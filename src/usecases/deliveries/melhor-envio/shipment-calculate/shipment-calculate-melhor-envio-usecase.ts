@@ -6,7 +6,6 @@ import { IUsersRepository } from "@/repositories/interfaces/interface-users-repo
 import { AppError } from "@/usecases/errors/app-error";
 
 export interface IRequestShipmentCalculate {
-    userId: string;
     to: string
 }
 
@@ -28,50 +27,49 @@ export class ShipmentCalculateDeliveriesUseCase {
     ) {}
 
     async execute({
-        userId,
         to, 
     }: IRequestShipmentCalculate): Promise<IResponseShipmentCalculate[]> {
         const shipmentResults: IResponseShipmentCalculate[] = [];
 
-        const findShopingCart = await this.shoppingCartRepository.findByUserId(userId);
+        // Buscar lojista pelo ID
+        const findShopkeeper = await this.userRepository.findShopkeeper() as unknown as IUserRelations;
 
-        if (!findShopingCart) {
-            throw new AppError(`Carrinho não encontrado`, 404);
+        // Validar se lojista existe
+        if (!findShopkeeper) {
+            throw new AppError(`Lojista não encontrado`, 404);
         }
 
-        const uniqueUserIds = [...new Set(findShopingCart.cartItem.map(item => item.userId))];
+        // Calcular envio para os produtos do lojista atual
+        const shipmentCalculate = await this.melhorEnvioProvider.shipmentCalculate({
+            to: {
+                postal_code: to,
+            },
+            from: {
+                postal_code: findShopkeeper.address.zipCode as string,
+            },
+        });
 
-        for(const shopkeeperId of uniqueUserIds) {
-            // Buscar lojista pelo ID
-            const findShopkeeper = await this.userRepository.findById(shopkeeperId) as unknown as IUserRelations;
 
-            // Validar se lojista existe
-            if (!findShopkeeper) {
-             throw new AppError(`Lojista não encontrado`, 404);
+        if (shipmentResults.length === 0) {
+            for(const freight of shipmentCalculate) {
+                shipmentResults.push({
+                    id: freight.id,
+                    name: freight.name,
+                    price: freight.price,
+                    delivery_time: freight.delivery_time,
+                    company: freight.company
+                })
             }
-
-            // Calcular envio para os produtos do lojista atual
-            const shipmentCalculate = await this.melhorEnvioProvider.shipmentCalculate({
-                to: {
-                    postal_code: to,
-                },
-                from: {
-                    postal_code: findShopkeeper.address.zipCode as string,
-                },
-                products: findShopingCart.cartItem.map(product => ({
-                    id: product.id,
-                    quantity: product.quantity,
-                    width: product.width,
-                    height: product.height,
-                    length: product.length,
-                    weight: product.weight,
-                    insurance_value: 0,
-                })) as IProduct[],
-            });
-
-
-            if (shipmentResults.length === 0) {
-                for(const freight of shipmentCalculate) {
+        } else {
+            for (const freight of shipmentCalculate) {
+                const existingFreight = shipmentResults.find(result => result.name === freight.name);
+        
+                if (existingFreight) {
+                    existingFreight.price += freight.price;
+                    if (existingFreight.delivery_time < freight.delivery_time) {
+                        existingFreight.delivery_time = freight.delivery_time;
+                    }
+                } else {
                     shipmentResults.push({
                         id: freight.id,
                         name: freight.name,
@@ -79,25 +77,6 @@ export class ShipmentCalculateDeliveriesUseCase {
                         delivery_time: freight.delivery_time,
                         company: freight.company
                     })
-                }
-            } else {
-                for (const freight of shipmentCalculate) {
-                    const existingFreight = shipmentResults.find(result => result.name === freight.name);
-            
-                    if (existingFreight) {
-                        existingFreight.price += freight.price;
-                        if (existingFreight.delivery_time < freight.delivery_time) {
-                            existingFreight.delivery_time = freight.delivery_time;
-                        }
-                    } else {
-                        shipmentResults.push({
-                            id: freight.id,
-                            name: freight.name,
-                            price: freight.price,
-                            delivery_time: freight.delivery_time,
-                            company: freight.company
-                        })
-                    }
                 }
             }
         }

@@ -22,6 +22,7 @@ export interface IUsersRepository {
     findByEmail(email:string): Promise<User | null>
     findByCPF(cpf:string): Promise<User | null>
     findByPhone(phone:string): Promise<User | null>
+    findShopkeeper(): Promise<User | null>
 
     activeEmail(id:string, activate?: boolean): Promise<void | null>
     changePassword(id:string, password:string): Promise<void | null>

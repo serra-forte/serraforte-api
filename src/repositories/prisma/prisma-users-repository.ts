@@ -4,6 +4,15 @@ import { IUsersRepository } from '../interfaces/interface-users-repository';
 import { IUserRelations } from "@/dtos/user-relations.dto";
 
 export class PrismaUsersRepository implements IUsersRepository{
+    async findShopkeeper(): Promise<User | null> {
+        const user = await prisma.user.findFirst({
+            where: { 
+                role: 'SHOPKEEPER'
+            },
+        }) as unknown as User
+
+        return user
+    }
     async activeSoftDelete(id: string): Promise<void> {
         await prisma.user.update({
             where: {

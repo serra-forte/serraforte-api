@@ -1,14 +1,18 @@
-import { $Enums, Prisma, Role, User } from "@prisma/client";
+import {  Prisma, Role, User } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { IUsersRepository } from '../interfaces/interface-users-repository';
 import { IUserRelations } from "@/dtos/user-relations.dto";
-
 export class PrismaUsersRepository implements IUsersRepository{
+   
     async findShopkeeper(): Promise<User | null> {
         const user = await prisma.user.findFirst({
             where: { 
                 role: 'SHOPKEEPER'
             },
+            select: {
+                id: true,
+                address:true
+            }
         }) as unknown as User
 
         return user

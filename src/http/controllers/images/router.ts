@@ -7,7 +7,7 @@ import { ListImageByUser } from "./list-by-user/list-by-user-images-controller";
 import { ListImage } from "./list/list-images-controller";
 
 export async function imageRoutes(fastifyApp: FastifyInstance) {
-    // fastifyApp.addHook('onRequest', verifyTokenJWT)
+    fastifyApp.addHook('onRequest', verifyTokenJWT)
     // fastifyApp.addHook('onRequest', verifyUserRole('ADMIN', 'SUPER'))
     
     // upload de imagens

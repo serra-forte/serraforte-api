@@ -1,12 +1,19 @@
 import { IUserRelations } from "@/dtos/user-relations.dto";
 import { IMelhorEnvioProvider, IProduct, IResponseCalculateShipping } from "@/providers/DeliveryProvider/interface-melhor-envio-provider";
-import { IProductsRepository } from "@/repositories/interfaces/interface-products-repository";
 import { IShoppingCartRepository } from "@/repositories/interfaces/interface-shopping-cart-repository";
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository";
 import { AppError } from "@/usecases/errors/app-error";
 
 export interface IRequestShipmentCalculate {
     to: string
+    products: {
+        id: string
+        quantity: number
+        height: number
+        width: number
+        weight: number
+        length: number
+    }[]
 }
 
 interface IResponseShipmentCalculate{
@@ -28,6 +35,7 @@ export class ShipmentCalculateDeliveriesUseCase {
 
     async execute({
         to, 
+        products
     }: IRequestShipmentCalculate): Promise<IResponseShipmentCalculate[]> {
         const shipmentResults: IResponseShipmentCalculate[] = [];
 
@@ -47,6 +55,15 @@ export class ShipmentCalculateDeliveriesUseCase {
             from: {
                 postal_code: findShopkeeper.address.zipCode as string,
             },
+            products: products.map(product => ({
+                id: product.id,
+                quantity: product.quantity,
+                width: product.width,
+                height: product.height,
+                length: product.length,
+                weight: product.weight,
+                insurance_value: 0,
+            })) as IProduct[],
         });
 
 

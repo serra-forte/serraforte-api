@@ -48,7 +48,7 @@ model User {
   shoppingCart         ShoppingCart?
   order                Order[]
   payment              Payment[]
-  address              Address?
+  address              Address[]
   products             Product[]
   cartItems            CartItem[]
   items                Item[]

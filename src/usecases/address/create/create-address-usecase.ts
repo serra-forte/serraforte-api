@@ -1,5 +1,5 @@
-import { IAddressesRepository } from "@/repositories/interface-addresses-repository";
-import { IUsersRepository } from "@/repositories/interface-users-repository";
+import { IAddressesRepository } from "@/repositories/interfaces/interface-addresses-repository";
+import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository";
 import { AppError } from "@/usecases/errors/app-error";
 import { Address } from "@prisma/client";
 
@@ -13,7 +13,6 @@ interface IResquestCreateAddress{
     reference?: string;
     country: string;
     neighborhood: string;
-    idAnnouncement?: string;
     userId?: string;
 }
 
@@ -33,7 +32,6 @@ export class CreateAddressUseCase {
     reference,
     country,
     neighborhood,
-    idAnnouncement,
     userId,
   }: IResquestCreateAddress): Promise<Address> {
 
@@ -52,12 +50,11 @@ export class CreateAddressUseCase {
         num,
         city,
         state,
-        zipCode,
+        zipCode: String(zipCode),
         complement,
         reference,
         country,
         neighborhood,
-        idAnnouncement,
         userId,
     });
 

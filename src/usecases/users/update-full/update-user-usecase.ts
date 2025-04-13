@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { AppError } from "@/usecases/errors/app-error";
 import {Address, StoreHours, User } from "@prisma/client";
 import { IUsersRepository } from '@/repositories/interfaces/interface-users-repository';
+import { IAddressesRepository } from '@/repositories/interfaces/interface-addresses-repository';
 
 interface IRequestUpdateUser {
     id: string,
@@ -36,6 +37,7 @@ interface IResponseUpdateUser {
 export class UpdateUserUseCase{
     constructor(
         private usersRepository: IUsersRepository,
+        private addressRepository: IAddressesRepository
     ) {}
 
     async execute({
@@ -95,7 +97,27 @@ export class UpdateUserUseCase{
             }
         }
 
-    //    await this.usersRepository.updateIdCostumerPayment(findUserExists.id, null)
+        const activeAddres = await this.addressRepository.findByActive(id)
+
+        if(activeAddres){
+            await this.addressRepository.updateById(activeAddres)
+        }else{
+            if(address){
+                await this.addressRepository.create({
+                    street: address.street,
+                    num: address.num,
+                    neighborhood: address.neighborhood,
+                    city: address.city,
+                    state: address.state,
+                    country: address.country,
+                    zipCode: address.zipCode,
+                    complement: address?.complement || null,
+                    reference: address?.reference || null,
+                    userId: id
+                })
+            }
+        }
+
 
     const userUpdated = await this.usersRepository.update({
         id,
@@ -107,12 +129,6 @@ export class UpdateUserUseCase{
         hasDeliveryMan,
         emailActive,
         avatarUrl,
-        address: {
-            upsert:{
-                create: address as unknown as Address,
-                update: address as unknown as Address
-            }
-        },
         storeHours: {
             upsert: (storeHours || []).map((storeHour) => ({
               where: {

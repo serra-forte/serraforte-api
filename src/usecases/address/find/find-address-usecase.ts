@@ -12,7 +12,7 @@ export class FindAddressByIdUseCase {
         ) {}
 
   async execute({id}:IResquestFindAddress): Promise<Address> {
-    const checkAddressExists = await this.addressRepository.findById(id);
+    const checkAddressExists = await this.addressRepository.findByActive(id);
 
     if (!checkAddressExists) {
       throw new AppError("Endereço não encontrado", 404);

@@ -1,8 +1,27 @@
-import { Prisma } from "@prisma/client";
+import { Address, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { IAddressesRepository } from "../interfaces/interface-addresses-repository";
 
 export class PrismaAddressesRepository implements IAddressesRepository{
+    async listByUser(userId: string): Promise<Address[]> {
+        const addresses = await prisma.address.findMany({
+            where: {
+                userId
+            }
+        })
+
+        return addresses
+    }
+    async findByActive(userId: string): Promise<Address | null> {
+        const address = await prisma.address.findFirst({
+            where: {
+                userId,  
+                active: true
+            }
+        })
+
+        return address
+    }
     async deleteById(id: string): Promise<void> {
         await prisma.address.delete({
             where: {id}

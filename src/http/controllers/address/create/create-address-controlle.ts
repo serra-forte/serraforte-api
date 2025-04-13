@@ -8,9 +8,6 @@ export async function CreateAddress (request: FastifyRequest, reply:FastifyReply
                 user: z.object({
                     id: z.string().uuid().optional(),
                 }).optional(),
-                announcement: z.object({
-                    id: z.string().uuid().optional(),
-                }).optional(),
                 street: z.string(),
                 num: z.number().nonnegative(),
                 neighborhood: z.string(),

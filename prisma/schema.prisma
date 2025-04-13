@@ -283,7 +283,7 @@ model Payment {
 model Address {
   id     String  @id @unique @default(uuid())
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String? @unique
+  userId String?
 
   delivery   Delivery? @relation(fields: [deliveryId], references: [id])
   deliveryId String?   @unique
@@ -297,6 +297,7 @@ model Address {
   zipCode      String?
   complement   String?
   reference    String?
+  active       Boolean? @default(true)
 
   @@map("addresses")
 }

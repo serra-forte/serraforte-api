@@ -1,6 +1,6 @@
 import { verifyTokenJWT } from "@/http/middlewares/verify-token-jwt"
 import { FastifyInstance } from "fastify"
-import { CreateAddress } from "./create/create-address-controlle"
+import { CreateAddress } from "./create/create-address-controller"
 import { UpdateAddress } from "./update-full/update-address-controlle"
 import { ListAddressByUser } from "./list/list-by-user-controller"
 

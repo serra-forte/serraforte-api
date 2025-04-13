@@ -13,7 +13,7 @@ interface IResquestCreateAddress{
     reference?: string;
     country: string;
     neighborhood: string;
-    userId?: string;
+    userId: string;
 }
 
 export class CreateAddressUseCase {

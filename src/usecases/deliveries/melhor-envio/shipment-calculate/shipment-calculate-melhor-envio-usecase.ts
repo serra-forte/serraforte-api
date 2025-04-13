@@ -53,7 +53,7 @@ export class ShipmentCalculateDeliveriesUseCase {
                 postal_code: to,
             },
             from: {
-                postal_code: findShopkeeper.address.zipCode as string,
+                postal_code: findShopkeeper.address[0].zipCode as string,
             },
             products: products.map(product => ({
                 id: product.id,

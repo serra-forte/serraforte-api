@@ -17,5 +17,5 @@ export interface IUserRelations {
     shoppingCart: ShoppingCart
     paymentFee: number
     asaasWalletId: string
-    address: Address
+    address: Address[]
 }

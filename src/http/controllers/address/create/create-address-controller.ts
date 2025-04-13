@@ -5,9 +5,7 @@ import { z } from 'zod'
 export async function CreateAddress (request: FastifyRequest, reply:FastifyReply){
         try {
             const userSchema = z.object({
-                user: z.object({
-                    id: z.string().uuid(),
-                }),
+                userId: z.string().uuid(),
                 street: z.string(),
                 num: z.number().nonnegative(),
                 neighborhood: z.string(),
@@ -20,7 +18,7 @@ export async function CreateAddress (request: FastifyRequest, reply:FastifyReply
             })
 
             const { 
-                user,
+                userId,
                 street,
                 num,
                 neighborhood,
@@ -35,7 +33,7 @@ export async function CreateAddress (request: FastifyRequest, reply:FastifyReply
             const createAddressUseCase = await makeCreateAddress()
 
             const address = await createAddressUseCase.execute({
-                userId: user.id,
+                userId,
                 street,
                 num,
                 neighborhood,

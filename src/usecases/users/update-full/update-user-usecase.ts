@@ -99,10 +99,21 @@ export class UpdateUserUseCase{
 
         const activeAddres = await this.addressRepository.findByActive(id)
 
-        if(activeAddres){
-            await this.addressRepository.updateById(activeAddres)
-        }else{
-            if(address){
+        if(address){
+            if(activeAddres){
+                await this.addressRepository.updateById({
+                    id: activeAddres.id,
+                    street: address.street,
+                    num: address.num,
+                    neighborhood: address.neighborhood,
+                    city: address.city,
+                    state: address.state,
+                    country: address.country,
+                    zipCode: address.zipCode,
+                    complement: address?.complement || null,
+                    reference: address?.reference || null
+                })
+            }else{
                 await this.addressRepository.create({
                     street: address.street,
                     num: address.num,

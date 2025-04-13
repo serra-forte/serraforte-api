@@ -8,7 +8,7 @@ interface IResquestCreateAddress{
     num: number;
     city: string;
     state: string;
-    zipCode: number;
+    zipCode: string;
     complement?: string;
     reference?: string;
     country: string;
@@ -50,7 +50,7 @@ export class CreateAddressUseCase {
         num,
         city,
         state,
-        zipCode: String(zipCode),
+        zipCode,
         complement,
         reference,
         country,

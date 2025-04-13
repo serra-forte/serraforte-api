@@ -14,7 +14,7 @@ export async function CreateAddress (request: FastifyRequest, reply:FastifyReply
                 country: z.string(),
                 city: z.string(),
                 state: z.string(),
-                zipCode: z.number().nonnegative(),
+                zipCode: z.string(),
                 complement: z.string().optional(),
                 reference: z.string().optional(),
             })

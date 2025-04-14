@@ -44,7 +44,9 @@ export class CreateAddressUseCase {
             throw new AppError('Usuário não encontrado', 404)
         }
     }
-    
+
+    const findActive = await this.addressRepository.findByActive(userId)
+
     const address = await this.addressRepository.create({
         street,
         num,
@@ -56,6 +58,7 @@ export class CreateAddressUseCase {
         country,
         neighborhood,
         userId,
+        active: findActive ? false : true
     });
 
     return address;

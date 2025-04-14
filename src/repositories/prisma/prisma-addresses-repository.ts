@@ -6,7 +6,8 @@ export class PrismaAddressesRepository implements IAddressesRepository{
     async listByUser(userId: string): Promise<Address[]> {
         const addresses = await prisma.address.findMany({
             where: {
-                userId
+                userId,
+                active: false
             }
         })
 

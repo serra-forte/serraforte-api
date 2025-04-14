@@ -4,13 +4,10 @@ import { Address } from "@prisma/client"
 export interface IListAddressUseCase {
     userId: string  
 }
-
 export class ListAddressbyUserUseCase {
-
     constructor(
         private addressRepository: IAddressesRepository
     ){}
-
     async execute(
         {userId}:IListAddressUseCase
     ): Promise<Address[]> {

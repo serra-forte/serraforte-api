@@ -89,14 +89,14 @@ export class AddFreightToCartMelhorEnvio {
                                         email: shopkeeper.email,
                                         document: shopkeeper.cpf as string,
                                         state_register: '12345678910',
-                                        address: shopkeeper.address.street as string,
-                                        complement: shopkeeper.address.complement as string,
-                                        number: String(shopkeeper.address.num),
-                                        district: shopkeeper.address.neighborhood as string,
-                                        city: shopkeeper.address.city as string,
+                                        address: shopkeeper.address[0].street as string,
+                                        complement: shopkeeper.address[0].complement as string,
+                                        number: String(shopkeeper.address[0].num),
+                                        district: shopkeeper.address[0].neighborhood as string,
+                                        city: shopkeeper.address[0].city as string,
                                         country_id: "BR", // Brasill
-                                        postal_code: shopkeeper.address.zipCode as string,
-                                        state_abbr: shopkeeper.address.state as string,
+                                        postal_code: shopkeeper.address[0].zipCode as string,
+                                        state_abbr: shopkeeper.address[0].state as string,
                                         note: "order for delivery"
                                     },
                                     to: {
@@ -171,14 +171,14 @@ export class AddFreightToCartMelhorEnvio {
                                         email: shopkeeper.email,
                                         document: shopkeeper.cpf as string,
                                         state_register: '12345678910',
-                                        address: shopkeeper.address.street as string,
-                                        complement: shopkeeper.address.complement as string,
-                                        number: String(shopkeeper.address.num),
-                                        district: shopkeeper.address.neighborhood as string,
-                                        city: shopkeeper.address.city as string,
+                                        address: shopkeeper.address[0].street as string,
+                                        complement: shopkeeper.address[0].complement as string,
+                                        number: String(shopkeeper.address[0].num),
+                                        district: shopkeeper.address[0].neighborhood as string,
+                                        city: shopkeeper.address[0].city as string,
                                         country_id: "BR", // Brasill
-                                        postal_code: shopkeeper.address.zipCode as string,
-                                        state_abbr: shopkeeper.address.state as string,
+                                        postal_code: shopkeeper.address[0].zipCode as string,
+                                        state_abbr: shopkeeper.address[0].state as string,
                                         note: "order for delivery"
                                     },
                                     to: {

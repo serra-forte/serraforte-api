@@ -1,6 +1,5 @@
 import { makeLoginUser } from '@/usecases/factories/users/make-login-user-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { refreshToken } from 'firebase-admin/app'
 import { z } from 'zod'
 
 export async function LoginUser (request: FastifyRequest, reply:FastifyReply){
@@ -16,8 +15,6 @@ export async function LoginUser (request: FastifyRequest, reply:FastifyReply){
         } = userSchema.parse(request.body)
         
         const loginUserUseCase = await makeLoginUser()
-
-       
 
         const userInfo = await loginUserUseCase.execute({
           email,

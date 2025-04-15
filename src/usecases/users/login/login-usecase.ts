@@ -31,7 +31,6 @@ export class LoginUseCase{
         private usersRepository: IUsersRepository,
         private usersTokensRepository: ITokensRepository,
         private dayjsDateProvider: IDateProvider,
-        private kafkaProvider: KafkaProducer
     ) {}
 
     async execute({
@@ -75,8 +74,6 @@ export class LoginUseCase{
             })
 
             const getSafeUser = await this.usersRepository.getUserSecurity(findUserExists.id) as User
-
-            await this.kafkaProvider.execute('add-freight-to-cart', getSafeUser)
 
             return {
                 user: getSafeUser,

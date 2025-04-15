@@ -287,13 +287,13 @@ export class PrismaProductsRepository  implements IProductsRepository{
             totalPages
         }
     }
-    async listBySales(page?: number | null) {
+    async listBySales(page = 1) {
         const products = await  prisma.product.findMany({
             orderBy:{
                 sales: 'desc'
             },
             take: 13,
-            skip: page ? (page - 1) * 13 : 0,
+            skip: (page - 1) * 13,
             select:{
                 id: true,
                 code:true,

@@ -115,7 +115,7 @@ export class CancellationUseCase {
             {
                 order: {
                     ...findOrderExist,
-                    total: findOrderExist.total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}),
+                    total: findOrderExist.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) as unknown as number,
                     createdAt: createdAtFormat,
                     items: findOrderExist.items.map(item => {
                         const price = Number(item.price)

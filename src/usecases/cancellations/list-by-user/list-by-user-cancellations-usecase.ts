@@ -2,6 +2,7 @@ import { ICancellationRelationsDTO } from "@/dtos/cancellation-relations.dto";
 import { ICancellationRepository } from "@/repositories/interfaces/interface-cancellations-repository";
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository";
 import { AppError } from "@/usecases/errors/app-error";
+import { IResponseListCancellationsByUser } from "../list-by-shopkeeper/list-by-shopkeeper-cancellations-usecase";
 
 interface IRequestListCancellationsByUser{
     userId: string
@@ -17,7 +18,7 @@ export class ListCancellationsByUserUseCase {
     async execute({
         userId,
         page
-    }: IRequestListCancellationsByUser): Promise<ICancellationRelationsDTO[]> {
+    }: IRequestListCancellationsByUser): Promise<IResponseListCancellationsByUser> {
         // buscar por id do usuario
         const findUserExist = await this.userRepository.findById(userId)
 

@@ -1,9 +1,6 @@
 import { INotificationRepository } from './../../../repositories/interfaces/interface-notification-repository';
 import { ICancellationMessagesRepository } from '@/repositories/interfaces/interface-cancellation-messages-repository';
-import { ICancellationRelationsDTO } from '../../../dtos/cancellation-relations.dto';
-import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 import { ICancellationRepository } from "@/repositories/interfaces/interface-cancellations-repository";
-import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository";
 import { AppError } from "@/usecases/errors/app-error";
 import { IDateProvider } from '@/providers/DateProvider/interface-date-provider';
@@ -89,7 +86,7 @@ export class SendMessageCancellationsUseCase {
             {
                 order: {
                     ...findCancellationExist.order,
-                    total: total.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'}),
+                    total: total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) as unknown as number,
                     createdAt: createdAtFormat,
                     items: findCancellationExist.order.items.map(item => {
                         const price = Number(item.price)

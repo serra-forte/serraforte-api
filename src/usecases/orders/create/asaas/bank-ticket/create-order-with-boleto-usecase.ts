@@ -15,6 +15,7 @@ import { IProductRelationsDTO } from '@/dtos/product-relations.dto';
 import { IOrderRelationsDTO } from '@/dtos/order-relations.dto';
 import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-discount-coupons-repository';
 import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementations/provider-melhor-envio';
+import { IDeliveryService } from '../pix/create-order-with-pix-usecase';
 
 export interface IRequestCreateOrderWithBoleto {
     userId: string
@@ -94,13 +95,12 @@ export class CreateOrderWithBoletoUsecase {
 
         let objItemsShopKeeper: any = {};
 
-        // Array para calcular o total de cada lojista
-        let arrayToSplitToMembers: AsaasPaymentWallet[] = [];
-
         // inicialize o valor do desconto
         let discountCoupomValue = 0
 
-        let paymentFeeDicount = 0
+        // constate para salvar o id do serviço escolhido no frete da entrega
+        let deliveryService: IDeliveryService[] = []
+
 
         // verificar a quantidade dos produtos no estoque
         for(let item of findShoppingCartExist.cartItem) {
@@ -126,168 +126,75 @@ export class CreateOrderWithBoletoUsecase {
                 objItemsShopKeeper[shopKeeperId].push(item);
             }
         }
-
-        // Converte o objeto em um array de arrays
-        let arrayItemsShopKeeperArray: IProductRelationsDTO[][] = Object.values(objItemsShopKeeper);
-
-         // buscar entregador existente
-         const listDeliveryMan = await this.userRepository.listByDeliveryMan(1, 1)
-
-         // validar se o entregador existe
-         const uniqueDeliveryMan = listDeliveryMan.users[0] as User
-        
-         // variavel para validar que exite entregador
-         let existDeliveryMan = false
  
-         if(address &&
-           address.zipCode &&
-           address.city &&
-           address.state &&
-           address.street &&
-           address.neighborhood &&
-           address.num &&
-           address.country
-         ){
-             const paymentFeeDeliveryMan = Number(uniqueDeliveryMan.paymentFee)
-             
-             total = total + paymentFeeDeliveryMan
+        // buscar lojista pelo id
+        const findShopKeeperExist = await this.userRepository.findById(findShoppingCartExist.cartItem[0].userId) as unknown as IUserRelations
 
-             existDeliveryMan = true
-
-             existDeliveryMan = true
- 
-             arrayToSplitToMembers.push({
-                 userId: uniqueDeliveryMan.id,
-                 walletId: uniqueDeliveryMan.asaasWalletId as string,
-                 fixedValue: paymentFeeDeliveryMan
-             })
-         }
-        
-        // For para calcular o total de cada lojista
-        for(let arrayShopKeeper of arrayItemsShopKeeperArray) {
-            // buscar lojista pelo id
-            const findShopKeeperExist = await this.userRepository.findById(arrayShopKeeper[0].user.id as string) as unknown as IUserRelations
-
-            // validar se o lojista existe
-            if(!findShopKeeperExist) {
-                throw new AppError("Lojista não encontrado", 404)
-            }
-
-            // validar se o lojista tem um asaasWalletId
-            if(!findShopKeeperExist.asaasWalletId) {
-                throw new AppError("Lojista não possui carteira de pagamento Asaas", 404)
-            }
-
-            let totalShopKeeper = arrayShopKeeper.reduce((acc, item) => {
-                let total = acc + Number(item.price) * Number(item.quantity);
-                return total;
-            }, 0);
-            
-            totalShopKeeper = totalShopKeeper * Number(findShopKeeperExist.paymentFee) / 100;
-
-            paymentFeeDicount = totalShopKeeper * Number(findShopKeeperExist.paymentFee) / 100
-
-            if(coupons && coupons.length > 0) {
-                    // filtrar cupom de desconto pelo id do lojista no array de cupons
-                    for(let coupom of coupons) {
-                        // buscar cupom de desconto pelo
-                        const findCoupomExist = await this.discountCoupon.findByCode(coupom.code as string)
-
-                        // verificar cupom de desconto
-                        if(!findCoupomExist) {
-                            throw new AppError("Cupom de desconto não encontrado", 404)
-                        }
-
-                        // validar quantidade de cupons
-                        if(findCoupomExist.quantity === 0) {
-                            throw new AppError("Quantidade de cupons esgotada", 404)
-                        }
-
-                        // verifica se o id do user no cupom é igual ao id do lojista
-                        if(findCoupomExist.userId === findShopKeeperExist.id) {
-                            // verificar tipo de desconto
-                            if(findCoupomExist.type === "PERCENTAGE") {
-                                // calcular total do desconto do cupom
-                                let calcDiscount = totalShopKeeper * Number(findCoupomExist.discount) / 100
-
-                                // passa o calculo do desconto para a variavel discountCupomValue
-                                discountCoupomValue = calcDiscount
-                            }
-
-                            if(findCoupomExist.type === "FIXED") {
-                                // calcular total do desconto do cupom
-                                let calcDiscount = Number(findCoupomExist.discount)
-
-                                // passa o calculo do desconto para a variavel discountCupomValue
-                                discountCoupomValue = calcDiscount
-                            }
-
-                            let minValueToUseCoupon = Number(findCoupomExist.minValue)
-
-                            if(totalShopKeeper < minValueToUseCoupon) {
-                                throw new AppError(`O pedido deve atintigir o mínimo de R$ ${minValueToUseCoupon}`, 400)
-                            }
-
-                            // atualizar quantidade do cupom
-                            await this.discountCoupon.decrementQuantity(findCoupomExist.id)
-                    
-                            // aplicar o calculo de desconto do cupom
-                            totalShopKeeper = totalShopKeeper - discountCoupomValue
-
-                            // aplicar desconto do cupom no total se existir
-                            total = total - discountCoupomValue
-                            
-                        }
-                    }
-                
-            }
-            
-            // aplicar calculo de desconto no total menos o desconto para cada lojista
-            totalShopKeeper = totalShopKeeper - paymentFeeDicount
-
-            // adicionar total de cada lojista no arrayToSplitToMembers
-            arrayToSplitToMembers.push({
-                userId: findShopKeeperExist.id,
-                walletId: findShopKeeperExist.asaasWalletId,
-                fixedValue: totalShopKeeper
-            })
-
-            // chamar melhor envio e enviar as dimentonses do produto para calcular o frete
-            const response = await this.melhorEnvioProvider.shipmentCalculate({
-                to: {
-                    postal_code: findShopKeeperExist.address.zipCode as string
-                },
-                from:{
-                    postal_code: findShopKeeperExist.address.zipCode as string
-                },
-                products: arrayShopKeeper.map(product => {
-                    return {
-                        height: Number(product.height),
-                        width: Number(product.width),
-                        length: Number(product.length),
-                        weight: Number(product.weight),
-                        quantity: Number(product.quantity),
-                        id: product.id,
-                        insurance_value: 0,
-                    }
-                })
-            })
-            
-            // buscar frete pelo nome dentro do response da melhor envio
-            const freightService = response.find(freightService => freightService.name === freightName)
-            
-            // validar se o frete foi encontrado
-            if(!freightService) {
-                throw new AppError("Frete não encontrado", 404)
-            }
-
-            // converter o valor do frete para number
-            const freightValue = Number(freightService.price)
-
-            // adicionar o valor do frete ao total do pedido
-            total += freightValue
-
+        // validar se o lojista existe
+        if(!findShopKeeperExist) {
+            throw new AppError("Lojista não encontrado", 404)
         }
+
+        if(coupons && coupons.length > 0) {
+            // filtrar cupom de desconto pelo id do lojista no array de cupons
+            for(let coupom of coupons) {
+                // buscar cupom de desconto pelo
+                const findCoupomExist = await this.discountCoupon.findByCode(coupom.code as string)
+
+                // verificar cupom de desconto
+                if(!findCoupomExist) {
+                    throw new AppError("Cupom de desconto não encontrado", 404)
+                }
+
+                // validar quantidade de cupons
+                if(findCoupomExist.quantity === 0) {
+                    throw new AppError("Quantidade de cupons esgotada", 404)
+                }
+
+                // verifica se o id do user no cupom é igual ao id do lojista
+                if(findCoupomExist.userId === findShopKeeperExist.id) {
+                    // verificar tipo de desconto
+                    if(findCoupomExist.type === "PERCENTAGE") {
+                        // calcular total do desconto do cupom
+                        let calcDiscount = total * Number(findCoupomExist.discount) / 100
+
+                        // passa o calculo do desconto para a variavel discountCupomValue
+                        discountCoupomValue = calcDiscount
+                    }
+
+                    if(findCoupomExist.type === "FIXED") {
+                        // calcular total do desconto do cupom
+                        let calcDiscount = Number(findCoupomExist.discount)
+
+                        // passa o calculo do desconto para a variavel discountCupomValue
+                        discountCoupomValue = calcDiscount
+                    }
+
+                    let minValueToUseCoupon = Number(findCoupomExist.minValue)
+
+                    if(total < minValueToUseCoupon) {
+                        throw new AppError(`O pedido deve atintigir o mínimo de R$ ${minValueToUseCoupon}`, 400)
+                    }
+
+                    // atualizar quantidade do cupom
+                    await this.discountCoupon.decrementQuantity(findCoupomExist.id)
+
+                    // aplicar o calculo de desconto do cupom
+                    total = total - discountCoupomValue
+                }
+            }
+            
+        }
+
+        deliveryService.push({
+            shopkeeperId: findShopKeeperExist.id,
+            serviceId: freight.id,
+            serviceName: freight.name,
+            companyName: freight.company.name,
+            price: freight.price
+        })
+
+        total += freight.price
 
         // criar pagamento na asaas
         let newCustomer = findUserExist.asaasCustomerId
@@ -326,7 +233,6 @@ export class CreateOrderWithBoletoUsecase {
             value: total,
             description: 'Payment of order',
             remoteIp: String(remoteIp),
-            split: arrayToSplitToMembers ?? null
         }) as IAsaasPayment
         
         if (!paymentAsaas) {
@@ -339,110 +245,102 @@ export class CreateOrderWithBoletoUsecase {
         // criar data para o pedido
         const dateNow = this.dateProvider.addDays(0)
 
-        async function recursiveCreateOrders(arrayShopKeeper: IProductRelationsDTO[][], orderRepository: IOrderRepository, index = 0,) {
-            if (index >= arrayShopKeeper.length) {
-                return; // Termina a recursão quando todos os pedidos forem criados
+        let countBooking = await this.orderRepository.countOrders()
+        let code = `#${countBooking + 1}`
+        let stopVerifyCode = false
+        // fazer laço para buscar reserva através do code para ve se existe
+        // enquanto existir alterar o valor do code e pesquisar novamente
+        // só para quando a reserva nao for encontrada pelo code.
+        do{
+            // buscar reserva pelo code
+            const findBookingByCode = await this.orderRepository.findByCode(code)
+
+            // validar se encontrou reserva pelo code
+            if (findBookingByCode) {
+                countBooking++
+                code = `#${countBooking}`
+            } else {
+                stopVerifyCode = true
             }
+        }while(!stopVerifyCode)
 
-            const itemsShopKeeper = arrayShopKeeper[index];
-            let countBooking = await orderRepository.countOrders()
-            let code = `#${countBooking + 1}`
-            let stopVerifyCode = false
+        // decrementar quantidade no estoque
+        for(let item of findShoppingCartExist.cartItem) {
+        await this.productsRepository.decrementQuantity(item.productId, item.quantity)
 
-            try {
-                // fazer laço para buscar reserva através do code para ve se existe
-                // enquanto existir alterar o valor do code e pesquisar novamente
-                // só para quando a reserva nao for encontrada pelo code.
-                do{
-                    // buscar reserva pelo code
-                    const findBookingByCode = await orderRepository.findByCode(code)
-        
-                    // validar se encontrou reserva pelo code
-                    if (findBookingByCode) {
-                        countBooking++
-                        code = `#${countBooking}`
-                    } else {
-                        stopVerifyCode = true
-                    }
-                }while(!stopVerifyCode)
-            
-            // somar total do carrinho
-            total = itemsShopKeeper.reduce((total, item) => total + Number(item.price) * Number(item.quantity), 0)
-                
-            // criar pedido passando lista de itens para criar juntos
-                const order = await orderRepository.create({
-                    userId,
-                    code,
-                    shoppingCartId: findShoppingCartExist.id,
-                    total,
-                    withdrawStore,
-                    delivery:{
-                        create:{
-                            address:{
-                                create: address ? address as Address : undefined
-                            }
-                        }
-                    },
-                    items: {
-                        createMany: {
-                            data: itemsShopKeeper.map(product => {
-                                return {
-                                    productId: product.id,
-                                    userId: product.user.id as string,
-                                    quantity: product.quantity,
-                                    name: product.name,
-                                    price: Number(product.price),
-                                    mainImage: product.mainImage,
-                                } as unknown as Item;
-                            })
-                        }
-                    },
-                    payment: {
-                        create: {
-                            asaasPaymentId: paymentAsaas.id,
-                            userId,
-                            paymentMethod: "BOLETO",
-                            invoiceUrl: paymentAsaas.invoiceUrl,
-                            value: total,
-                            discount: discountCoupomValue
-                        }
-                    },
-                    createdAt: dateNow
-                })as unknown as IOrderRelationsDTO
+        // atualizar vendas do produto no estoque
+        await this.productsRepository.updateSales(item.productId, item.quantity)
 
-                // adicionar id do pedido ao array
-                createdOrders.push(order)
-                // mandar email para lojista que o pedido foi criado
-            } catch (error) {
-                console.error(`Erro ao criar pedido: ${error}`);
-                throw new AppError('Erro ao criar pedido', 400);
-            }
+        // buscar produto pelo id
+        const response = await this.productsRepository.findById(item.productId) as IResponseFindProductWithReviews
 
-            // Chama a função recursiva para o próximo grupo de itens
-            await recursiveCreateOrders(arrayShopKeeper, orderRepository, index + 1,);
+        const {
+            product
+        } = response
+
+        if(product && product.quantity === 0) {
+            // desativar produto
+            await this.productsRepository.updateStatus(product.id, false)
+        }
         }
 
-        await recursiveCreateOrders(arrayItemsShopKeeperArray, this.orderRepository);
+        // criar pedido
+        // criar pedido passando lista de itens para criar juntos
+        const order = await this.orderRepository.create({
+            userId: findUserExist.id,
+            code,
+            shoppingCartId: findShoppingCartExist.id,
+            total,
+            withdrawStore,
+            // description,
+            delivery: {
+                create: {
+                    address: {
+                        create: address ? address as Address : undefined
+                    },
+                    serviceDelivery:{
+                        create:{
+                            companyName: freight.company.name,
+                            serviceId: freight.id,
+                            price: freight.price,
+                            serviceName: freight.name
+                        }
+                    }
+                }
+            },
+            items: {
+                createMany: {
+                    data: findShoppingCartExist.cartItem.map(item => {
+                        return {
+                            productId: item.productId,
+                            userId: item.userId as string,
+                            quantity: item.quantity,
+                            name: item.name,
+                            price: Number(item.price),
+                            mainImage: item.mainImage,
+                            height: Number(item.height),
+                            width: Number(item.width),
+                            length: Number(item.length),
+                            weight: Number(item.weight),
+                        } 
+                    })
+                }
+            },
+            payment: {
+                create: {
+                    asaasPaymentId: paymentAsaas.id,
+                    userId: findUserExist.id,
+                    paymentMethod: "PIX",
+                    invoiceUrl: paymentAsaas.invoiceUrl,
+                    value: total,
+                    discount: discountCoupomValue,
+                }
+            },
+            createdAt: dateNow
+        }) as unknown as IOrderRelationsDTO
 
-
-         // decrementar quantidade no estoque
-         for(let item of findShoppingCartExist.cartItem) {
-            await this.productsRepository.decrementQuantity(item.productId, item.quantity)
-
-            // atualizar vendas do produto no estoque
-            await this.productsRepository.updateSales(item.productId, item.quantity)
-
-            // buscar produto pelo id
-            const response = await this.productsRepository.findById(item.productId) as IResponseFindProductWithReviews
-
-            const {
-                product
-            } = response
-
-            if(product && product.quantity === 0) {
-                // desativar produto
-                await this.productsRepository.updateStatus(product.id, false)
-            }
+        if(!order) {
+            throw new AppError('Error create order', 400)
         }
 
         // esvaziar o carrinho
@@ -450,15 +348,23 @@ export class CreateOrderWithBoletoUsecase {
 
         // limpar total
         await this.shoppingCartRepository.updateTotal(findShoppingCartExist.id, 0)
-
+       
         const endOrder: IOrderRelationsDTO = {
-            user: findUserExist,
+            user: {
+                id: order.user.id,
+                name: order.user.name,
+                email: order.user.email,
+                phone: order.user.phone,
+                avatar: order.user.avatarUrl,
+                shoppingCart: order.shoppingCart
+            },
             delivery: {
                 address: address ? address : undefined
             },
-            payment: createdOrders[0].payment,
-            total: 0, // Inicializa total como 0
-            items: [] // Inicializa items como array vazio
+            boxes: order.boxes,
+            payment: order.payment,
+            total: Number(order.total), 
+            items: order.items,
         } as unknown as IOrderRelationsDTO;
         
         for (let order of createdOrders) {
@@ -467,9 +373,20 @@ export class CreateOrderWithBoletoUsecase {
             endOrder.items.push(...order.items); // spreed no array de items para acumular os items anteriores e os novos
         }
 
-        if(existDeliveryMan){
-            endOrder.total += Number(uniqueDeliveryMan.paymentFee)
-        }
+        // criar variavel com caminho do template de email
+        const templatePathApproved = './views/emails/confirmation-payment.hbs'
+
+        // disparar envio de email de pagamento recebido do usuário com nota fiscal(invoice)
+        await this.mailProvider.sendEmail(
+            findUserExist.email,
+            findUserExist.name,
+            'Confirmação de Pagamento',
+            paymentAsaas.invoiceUrl,
+            templatePathApproved,
+            {
+                order
+            }
+        )
 
        // retornar pedido criado
        return endOrder

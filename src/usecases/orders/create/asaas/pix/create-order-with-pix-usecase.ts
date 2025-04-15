@@ -16,7 +16,7 @@ import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-
 import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementations/provider-melhor-envio';
 import { IDeliveryRepository } from '@/repositories/interfaces/interface-deliveries-repository';
 
-interface IDeliveryService{
+export interface IDeliveryService{
     serviceId: number
     serviceName: string
     shopkeeperId: string
@@ -118,11 +118,6 @@ export class CreateOrderWithPixUsecase {
             throw new AppError("Carrinho vazio", 400)
         }
 
-        // Inicialize um objeto para agrupar os itens por lojista (user.id)
-        let boxesFromDelivery: Box[] = [];
-
-        // Array para calcular o total de cada lojista e entregador
-        let arrayToSplitToMembers: AsaasPaymentWallet[] = [];
 
         // constate para salvar o id do serviço escolhido no frete da entrega
         let deliveryService: IDeliveryService[] = []
@@ -140,15 +135,12 @@ export class CreateOrderWithPixUsecase {
                 if (product.quantity < item.quantity) {
                     throw new AppError("Estoque insuficiente", 400);
                 }
-
-                boxesFromDelivery = product.boxes
             }
         }
 
         // inicialize o valor de desconto
         let discountCoupomValue = 0
 
-        // For para calcular o total de cada lojista
         // buscar lojista pelo id
         const findShopKeeperExist = await this.userRepository.findById(findShoppingCartExist.cartItem[0].userId) as unknown as IUserRelations
 
@@ -222,22 +214,22 @@ export class CreateOrderWithPixUsecase {
         let newCustomer = ''
         const newDate = this.dateProvider.addDays(0)
         // validar se o cliente existe no asaas se não existir criar            // atualizar user com o id do cliente no asaas
-            const createCustomer = await this.asaasProvider.createCustomer({
-                name: findUserExist.name,
-                cpfCnpj: findUserExist.cpf as string,
-                email: findUserExist.email,
-                phone: findUserExist.phone?.replace('(+)', '').replace(' ', '') as string,
-            })
+        const createCustomer = await this.asaasProvider.createCustomer({
+            name: findUserExist.name,
+            cpfCnpj: findUserExist.cpf as string,
+            email: findUserExist.email,
+            phone: findUserExist.phone?.replace('(+)', '').replace(' ', '') as string,
+        })
 
-            if (!createCustomer) {
-                throw new AppError('Error create customer for Asaas', 400)
-            }
+        if (!createCustomer) {
+            throw new AppError('Error create customer for Asaas', 400)
+        }
 
-            const customer = await this.userRepository.updateAsaasCostumerId(
-                findUserExist.id,
-                createCustomer.id as string,
-            )
-            newCustomer = String(customer.asaasCustomerId)
+        const customer = await this.userRepository.updateAsaasCostumerId(
+            findUserExist.id,
+            createCustomer.id as string,
+        )
+        newCustomer = String(customer.asaasCustomerId)
 
         // verificar se o usuario tem um idCostumerPayment se não tiver retorna o new customer criado anteriormente
         const idCostumerPayment = String(newCustomer)
@@ -279,8 +271,6 @@ export class CreateOrderWithPixUsecase {
         }while(!stopVerifyCode)
 
 
-        const boxInProduct = boxesFromDelivery as unknown as BoxInProduct[]
-
         // criar pedido passando lista de itens para criar juntos
         const order = await this.orderRepository.create({
             userId: findUserExist.id,
@@ -319,15 +309,6 @@ export class CreateOrderWithPixUsecase {
                             length: Number(item.length),
                             weight: Number(item.weight),
                         } 
-                    })
-                }
-            },
-            boxes: {
-                createMany: {
-                    data: boxInProduct.map(box => {
-                        return {
-                            boxId: box.boxId,
-                        }
                     })
                 }
             },

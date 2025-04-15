@@ -110,7 +110,7 @@ export class PaymentWebHookUseCases {
       const templatePathUserReproved =
       './views/emails/admin-payment-reproved.hbs'
 
-      if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') {  // [x] criar validação para caso o evento seja "REPROVED"
+      if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') { 
         // [x] atualizar payment no banco de dados com os dados recebidos e status REPROVED
          await this.paymentsRepository.updateById(
           payment.id,
@@ -173,7 +173,7 @@ export class PaymentWebHookUseCases {
           return
       }else if (
         (event === 'PAYMENT_RECEIVED' && paymenAsaas.billingType === 'PIX') || 
-        (event === 'PAYMENT_CONFIRMED' && paymenAsaas.billingType === 'BOLETO') ||
+        (event === 'PAYMENT_RECEIVED' && paymenAsaas.billingType === 'BOLETO') ||
         (event === 'PAYMENT_CONFIRMED' && paymenAsaas.billingType === 'CREDIT_CARD'))
 		{ 
 

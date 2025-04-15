@@ -326,7 +326,7 @@ export class CreateOrderWithCreditCardUsecase {
                 create: {
                     asaasPaymentId: paymentAsaas.id,
                     userId: findUserExist.id,
-                    paymentMethod: "PIX",
+                    paymentMethod: PaymentMethod.CREDIT_CARD,
                     invoiceUrl: paymentAsaas.invoiceUrl,
                     value: total,
                     discount: discountCoupomValue,

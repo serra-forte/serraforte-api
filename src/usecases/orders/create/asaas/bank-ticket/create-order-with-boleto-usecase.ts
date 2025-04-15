@@ -330,7 +330,7 @@ export class CreateOrderWithBoletoUsecase {
                 create: {
                     asaasPaymentId: paymentAsaas.id,
                     userId: findUserExist.id,
-                    paymentMethod: "PIX",
+                    paymentMethod: PaymentMethod.BOLETO,
                     invoiceUrl: paymentAsaas.invoiceUrl,
                     value: total,
                     discount: discountCoupomValue,

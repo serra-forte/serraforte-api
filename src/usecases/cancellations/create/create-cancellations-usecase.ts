@@ -8,6 +8,7 @@ import { AppError } from "@/usecases/errors/app-error";
 import { EtherealProvider } from '@/providers/MailProvider/implementations/provider-ethereal';
 import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider';
 import { env } from '@/env';
+import { Status } from '@prisma/client';
 
 interface IRequestCreateCancellation{
     orderId: string
@@ -36,21 +37,8 @@ export class CancellationUseCase {
         imageUrl,
         reason
     }:IRequestCreateCancellation): Promise<ICancellationRelationsDTO>{
-        let users = [userId, shopkeeperId]
         let shopkeeperName = ''
         let shopkeeperEmail = ''
-
-        for(let i= 0; i < users.length; i++){
-            const userExist = await this.userRepository.findById(users[i])
-            if(!userExist){
-                throw new AppError('Lojista ou Cliente não encontrado', 404)
-            }
-
-            if(i === 1){
-                shopkeeperName = userExist.name
-                shopkeeperEmail = userExist.email
-            }
-        }
 
         // buscar pedido pelo id
         const findOrderExist = await this.orderRepository.findById(orderId) as unknown as IOrderRelationsDTO
@@ -70,6 +58,13 @@ export class CancellationUseCase {
         if(amountDaysAfterDatePayment > 10){
             throw new AppError('O cancelamento para esse pedido já expirou', 400)
         }
+
+        // validar se ja existe um cancelamento para esse pedido
+        const findCancellationExist = await this.cancellationsRepository.findByOrderId(orderId)
+
+        if(findCancellationExist && findCancellationExist.status === Status.PENDING){
+            throw new AppError('Ja existe um cancelamento para esse pedido', 400)
+        }
         
         const newDate = this.dayjsProvider.addDays(0)
         // criar cancelamento
@@ -77,7 +72,7 @@ export class CancellationUseCase {
             orderId,
             userId,
             reason,
-            shopkeeperId: shopkeeperId,
+            shopkeeperId,
             shopkeeperName,
             cancellationMessages:{
                 create:{

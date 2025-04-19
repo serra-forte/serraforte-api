@@ -19,11 +19,6 @@ export class ListCancellationByStatusUseCase {
         role,
         page
     }: IRequestListByStatus) {
-        if(role === 'SHOPKEEPER') {
-            const cancellations = await this.cancellationsRepository.listByStatusAndShopkeeperId(status, userId, page)
-            return cancellations
-        }
-
         if(role === 'ADMIN' || role === 'SUPER'){
             const cancellations = await this.cancellationsRepository.listByStatusAndAdmin(status, page)
             return cancellations

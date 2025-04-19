@@ -7,6 +7,7 @@ import { Cancellation, Prisma, Role, Status } from "@prisma/client"
 export interface ICancellationRepository {
     create(data: Prisma.CancellationUncheckedCreateInput):Promise<ICancellationRelationsDTO>
     findById(id:string): Promise<ICancellationRelationsDTO>
+    findByOrderId(orderId: string): Promise<ICancellationRelationsDTO | null>
     changeStatus(cancellationId: string, status: Status): Promise<void>
     countByPendingAndUserId(userId?:string | null, shopkeeperId?:string | null): Promise<number>
 

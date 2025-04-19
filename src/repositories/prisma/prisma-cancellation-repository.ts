@@ -1,9 +1,18 @@
 import { prisma } from '../../lib/prisma';
-import { Prisma, Cancellation, Status, CancellationMessage, Role } from '@prisma/client';
+import { Prisma, Status } from '@prisma/client';
 import { ICancellationRepository } from './../interfaces/interface-cancellations-repository';
 import { ICancellationRelationsDTO } from '../../dtos/cancellation-relations.dto';
 import { ICancellationMessageRelationsDTO } from '@/dtos/cancellation-message-relations';
 export class PrismaCancellationRepository implements ICancellationRepository{
+    async findByOrderId(orderId: string): Promise<ICancellationRelationsDTO | null> {
+        const canllation = await prisma.cancellation.findUnique({
+            where: {
+                orderId
+            },
+        })
+
+        return canllation as unknown as ICancellationRelationsDTO
+    }
     async countByPendingAndUserId(userId?: string | null, shopkeeperId?: string | null): Promise<number> {
         const count = await prisma.cancellation.count({
             where: {

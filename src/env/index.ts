@@ -39,6 +39,9 @@ const envSchema = z.object({
     RAILWAY_ENVIRONMENT_ID: z.string(),
     RAILWAY_SERVICE_ID: z.string(),
     KAFKA_PRIVATE_URL: z.string(),
+    BIER_HELD_CLIENT_ID: z.string(),
+    BIER_HELD_API_URL: z.string(),
+    BIER_HELD_PASSWORD: z.string(),
 })
 
 const _env = envSchema.safeParse(process.env)

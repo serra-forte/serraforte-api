@@ -8,6 +8,7 @@ import { User } from "@prisma/client";
 import { AppError } from "@/usecases/errors/app-error";
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository";
 import { ITokensRepository } from "@/repositories/interfaces/interface-tokens-repository";
+import { IBierHeldProvider } from "@/providers/BierHeldProvider/bier-held-interface";
 
 interface IRequestRegisterAccount {
     email: string,
@@ -23,6 +24,7 @@ export class RegisterUseCase{
         private dayjsDateProvider: IDateProvider,
         private usersTokensRepository: ITokensRepository,
         private sendMailProvider: IMailProvider,
+        private bierHeldProvider: IBierHeldProvider
     ) {}
 
     async execute({
@@ -50,8 +52,25 @@ export class RegisterUseCase{
         }
         
         const criptingPassword = await hash(password, 8)
+
+        // salva no bier held o usuário criado
+        const bierHeldResponse = await this.bierHeldProvider.createNaturalPerson({
+            fullName: name,
+            cpf: cpf as string,
+            contactAttributes:[
+             {
+                 contact_type: 'email',
+                 value: email
+             }
+            ]
+         })
+
+        if(bierHeldResponse instanceof Error){
+            throw new AppError('Erro ao cadastrar usuário, tente novamente mais tarde', 403)
+        }
        
         const user = await this.usersRepository.create({
+            bierHeldUserId: bierHeldResponse.id,
             email,
             name,
             password: criptingPassword,
@@ -96,6 +115,8 @@ export class RegisterUseCase{
             pathTemplate,
             null
         )
+
+        
 
         return user
     }

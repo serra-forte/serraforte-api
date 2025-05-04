@@ -47,7 +47,7 @@ export class BierHeldProvider implements IBierHeldProvider{
             const errorHandler = await this.errorHandler(error)
 
             if(errorHandler){
-                await this.createNaturalPerson({
+                return await this.createNaturalPerson({
                     fullName,
                     cpf,
                     contactAttributes,

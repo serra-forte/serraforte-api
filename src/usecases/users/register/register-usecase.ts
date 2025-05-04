@@ -56,7 +56,6 @@ export class RegisterUseCase{
         // salva no bier held o usuário criado
         const bierHeldResponse = await this.bierHeldProvider.createNaturalPerson({
             fullName: name,
-            cpf: cpf as string,
             contactAttributes:[
              {
                  contact_type: 'email',

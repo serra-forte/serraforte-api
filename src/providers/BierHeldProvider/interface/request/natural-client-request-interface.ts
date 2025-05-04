@@ -1,6 +1,6 @@
 export interface INaturalClientRequest {
     fullName: string;
-    cpf: string;
+    cpf?: string;
     contactAttributes: {
         contact_type: 'email' | 'cellphone';
         value: string;

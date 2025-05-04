@@ -2,7 +2,7 @@ import { INaturalClientRequest } from "./interface/request/natural-client-reques
 import { INaturalClientResponse } from "./interface/response/natural-client-response-interface"
 
 export interface IBierHeldProvider {
-    authentication(): Promise<true>
+    authentication(): Promise<boolean>
     createNaturalPerson(data: INaturalClientRequest): Promise<Error | INaturalClientResponse>
     errorHandler(error: any): Promise<Error | boolean> 
 }

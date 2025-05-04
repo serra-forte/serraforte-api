@@ -58,7 +58,7 @@ export class BierHeldProvider implements IBierHeldProvider{
         }
     }
 
-    async authentication(): Promise<true> {
+    async authentication(): Promise<boolean> {
         try{
             const path = `${env.BIER_HELD_API_URL}/auth/sign_in`
             

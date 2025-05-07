@@ -191,9 +191,6 @@ export class UpdateUserUseCase{
                 complement: address?.complement,
             }
         })
-
-
-        
     
         return {
             user: userUpdated

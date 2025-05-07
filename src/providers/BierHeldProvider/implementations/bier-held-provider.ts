@@ -1,15 +1,75 @@
+import { verify } from 'jsonwebtoken';
 import { env } from "@/env";
 import { IBierHeldProvider } from "../bier-held-interface";
 import axios from 'axios'
-import { INaturalClientRequest } from "../interface/request/natural-client-request-interface";
-import { AppError } from "@/usecases/errors/app-error";
-import { INaturalClientResponse } from "../interface/response/natural-client-response-interface";
+import { ICreateNaturalClientRequest } from "../interface/request/create-natural-client-request-interface";
+import { ICreateNaturalClientResponse } from "../interface/response/create-natural-client-response-interface";
+import { IUpdateNaturalClientRequest } from "../interface/request/update-natural-client-request-interface ";
 
 export class BierHeldProvider implements IBierHeldProvider{
     client!: string;
     accessToken!: string;
 
     constructor(){}
+    private async verifyToken(): Promise<void> {
+        if(!this.accessToken || !this.client){
+           await this.authentication()
+        }
+
+    }
+    async updateNaturalPerson({
+        id,
+        fullName,
+        cpf,
+        active,
+        contactAttributes,
+        addressAttributes,
+        birtDate
+    }: IUpdateNaturalClientRequest): Promise<Error | void> {
+        try{
+            const path = `${env.BIER_HELD_API_URL}/v2/person_clients/${id}`
+
+            const body = {
+                person_client: {
+                    full_name: fullName,
+                    cpf,
+                    contacts_attributes: contactAttributes,
+                    address_attributes: addressAttributes,
+                    birth_date: birtDate,
+                    active
+                }
+            }
+
+            await this.verifyToken()
+
+            await axios.put<ICreateNaturalClientResponse>(path, body, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'access-token': this.accessToken,
+                    'client': this.client,
+                    'uid': env.BIER_HELD_CLIENT_ID
+                },
+            })
+        }catch(error){
+            console.log(error);
+            
+            const errorHandler = await this.errorHandler(error)
+
+            if(errorHandler){
+                return await this.updateNaturalPerson({
+                    id,
+                    fullName,
+                    cpf,
+                    active,
+                    contactAttributes,
+                    addressAttributes,
+                    birtDate
+                })
+            }
+
+            throw errorHandler
+        }
+    }
     
     async createNaturalPerson({
         fullName,
@@ -17,7 +77,7 @@ export class BierHeldProvider implements IBierHeldProvider{
         contactAttributes,
         addressAttributes,
         birtDate
-    }: INaturalClientRequest): Promise<Error | INaturalClientResponse> {
+    }: ICreateNaturalClientRequest): Promise<Error | ICreateNaturalClientResponse> {
         try{
             const path = `${env.BIER_HELD_API_URL}/v2/person_clients`
 
@@ -27,11 +87,14 @@ export class BierHeldProvider implements IBierHeldProvider{
                     cpf,
                     contacts_attributes: contactAttributes,
                     address_attributes: addressAttributes,
-                    birth_date: birtDate
+                    birth_date: birtDate,
+                    active: true
                 }
             }
 
-            const { data } = await axios.post<INaturalClientResponse>(path, body, {
+            await this.verifyToken()
+
+            const { data } = await axios.post<ICreateNaturalClientResponse>(path, body, {
                 headers: {
                     'Content-Type': 'application/json',
                     'access-token': this.accessToken,

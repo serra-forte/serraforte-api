@@ -1,4 +1,4 @@
-export interface INaturalClientResponse {
+export interface ICreateNaturalClientResponse {
   id?: number;
   client_id?: number;
   full_name?: string;

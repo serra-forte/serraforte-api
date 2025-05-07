@@ -3,6 +3,8 @@ import { AppError } from "@/usecases/errors/app-error";
 import {Address, StoreHours, User } from "@prisma/client";
 import { IUsersRepository } from '@/repositories/interfaces/interface-users-repository';
 import { IAddressesRepository } from '@/repositories/interfaces/interface-addresses-repository';
+import { IBierHeldProvider } from '@/providers/BierHeldProvider/bier-held-interface';
+import { IUpdateNaturalClientRequest } from '@/providers/BierHeldProvider/interface/request/update-natural-client-request-interface ';
 
 interface IRequestUpdateUser {
     id: string,
@@ -37,7 +39,8 @@ interface IResponseUpdateUser {
 export class UpdateUserUseCase{
     constructor(
         private usersRepository: IUsersRepository,
-        private addressRepository: IAddressesRepository
+        private addressRepository: IAddressesRepository,
+        private bierHeldProvider: IBierHeldProvider
     ) {}
 
     async execute({
@@ -160,6 +163,37 @@ export class UpdateUserUseCase{
             })),
           },
         })
+
+        
+        await this.bierHeldProvider.updateNaturalPerson({
+            id: findUserByEmail?.bierHeldUserId as number,
+            fullName: name,
+            birtDate: new Date(dateBirth!),
+            active: true,
+            cpf,
+            contactAttributes: [
+                {
+                    contact_type: 'email',
+                    value: email
+                },
+                {
+                    contact_type: 'cellphone',
+                    value: phone as string
+                }
+            ],
+            addressAttributes:{
+                street: address?.street as string,
+                number: String(address?.num),
+                neighborhood: address?.neighborhood as string,
+                city: address?.city as string,
+                state: address?.state as string,
+                zipCode: address?.zipCode as string,
+                complement: address?.complement,
+            }
+        })
+
+
+        
     
         return {
             user: userUpdated

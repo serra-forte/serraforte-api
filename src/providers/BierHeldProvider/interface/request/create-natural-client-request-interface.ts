@@ -1,4 +1,4 @@
-export interface INaturalClientRequest {
+export interface ICreateNaturalClientRequest {
     fullName: string;
     cpf?: string;
     contactAttributes: {

@@ -34,7 +34,15 @@ export class BierHeldProvider implements IBierHeldProvider{
                     full_name: fullName,
                     cpf,
                     contacts_attributes: contactAttributes,
-                    address_attributes: addressAttributes,
+                    address_attributes: {
+                        street: addressAttributes?.street,
+                        number: addressAttributes?.number,
+                        complement: addressAttributes?.complement,
+                        district: addressAttributes?.neighborhood,
+                        nfe_city_name: addressAttributes?.city,
+                        nfe_city_state_acronym: addressAttributes?.state,
+                        zip: addressAttributes?.zipCode
+                    },
                     birth_date: birtDate,
                     active
                 }

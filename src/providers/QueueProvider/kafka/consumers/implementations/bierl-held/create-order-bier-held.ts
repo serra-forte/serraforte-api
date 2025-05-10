@@ -4,14 +4,15 @@ import { KafkaConsumerFreight } from "../../interface/melhor-envio/kafka-consume
 import { IBierHeldProvider } from "@/providers/BierHeldProvider/bier-held-interface";
 import { BierHeldProvider } from "@/providers/BierHeldProvider/implementations/bier-held-provider";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
+import { KafkaConsumerCreateOrder } from "../../interface/bier-held/kafka-consumer-create-order";
 
 export class CreateOrderBierHeld {
-    private kafkaConsumer: KafkaConsumerFreight;
+    private kafkaConsumer: KafkaConsumerCreateOrder;
     private orderRepository: IOrderRepository;
     private bierHeldProvider: IBierHeldProvider
 
     constructor() {
-        this.kafkaConsumer = new KafkaConsumerFreight();
+        this.kafkaConsumer = new KafkaConsumerCreateOrder();
         this.orderRepository = new PrismaOrderRepository();
         this.bierHeldProvider = new BierHeldProvider()
     }

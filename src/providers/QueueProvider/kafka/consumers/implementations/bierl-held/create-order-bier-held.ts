@@ -1,6 +1,5 @@
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
-import { KafkaConsumerFreight } from "../../interface/melhor-envio/kafka-consumer-freight";
 import { IBierHeldProvider } from "@/providers/BierHeldProvider/bier-held-interface";
 import { BierHeldProvider } from "@/providers/BierHeldProvider/implementations/bier-held-provider";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
@@ -32,7 +31,7 @@ export class CreateOrderBierHeld {
                     console.log('[Consumer - Create order] Mensagem recebida:');
 
                     if (!parsedMessage.items || !Array.isArray(parsedMessage.items) || parsedMessage.items.length === 0) {
-                        console.warn('[Consumer - Freight] Itens do pedido estão ausentes ou inválidos.');
+                        // console.warn('[Consumer - Freight] Itens do pedido estão ausentes ou inválidos.');
                         return;
                     }
 

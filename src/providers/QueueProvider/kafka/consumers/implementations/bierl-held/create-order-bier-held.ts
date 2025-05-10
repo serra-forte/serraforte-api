@@ -31,8 +31,8 @@ export class CreateOrderBierHeld {
                     const parsedMessage = JSON.parse(message.value.toString());
                     console.log('[Consumer - Create order] Mensagem recebida:');
 
-                    if (!parsedMessage.packages || !Array.isArray(parsedMessage.packages) || parsedMessage.packages.length === 0) {
-                        console.warn('[Consumer - Create order] Pacotes estão ausentes ou inválidos.');
+                    if (!parsedMessage.items || !Array.isArray(parsedMessage.items) || parsedMessage.items.length === 0) {
+                        // console.warn('[Consumer - Freight] Itens do pedido estão ausentes ou inválidos.');
                         return;
                     }
 

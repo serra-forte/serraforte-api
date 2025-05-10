@@ -32,7 +32,7 @@ export class CreateOrderBierHeld {
                     console.log('[Consumer - Create order] Mensagem recebida:');
 
                     if (!parsedMessage.items || !Array.isArray(parsedMessage.items) || parsedMessage.items.length === 0) {
-                        // console.warn('[Consumer - Freight] Itens do pedido estão ausentes ou inválidos.');
+                        console.warn('[Consumer - Freight] Itens do pedido estão ausentes ou inválidos.');
                         return;
                     }
 

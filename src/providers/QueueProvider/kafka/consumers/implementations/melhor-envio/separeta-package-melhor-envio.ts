@@ -2,8 +2,8 @@ import { IOrderRepository } from "@/repositories/interfaces/interface-order-repo
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 import { Address, Box, CartItem, Item } from "@prisma/client";
-import { KafkaProducer } from "../../kafka-producer";
-import { KafkaConsumerSeparetePackage } from "../../kafka-consumer-separete-package";
+import { KafkaProducer } from "../../../kafka-producer";
+import { KafkaConsumerSeparetePackage } from "../../interface/melhor-envio/kafka-consumer-separete-package";
 
 interface IRelationBox {
     box: Box

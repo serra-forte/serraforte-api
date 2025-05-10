@@ -4,7 +4,7 @@ import {Address, StoreHours, User } from "@prisma/client";
 import { IUsersRepository } from '@/repositories/interfaces/interface-users-repository';
 import { IAddressesRepository } from '@/repositories/interfaces/interface-addresses-repository';
 import { IBierHeldProvider } from '@/providers/BierHeldProvider/bier-held-interface';
-import { IUpdateNaturalClientRequest } from '@/providers/BierHeldProvider/interface/request/update-natural-client-request-interface ';
+import { IUpdateNaturalClientRequest } from '@/providers/BierHeldProvider/interface/request/update-natural-client-request-interface';
 
 interface IRequestUpdateUser {
     id: string,

@@ -11,8 +11,8 @@ import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repos
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 import { IUserRelations } from "@/dtos/user-relations.dto";
 import { Box, Status } from "@prisma/client";
-import { KafkaProducer } from "../../kafka-producer";
-import { KafkaConsumerFreight } from "../../kafka-consumer-freight";
+import { KafkaProducer } from "../../../kafka-producer";
+import { KafkaConsumerFreight } from "../../interface/melhor-envio/kafka-consumer-freight";
 import { IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
 import { PrismaDeliveryRepository } from "@/repositories/prisma/prisma-deliveries-repository";
 import { AppError } from "@/usecases/errors/app-error";

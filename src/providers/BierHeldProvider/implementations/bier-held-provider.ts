@@ -1,16 +1,40 @@
-import { verify } from 'jsonwebtoken';
 import { env } from "@/env";
 import { IBierHeldProvider } from "../bier-held-interface";
 import axios from 'axios'
 import { ICreateNaturalClientRequest } from "../interface/request/create-natural-client-request-interface";
 import { ICreateNaturalClientResponse } from "../interface/response/create-natural-client-response-interface";
-import { IUpdateNaturalClientRequest } from "../interface/request/update-natural-client-request-interface ";
+import { IUpdateNaturalClientRequest } from "../interface/request/update-natural-client-request-interface";
+import { ICreateOrderRequest } from '../interface/request/create-order-request-interface';
 
 export class BierHeldProvider implements IBierHeldProvider{
     client!: string;
     accessToken!: string;
 
     constructor(){}
+    async createOrder(data: ICreateOrderRequest): Promise<Error | ICreateOrderResponse> {
+        try{
+            const path = `${env.BIER_HELD_API_URL}/v2/orders`
+
+            await this.verifyToken()
+
+            const response = await axios.post<ICreateOrderResponse>(path, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'access-token': this.accessToken,
+                    'client': this.client,
+                    'uid': env.BIER_HELD_CLIENT_ID
+                },
+            })
+            return response.data
+        }catch(error){
+            const errorHandler = await this.errorHandler(error)
+            if(errorHandler === true){
+                return await this.createOrder(data)
+            }
+
+            throw errorHandler
+        }
+    }
     private async verifyToken(): Promise<void> {
         if(!this.accessToken || !this.client){
            await this.authentication()
@@ -61,7 +85,7 @@ export class BierHeldProvider implements IBierHeldProvider{
             
             const errorHandler = await this.errorHandler(error)
 
-            if(errorHandler){
+            if(errorHandler === true){
                 return await this.updateNaturalPerson({
                     id,
                     fullName,
@@ -76,7 +100,6 @@ export class BierHeldProvider implements IBierHeldProvider{
             throw errorHandler
         }
     }
-    
     async createNaturalPerson({
         fullName,
         cpf,
@@ -115,7 +138,7 @@ export class BierHeldProvider implements IBierHeldProvider{
             
             const errorHandler = await this.errorHandler(error)
 
-            if(errorHandler){
+            if(errorHandler === true){
                 return await this.createNaturalPerson({
                     fullName,
                     cpf,
@@ -126,7 +149,6 @@ export class BierHeldProvider implements IBierHeldProvider{
             throw errorHandler
         }
     }
-
     async authentication(): Promise<boolean> {
         try{
             const path = `${env.BIER_HELD_API_URL}/auth/sign_in`
@@ -152,14 +174,13 @@ export class BierHeldProvider implements IBierHeldProvider{
             throw this.errorHandler(error)
         }
     }
-
     async errorHandler(error: any): Promise<Error | boolean> {
+        const message = error.response.data[0]
         switch(error.response.status){
             case 401:
                 return await this.authentication()
             default:
-                throw new Error('Internal Server Error')
+                throw new Error(message)
         }
     }
 }
-

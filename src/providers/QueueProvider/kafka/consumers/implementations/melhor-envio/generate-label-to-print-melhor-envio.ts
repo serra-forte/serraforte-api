@@ -8,10 +8,10 @@ import { MailProvider } from "@/providers/MailProvider/implementations/provider-
 import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
-import { KafkaProducer } from "../../kafka-producer";
+import { KafkaProducer } from "../../../kafka-producer";
 import { AppError } from "@/usecases/errors/app-error";
 import { Status } from "@prisma/client";
-import { KafkaConsumerGenerateLabelToPrint } from "../../kafka-consumer-generate-label-to-print";
+import { KafkaConsumerGenerateLabelToPrint } from "../../interface/melhor-envio/kafka-consumer-generate-label-to-print";
 import { IFreightsRepository } from "@/repositories/interfaces/interface-freights-repository";
 import { PrismaFreightRepository } from "@/repositories/prisma/prisma-freights-repository";
 

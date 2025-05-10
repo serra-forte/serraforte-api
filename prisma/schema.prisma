@@ -24,6 +24,7 @@ enum Role {
 model User {
   id                 String    @id @unique @default(uuid())
   bierHeldUserId         Int?   @map("bier_held_user_id")
+  bierHeldClientId       Int?   @map("bier_held_client_id")
   asaasCustomerId    String?   @map("asaas_customer_id")
   asaasWalletId      String?   @map("asaas_wallet_id")
   paymentFee         Decimal?  @map("payment_fee")
@@ -179,10 +180,11 @@ model Order {
   code           String?      @unique
   shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id])
   shoppingCartId String       @map("shopping_cart_id")
+  bierHeldOrderId Int?         @map("bier_held_order_id")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @map("user_id")
-
+  
 
   total             Decimal
   status            Status         @default(CREATED)
@@ -203,7 +205,7 @@ model Order {
 
   @@map("orders")
 }
-
+  
 model Item {
   id String @id @unique @default(uuid())
 

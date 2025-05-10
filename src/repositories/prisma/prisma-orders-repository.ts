@@ -713,6 +713,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 user:{
                     select:{
                         id: true,
+                        bierHeldClientId: true,
                         name: true,
                         email: true,
                         cpf: true,

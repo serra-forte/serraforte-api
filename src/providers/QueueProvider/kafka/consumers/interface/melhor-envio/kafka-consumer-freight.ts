@@ -1,16 +1,16 @@
-import { kafka } from "."
+import { kafka } from "../../.."
 
-export class KafkaConsumerGenerateLabelToPrint {
+export class KafkaConsumerFreight {
     async execute(topic: string) {
         // criar consumer com um grupo de id para ficar escutando as mensagens
         const consumer = kafka.consumer({
-            groupId: 'APP_SERRAFORTE_GENERATE_LABEL_TO_PRINT',
+            groupId: 'APP_SERRAFORTE_FREIGHT',
         })
 
         // criar conexão com o consumer
         await consumer.connect()
         
-        console.info('Consumer generate label to print connected. . .')
+        console.info('Consumer add freight to cart connected. . .')
 
         // assianr para ficar escutando as mensagens do topico assinado
         await consumer.subscribe({ topic, fromBeginning: true })

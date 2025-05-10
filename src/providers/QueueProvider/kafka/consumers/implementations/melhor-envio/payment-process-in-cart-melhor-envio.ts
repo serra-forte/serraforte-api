@@ -8,29 +8,32 @@ import { MailProvider } from "@/providers/MailProvider/implementations/provider-
 import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
-import { KafkaConsumerGenerateLabel } from "../../kafka-consumer-generate-label";
+import { KafkaProducer } from "../../../kafka-producer";
+import { KafkaConsumerPaymentToLabel } from "../../interface/melhor-envio/kafka-consumer-payment";
 import { Status } from "@prisma/client";
+import { AppError } from "@/usecases/errors/app-error";
 import { IDeliveryRepository } from "@/repositories/interfaces/interface-deliveries-repository";
 import { PrismaDeliveryRepository } from "@/repositories/prisma/prisma-deliveries-repository";
-import { AppError } from "@/usecases/errors/app-error";
-import { KafkaProducer } from "../../kafka-producer";
 
-export interface IGenerateLabelLink {
+interface IInfoGenerateLabelFreight {
     orderId: string;
     freightId: string;
 }
-export class GenerateFreightMelhorEnvio {
-    private kafkaConsumer: KafkaConsumerGenerateLabel;
+interface IPaymentProcessInCartMelhorEnvio {
+    deliveryId: string;
+    freightId: string;
+}
+export class PaymentProcessInCartMelhorEnvio {
+    private kafkaConsumer: KafkaConsumerPaymentToLabel;
     private kafkaProducer: KafkaProducer;
     private railwayProvider: IRailwayProvider;
     private mailProvider: IMailProvider;
     private usersRepository: IUsersRepository;
     private melhorEnvioProvider: IMelhorEnvioProvider;
     private orderRepository: IOrderRepository;
-    private deliveryRepository: IDeliveryRepository
-
+    private deliveryRepository: IDeliveryRepository;
     constructor() {
-        this.kafkaConsumer = new KafkaConsumerGenerateLabel();
+        this.kafkaConsumer = new KafkaConsumerPaymentToLabel();
         this.kafkaProducer = new KafkaProducer();
         this.railwayProvider = new RailwayProvider();
         this.mailProvider = new MailProvider();
@@ -45,40 +48,45 @@ export class GenerateFreightMelhorEnvio {
     }
 
     async execute() {
-        const createdConsumer = await this.kafkaConsumer.execute('GENERATE_LABEL');
+        const createdConsumer = await this.kafkaConsumer.execute('PAYMENT_PROCESS_IN_CART');
 
         createdConsumer.run({
             eachMessage: async ({ message }) => {
                 if (!message || !message.value) {
-                    console.warn('[Consumer - Generate Label] Mensagem vazia ou inválida:');
+                    console.warn('[Consumer - Payment] Mensagem vazia ou inválida:');
                     return;
                 }
 
                 try {
                     const parsedMessage = JSON.parse(message.value.toString());
-                    console.log('[Consumer - Generate Label] Mensagem recebida:');
+                    console.log('[Consumer - Payment] Mensagem recebida:');
 
                     if (!parsedMessage) {
                         // console.warn('[Consumer - Payment] Itens do pedido estão ausentes ou inválidos.');
                         return;
                     }
 
-                    // gerar etiqueta na melhor envio
-                    await this.melhorEnvioProvider.generateLabel(parsedMessage.freightId)
+                    const messageReceived = parsedMessage as IPaymentProcessInCartMelhorEnvio;
+                    // chamar melhor envio para processar o pagamento
+                    const response = await this.melhorEnvioProvider.paymentToFreight(messageReceived.freightId)
+                    
+                    if (!response) {
+                        throw new AppError('Erro ao processar pagamento');
+                    }
 
-
-                    const delivery = await this.deliveryRepository.findById(parsedMessage.deliveryId)
+                    // buscar a entrega correspondente ao frete
+                    const delivery = await this.deliveryRepository.findById(messageReceived.deliveryId)
 
                     if (!delivery) {
                         throw new AppError('Entrega nao encontrada', 404);
                     }
 
-                    // atualizar pedido com status "AWAITING_LABEL_LINK"
-                    await this.orderRepository.updateStatus(delivery.orderId, Status.AWAITING_LABEL_LINK)
+                    // atualizar pedido com status "AWAITING_LABEL_GENERATE"
+                    await this.orderRepository.updateStatus(delivery.orderId, Status.AWAITING_LABEL_GENERATE)
 
-                    console.info('[Consumer - Generate Label] Frete encaminhado para geração de etiqueta');
+                    console.info('[Consumer - Payment] Pagamento processado com sucesso');
                 } catch (error) {
-                    console.error('[Consumer - Generate Label ] Erro ao processar mensagem:', error);
+                    console.error('[Consumer ] Erro ao processar mensagem:', error);
                 }
             },
         });
@@ -86,5 +94,5 @@ export class GenerateFreightMelhorEnvio {
     
 }
 
-const generateFreightMelhorEnvio = new GenerateFreightMelhorEnvio();
-generateFreightMelhorEnvio.execute();
+const paymentProcessInCartMelhorEnvio = new PaymentProcessInCartMelhorEnvio();
+paymentProcessInCartMelhorEnvio.execute();

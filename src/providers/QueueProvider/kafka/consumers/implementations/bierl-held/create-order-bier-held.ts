@@ -55,7 +55,7 @@ export class CreateOrderBierHeld {
                             delivery_value: Number(order.delivery.serviceDelivery.price),
                             return_value: 100,
                             total_value: order.total,
-                            delivery_date_time: order.delivery.deliveryDate.toISOString(),
+                            delivery_date_time: String(order.delivery.deliveryDate),
                             address_attributes: {
                                 street: order.delivery.address.street as string,
                                 number: String(order.delivery.address.num as number),

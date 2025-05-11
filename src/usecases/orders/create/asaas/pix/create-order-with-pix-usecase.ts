@@ -48,6 +48,7 @@ export interface IRequestCreateOrderWithPix {
         id: number
         name: string
         price: number
+        delivery_time: number
         company: {
             id: number
             name: string
@@ -281,6 +282,7 @@ export class CreateOrderWithPixUsecase {
             // description,
             delivery: {
                 create: {
+                    shippingDate: this.dateProvider.addDays(freight.delivery_time),
                     address: {
                         create: address ? address as Address : undefined
                     },
@@ -289,7 +291,7 @@ export class CreateOrderWithPixUsecase {
                             companyName: freight.company.name,
                             serviceId: freight.id,
                             price: freight.price,
-                            serviceName: freight.name
+                            serviceName: freight.name,
                         }
                     }
                 }

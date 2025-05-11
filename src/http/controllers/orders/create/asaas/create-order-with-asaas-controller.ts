@@ -15,6 +15,7 @@ export async function CreateOrderWithAsaas(request: FastifyRequest, reply: Fasti
                 id: z.number(),
                 price: z.number().nonnegative(),
                 name: z.string(),
+                delivery_time: z.number().nonnegative(),
                 company: z.object({
                     id: z.number(),
                     name: z.string(),

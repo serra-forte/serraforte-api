@@ -23,6 +23,7 @@ export interface IRequestCreateOrderWithBoleto {
         id: number
         name: string
         price: number
+        delivery_time: number
         company: {
             id: number
             name: string
@@ -295,6 +296,7 @@ export class CreateOrderWithBoletoUsecase {
             // description,
             delivery: {
                 create: {
+                    shippingDate: this.dateProvider.addDays(freight.delivery_time),
                     address: {
                         create: address ? address as Address : undefined
                     },

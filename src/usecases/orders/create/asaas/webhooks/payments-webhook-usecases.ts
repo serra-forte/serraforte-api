@@ -251,7 +251,7 @@ export class PaymentWebHookUseCases {
         await this.kafkaProducer.execute('CREATE_ORDER_BIER_HELD', endOrder)
 
         // chamar producer para enviar endOrder para o consumer enviar um frete para o carrinho da melhor envio
-        await this.kafkaProducer.execute('SEPARATE_PACKAGE', endOrder)
+        // await this.kafkaProducer.execute('SEPARATE_PACKAGE', endOrder)
       }      
     }
   }

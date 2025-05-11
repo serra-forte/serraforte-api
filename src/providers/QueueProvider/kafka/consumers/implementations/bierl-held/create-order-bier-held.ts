@@ -41,6 +41,7 @@ export class CreateOrderBierHeld {
 
 
                     const order = parsedMessage as IOrderRelationsDTO;
+                    console.log(order)
 
                     let bierHeldItems:{reference_item_id:number, name:string, quantity:number, price:number}[] = []
 

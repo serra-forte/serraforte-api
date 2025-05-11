@@ -109,6 +109,7 @@ export class CreateOrderBierHeld {
                     console.log(createdOrderBierHeld);
 
                 } catch (error) {
+                    console.log(error);
                     console.error('[Consumer - Create order] Erro ao processar mensagem:', error);
                 }
             },

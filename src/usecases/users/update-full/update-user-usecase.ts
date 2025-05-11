@@ -166,7 +166,7 @@ export class UpdateUserUseCase{
 
         
         await this.bierHeldProvider.updateNaturalPerson({
-            id: findUserByEmail?.bierHeldUserId as number,
+            id: findUserByEmail?.erpUserId as number,
             fullName: name,
             birtDate: new Date(dateBirth!),
             active: true,

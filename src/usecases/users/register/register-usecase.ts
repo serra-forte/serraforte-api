@@ -69,8 +69,8 @@ export class RegisterUseCase{
         }
        
         const user = await this.usersRepository.create({
-            bierHeldUserId: bierHeldResponse.id,
-            bierHeldClientId: bierHeldResponse.client_id,
+            erpUserId: bierHeldResponse.id,
+            erpClientId: bierHeldResponse.client_id,
             email,
             name,
             password: criptingPassword,

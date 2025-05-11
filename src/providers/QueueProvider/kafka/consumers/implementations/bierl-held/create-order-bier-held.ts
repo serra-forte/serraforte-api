@@ -51,7 +51,7 @@ export class CreateOrderBierHeld {
                             throw new Error('Produto nao encontrado')
                         }
 
-                        const getItemBierHeld = await this.bierHeldProvider.getItem(findProduct.product.bierHeldProductId)
+                        const getItemBierHeld = await this.bierHeldProvider.getItem(findProduct.product.erpProductId)
  
                         if(!getItemBierHeld){
                             throw new Error('Item nao encontrado')
@@ -84,7 +84,7 @@ export class CreateOrderBierHeld {
                         send_order_mail: true,
                         client_mail: order.user.email,
                         order:{
-                            client_id: order.user.bierHeldClientId as number,
+                            client_id: order.user.erpClientId as number,
                             order_value: order.total,
                             delivery_value: Number(order.delivery.serviceDelivery.price),
                             return_value: 100,

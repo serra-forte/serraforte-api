@@ -34,5 +34,5 @@ export interface IOrderRepository {
     countOrders(): Promise<number>
     addDescription(id: string, description: string): Promise<void>
     confirmWithdrawed(id: string, date: string): Promise<void>
-    addBierHeldOrderId(id: string, bierHeldOrderId: number): Promise<void>
+    addBierHeldOrderId(id: string, erpOrderId: number): Promise<void>
 }

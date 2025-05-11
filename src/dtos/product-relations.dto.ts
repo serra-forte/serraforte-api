@@ -1,7 +1,7 @@
 import { Box, CartItem, Category, Review, User } from '@prisma/client';
 export interface IProductRelationsDTO {
     id: string
-    bierHeldProductId: number;
+    erpProductId: number;
     code: string,
     quantity: number
     price: number

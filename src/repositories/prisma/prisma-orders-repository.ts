@@ -4,6 +4,14 @@ import { prisma } from "@/lib/prisma";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 
 export class PrismaOrderRepository implements IOrderRepository {
+    async addBierHeldOrderId(id: string, bierHeldOrderId: number): Promise<void> {
+        await prisma.order.update({
+            where: { id },
+            data: {
+                bierHeldOrderId
+            }
+        })
+    }
     async listByAsaasPaymentId(asaasPaymentId: string): Promise<IOrderRelationsDTO[]> {
         const orders = await prisma.order.findMany({
             where: {

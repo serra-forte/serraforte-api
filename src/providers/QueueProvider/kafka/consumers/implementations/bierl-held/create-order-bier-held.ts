@@ -109,7 +109,11 @@ export class CreateOrderBierHeld {
                         }
                     });
 
-                    console.log(createdOrderBierHeld);
+                    if(createdOrderBierHeld instanceof Error){
+                        throw new Error('Erro ao criar pedido na bier held')
+                    }
+
+                    await this.orderRepository.addBierHeldOrderId(order.id, createdOrderBierHeld.id);
 
                 } catch (error) {
                     console.log(error);

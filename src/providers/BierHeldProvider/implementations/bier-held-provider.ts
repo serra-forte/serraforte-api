@@ -5,12 +5,37 @@ import { ICreateNaturalClientRequest } from "../interface/request/create-natural
 import { ICreateNaturalClientResponse } from "../interface/response/create-natural-client-response-interface";
 import { IUpdateNaturalClientRequest } from "../interface/request/update-natural-client-request-interface";
 import { ICreateOrderRequest } from '../interface/request/create-order-request-interface';
+import { IGetItemResponse } from "../interface/response/get-item-response-interface";
 
 export class BierHeldProvider implements IBierHeldProvider{
     client!: string;
     accessToken!: string;
 
     constructor(){}
+    async getItem(id: number): Promise<IGetItemResponse | null> {
+        try{
+            const path = `${env.BIER_HELD_API_URL}/v2/items/${id}`
+
+            await this.verifyToken()
+
+            const response = await axios.get<IGetItemResponse>(path, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'access-token': this.accessToken,
+                    'client': this.client,
+                    'uid': env.BIER_HELD_CLIENT_ID
+                },
+            })
+            return response.data
+        }catch(error){
+            const errorHandler = await this.errorHandler(error)
+            if(errorHandler === true){
+                return await this.getItem(id)
+            }
+
+            throw errorHandler
+        }
+    }
     async createOrder(data: ICreateOrderRequest): Promise<Error | ICreateOrderResponse> {
         try{
             const path = `${env.BIER_HELD_API_URL}/v2/orders`

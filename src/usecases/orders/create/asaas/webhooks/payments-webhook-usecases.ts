@@ -86,10 +86,11 @@ export class PaymentWebHookUseCases {
             shippingDate: findOrderExist.delivery.shippingDate,
             serviceDelivery: findOrderExist.delivery.serviceDelivery
         },
+        withdrawStore: findOrderExist.withdrawStore,
         boxes: findOrderExist.boxes,
         payment: orders[0].payment,
-        total: 0, // Inicializa total como 0
-        items: [] // Inicializa items como array vazio
+        total: findOrderExist.total,
+        items: findOrderExist.items
       } as unknown as IOrderRelationsDTO;
 
       let listShopkeeper = []

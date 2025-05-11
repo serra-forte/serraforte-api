@@ -4,16 +4,20 @@ import { IBierHeldProvider } from "@/providers/BierHeldProvider/bier-held-interf
 import { BierHeldProvider } from "@/providers/BierHeldProvider/implementations/bier-held-provider";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 import { KafkaConsumerCreateOrder } from "../../interface/bier-held/kafka-consumer-create-order";
+import { IProductsRepository } from "@/repositories/interfaces/interface-products-repository";
+import { PrismaProductsRepository } from "@/repositories/prisma/prisma-products-repository";
 
 export class CreateOrderBierHeld {
     private kafkaConsumer: KafkaConsumerCreateOrder;
     private orderRepository: IOrderRepository;
-    private bierHeldProvider: IBierHeldProvider
+    private bierHeldProvider: IBierHeldProvider;
+    private productRepository: IProductsRepository;
 
     constructor() {
         this.kafkaConsumer = new KafkaConsumerCreateOrder();
         this.orderRepository = new PrismaOrderRepository();
-        this.bierHeldProvider = new BierHeldProvider()
+        this.bierHeldProvider = new BierHeldProvider();
+        this.productRepository = new PrismaProductsRepository();
     }
 
     async execute() {
@@ -38,7 +42,35 @@ export class CreateOrderBierHeld {
 
                     const order = parsedMessage as IOrderRelationsDTO;
 
-                    // console.log(order.delivery)
+                    let bierHeldItems:{reference_item_id:number, name:string, quantity:number, price:number}[] = []
+
+                    for(const item of order.items){
+                        const findProduct = await this.productRepository.findById(item.productId)
+
+                        if(!findProduct){
+                            throw new Error('Produto nao encontrado')
+                        }
+
+                        const getItemBierHeld = await this.bierHeldProvider.getItem(findProduct.product.bierHeldProductId)
+ 
+                        if(!getItemBierHeld){
+                            throw new Error('Item nao encontrado')
+                        }
+                        
+                        bierHeldItems.push({
+                            reference_item_id: getItemBierHeld.id,
+                            name: getItemBierHeld.name,
+                            quantity: Number(item.quantity),
+                            price: getItemBierHeld.price
+                        })
+                       
+                    }
+
+                    let delivery_method: 'delivery_by_shipper' | 'withdrawal_at_company' = 'delivery_by_shipper'
+
+                    if(order.withdrawStore === true){
+                        delivery_method = 'withdrawal_at_company'
+                    }
 
                     let payTypeId = 39
 
@@ -57,18 +89,14 @@ export class CreateOrderBierHeld {
                             return_value: 100,
                             total_value: order.total,
                             delivery_date_time: String(order.delivery.shippingDate),
+                            delivery_method,
                             address_attributes: {
                                 street: order.delivery.address.street as string,
                                 number: String(order.delivery.address.num as number),
                                 complement: order.delivery.address.complement as string,
                                 district: order.delivery.address.neighborhood as string,
                             },
-                            // order_items_attributes: order.items.map(item => ({
-                            //     reference_item_id: 'verificar como fazer isso.',
-                            //     quantity: item.quantity,
-                            //     name: item.name,
-                            //     price: item.price,
-                            // })),
+                            order_items_attributes: bierHeldItems,
                             payments_attributes: [
                                 {
                                    pay_type_id: payTypeId,

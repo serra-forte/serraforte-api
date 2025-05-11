@@ -89,8 +89,8 @@ export class PaymentWebHookUseCases {
         withdrawStore: findOrderExist.withdrawStore,
         boxes: findOrderExist.boxes,
         payment: orders[0].payment,
-        total: findOrderExist.total,
-        items: findOrderExist.items
+        total: 0,
+        items: []
       } as unknown as IOrderRelationsDTO;
 
       let listShopkeeper = []

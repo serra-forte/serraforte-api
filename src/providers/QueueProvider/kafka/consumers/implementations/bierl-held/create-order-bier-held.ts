@@ -38,6 +38,8 @@ export class CreateOrderBierHeld {
 
                     const order = parsedMessage as IOrderRelationsDTO;
 
+                    console.log(order)
+
                     let payTypeId = 39
 
                    if(order.payment.paymentMethod === 'BOLETO'){

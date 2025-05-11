@@ -41,7 +41,6 @@ export class CreateOrderBierHeld {
 
 
                     const order = parsedMessage as IOrderRelationsDTO;
-                    console.log(order.items)
 
                     let bierHeldItems:{reference_item_id:number, name:string, quantity:number, price:number}[] = []
 
@@ -81,7 +80,6 @@ export class CreateOrderBierHeld {
                         payTypeId = 37 
                    } 
 
-                   console.log(bierHeldItems);
                     const createdOrderBierHeld = await this.bierHeldProvider.createOrder({
                         send_order_mail: true,
                         client_mail: order.user.email,

@@ -38,7 +38,7 @@ export class CreateOrderBierHeld {
 
                     const order = parsedMessage as IOrderRelationsDTO;
 
-                    console.log(order)
+                    console.log(order.delivery)
 
                     let payTypeId = 39
 
@@ -56,7 +56,7 @@ export class CreateOrderBierHeld {
                             delivery_value: Number(order.delivery.serviceDelivery.price),
                             return_value: 100,
                             total_value: order.total,
-                            delivery_date_time: String(order.delivery.deliveryDate),
+                            delivery_date_time: new Date(order.delivery.deliveryDate).toISOString(),
                             address_attributes: {
                                 street: order.delivery.address.street as string,
                                 number: String(order.delivery.address.num as number),

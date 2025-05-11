@@ -79,6 +79,8 @@ export class CreateOrderBierHeld {
                    }else if(order.payment.paymentMethod === 'CREDIT_CARD'){
                         payTypeId = 37 
                    } 
+
+                   console.log(bierHeldItems);
                     const createdOrderBierHeld = await this.bierHeldProvider.createOrder({
                         send_order_mail: true,
                         client_mail: order.user.email,

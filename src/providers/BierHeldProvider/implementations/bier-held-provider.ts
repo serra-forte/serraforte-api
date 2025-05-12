@@ -16,35 +16,36 @@ export class BierHeldProvider implements IBierHeldProvider{
     constructor(){}
     
     async litItems(data: IListItemsRequest): Promise<IListItemsResponse[]> {
-        try{
-            const path = `${env.BIER_HELD_API_URL}/v2/orders/order_related_items`
-
+        try {
             await this.verifyToken()
-
+    
+            const query = new URLSearchParams({
+                client_id: String(data.client_id),
+                per_page: String(data.per_page),
+                ...(data.item_filters?.search && { 'item_filters[search]': data.item_filters.search })
+            }).toString() 
+    
+            const path = `${env.BIER_HELD_API_URL}/v2/orders/order_related_items?${query}`
+    
             const response = await axios.get<IListItemsResponse[]>(path, {
                 headers: {
                     'Content-Type': 'application/json',
                     'access-token': this.accessToken,
                     'client': this.client,
                     'uid': env.BIER_HELD_CLIENT_ID
-                },
-                params: {
-                    client_id: data.client_id,
-                    per_page: data.per_page,
-                    'item_filters[search]': data.item_filters?.search
                 }
             })
+    
             return response.data
-        }catch(error){
+        } catch (error) {
             const errorHandler = await this.errorHandler(error)
-            if(errorHandler === true){
+            if (errorHandler === true) {
                 return await this.litItems(data)
             }
-
             throw errorHandler
         }
     }
-
+    
     async getItem(id: number): Promise<IGetItemResponse | null> {
         try{
             const path = `${env.BIER_HELD_API_URL}/v2/items/${id}`

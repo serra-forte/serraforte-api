@@ -5,7 +5,7 @@ import { z } from 'zod'
 export async function CreateProduct(request: FastifyRequest, reply:FastifyReply){
         try {
             const productSchema = z.object({
-                erpProductId: z.coerce.number().nonnegative(),
+                erpProductId: z.coerce.number().nonnegative().optional().nullable(),
                 categoryId: z.string().uuid(),
                 shopKeeperId: z.string().uuid(),
                 name: z.string().min(4),

@@ -19,10 +19,10 @@ export class BierHeldProvider implements IBierHeldProvider{
         try {
             await this.verifyToken()
     
-            const client_id = data.client_id ? `client_id=${data.client_id}` : ''
-            const page = data.page ? `page=${data.page}` : ''
-            const per_page = data.per_page ? `per_page=${data.per_page}` : ''
-            const query = `${client_id}&${page}&${per_page}`
+            const client_id = `client_id=${String(data.client_id)}`
+            const per_page = data.per_page ? `per_page=${String(data.per_page)}` : ''
+            const filterSearch = `item_filters%5Bsearch%5D=${String(data.item_filters?.search)}`
+            const query = `${client_id}&${per_page}&${filterSearch}`
     
             const path = `${env.BIER_HELD_API_URL}/v2/orders/order_related_items?${query}`
     
@@ -34,9 +34,10 @@ export class BierHeldProvider implements IBierHeldProvider{
                     'uid': env.BIER_HELD_CLIENT_ID
                 }
             })
-    
+            console.log(response.data)
             return response.data
         } catch (error) {
+            console.log(error)
             const errorHandler = await this.errorHandler(error)
             if (errorHandler === true) {
                 return await this.litItems(data)
@@ -242,3 +243,4 @@ export class BierHeldProvider implements IBierHeldProvider{
         }
     }
 }
+

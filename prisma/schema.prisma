@@ -23,8 +23,8 @@ enum Role {
 
 model User {
   id                 String    @id @unique @default(uuid())
-  erpUserId         Int?   @map("erp_user_id")
-  erpClientId       Int?   @map("erp_client_id")
+  erpUserId         Int?   @map("erp_user_id") @unique
+  erpClientId       Int?   @map("erp_client_id") @unique
   asaasCustomerId    String?   @map("asaas_customer_id")
   asaasWalletId      String?   @map("asaas_wallet_id")
   paymentFee         Decimal?  @map("payment_fee")
@@ -94,7 +94,7 @@ model Category {
 
 model Product {
   id         String    @id @unique @default(uuid())
-  erpProductId Int?   @map("erp_product_id")
+  erpProductId Int?   @map("erp_product_id") @unique
   code       Int       @default(autoincrement())
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
@@ -180,7 +180,7 @@ model Order {
   code           String?      @unique
   shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id])
   shoppingCartId String       @map("shopping_cart_id")
-  erpOrderId Int?         @map("erp_order_id")
+  erpOrderId Int?         @map("erp_order_id") @unique
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @map("user_id")

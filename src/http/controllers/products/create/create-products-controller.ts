@@ -5,6 +5,7 @@ import { z } from 'zod'
 export async function CreateProduct(request: FastifyRequest, reply:FastifyReply){
         try {
             const productSchema = z.object({
+                erpProductId: z.coerce.number().nonnegative(),
                 categoryId: z.string().uuid(),
                 shopKeeperId: z.string().uuid(),
                 name: z.string().min(4),
@@ -21,6 +22,7 @@ export async function CreateProduct(request: FastifyRequest, reply:FastifyReply)
             })
 
             const { 
+                erpProductId,
                 name,
                 description,
                 price,
@@ -39,6 +41,7 @@ export async function CreateProduct(request: FastifyRequest, reply:FastifyReply)
             const createProductUseCase = await makeCreateProduct()
             
             const product = await createProductUseCase.execute({
+                erpProductId,
                 name,
                 description,
                 price,

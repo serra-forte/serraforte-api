@@ -4,6 +4,17 @@ import { prisma } from "@/lib/prisma";
 import { IProductRelationsDTO } from "@/dtos/product-relations.dto";
 
 export class PrismaProductsRepository  implements IProductsRepository{
+    async findByErpProductId(erpProductId: number): Promise<Product | null> {
+        const product = await prisma.product.findUnique({
+            where: {
+                erpProductId: erpProductId
+            },
+            select: {
+                id: true
+            }
+        })
+        return product as Product
+    }
     async searchProducts(keyword: string) {
         // Normaliza a palavra-chave
         const lowerKeyword = keyword.trim().toLowerCase();

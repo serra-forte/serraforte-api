@@ -34,7 +34,7 @@ export class BierHeldProvider implements IBierHeldProvider{
                     'uid': env.BIER_HELD_CLIENT_ID
                 }
             })
-            
+
             return response.data
         } catch (error) {
             console.log(error)
@@ -45,7 +45,6 @@ export class BierHeldProvider implements IBierHeldProvider{
             throw errorHandler
         }
     }
-    
     async getItem(id: number): Promise<IGetItemResponse | null> {
         try{
             const path = `${env.BIER_HELD_API_URL}/v2/items/${id}`

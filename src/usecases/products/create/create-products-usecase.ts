@@ -5,6 +5,7 @@ import { AppError } from "@/usecases/errors/app-error"
 import { Product } from "@prisma/client"
 
 export interface IRequestCreateProducts {
+    erpProductId: number
     name: string
     categoryId: string
     description?: string | null
@@ -28,6 +29,7 @@ export class CreateProductsUseCase {
     ){}
 
     async execute({ 
+        erpProductId,
         name, 
         categoryId, 
         description, 
@@ -42,6 +44,13 @@ export class CreateProductsUseCase {
         boxesIds,
         shopKeeperId: userId
      }: IRequestCreateProducts): Promise<Product> {
+        const findProductErpExist = await this.productsRepository.findByErpProductId(erpProductId)
+
+        // validar se existe um produto com o mesmo erpProductId
+        if(findProductErpExist){
+            throw new AppError('Produto ja existe', 409)
+        }
+        
         // buscar categoria pelo id
         const findCategoryExists = await this.categoriesRepository.findById(categoryId as string)
 
@@ -68,6 +77,7 @@ export class CreateProductsUseCase {
 
         // criar produto
         const product = await this.productsRepository.create({
+            erpProductId,
             name,
             description,
             price,

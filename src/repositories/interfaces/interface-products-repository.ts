@@ -36,4 +36,5 @@ export interface IProductsRepository {
     updateStatus(id: string, status: boolean): Promise<Product>
     updateSales(id: string, sales: number): Promise<void>
     delete(id: string): Promise<void>
+    findByErpProductId(erpProductId: number): Promise<Product | null>
 }

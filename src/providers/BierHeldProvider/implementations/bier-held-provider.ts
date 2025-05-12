@@ -19,11 +19,10 @@ export class BierHeldProvider implements IBierHeldProvider{
         try {
             await this.verifyToken()
     
-            const query = new URLSearchParams({
-                client_id: String(data.client_id),
-                per_page: String(data.per_page),
-                ...(data.item_filters?.search && { 'item_filters[search]': data.item_filters.search })
-            }).toString() 
+            const client_id = data.client_id ? `client_id=${data.client_id}` : ''
+            const page = data.page ? `page=${data.page}` : ''
+            const per_page = data.per_page ? `per_page=${data.per_page}` : ''
+            const query = `${client_id}&${page}&${per_page}`
     
             const path = `${env.BIER_HELD_API_URL}/v2/orders/order_related_items?${query}`
     

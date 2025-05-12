@@ -18,7 +18,6 @@ export interface IRequestCreateProducts {
     height: number
     width: number
     length: number
-    boxesIds: string[]
 }
 
 export class CreateProductsUseCase {
@@ -41,7 +40,6 @@ export class CreateProductsUseCase {
         height,
         width,
         length,
-        boxesIds,
         shopKeeperId: userId
      }: IRequestCreateProducts): Promise<Product> {
         const findProductErpExist = await this.productsRepository.findByErpProductId(erpProductId)
@@ -50,7 +48,7 @@ export class CreateProductsUseCase {
         if(findProductErpExist){
             throw new AppError('Produto ja existe', 409)
         }
-        
+
         // buscar categoria pelo id
         const findCategoryExists = await this.categoriesRepository.findById(categoryId as string)
 
@@ -98,15 +96,6 @@ export class CreateProductsUseCase {
                     id: findCategoryExists.id
                 }
             },
-            boxes:{
-                createMany: {
-                    data: boxesIds.map(boxId => {
-                        return {
-                            boxId
-                        }
-                    })
-                }
-            }
         })
 
         // retornar produtos

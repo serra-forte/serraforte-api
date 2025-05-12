@@ -1,31 +1,22 @@
 import { IBierHeldProvider } from "@/providers/BierHeldProvider/bier-held-interface";
 
-export interface IRequestListItems {
-    client_id: number;
-    page?: number;
-    per_page?: number;
-    search?: string;
+export interface IRequestGetItems {
+    id: number
 }
 
-export class ListItemsUseCase {
+export class GetItemUseCase {
     constructor(
         private bierHeldProvider: IBierHeldProvider
     ){}
     async execute({
-        client_id,
-        page,
-        per_page,
-        search
-    }: IRequestListItems) {
-        const listItems = await this.bierHeldProvider.litItems({
-            client_id,
-            page,
-            per_page,
-            item_filters: {
-                search 
-            }
-        })
+        id
+    }: IRequestGetItems) {
+        const findItem = await this.bierHeldProvider.getItem(id)
 
-        return listItems
+        if(!findItem){
+            throw new Error('Item não encontrado')
+        }
+
+        return findItem
     }
 }

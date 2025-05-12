@@ -15,36 +15,6 @@ export class BierHeldProvider implements IBierHeldProvider{
 
     constructor(){}
     
-    async litItems(data: IListItemsRequest): Promise<IListItemsResponse[]> {
-        try {
-            await this.verifyToken()
-    
-            const client_id = `client_id=${String(data.client_id)}`
-            const per_page = data.per_page ? `per_page=${String(data.per_page)}` : ''
-            const filterSearch = `item_filters%5Bsearch%5D=${String(data.item_filters?.search)}`
-            const query = `${client_id}&${per_page}&${filterSearch}`
-    
-            const path = `${env.BIER_HELD_API_URL}/v2/orders/order_related_items?${query}`
-    
-            const response = await axios.get<IListItemsResponse[]>(path, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'access-token': this.accessToken,
-                    'client': this.client,
-                    'uid': env.BIER_HELD_CLIENT_ID
-                }
-            })
-
-            return response.data
-        } catch (error) {
-            console.log(error)
-            const errorHandler = await this.errorHandler(error)
-            if (errorHandler === true) {
-                return await this.litItems(data)
-            }
-            throw errorHandler
-        }
-    }
     async getItem(id: number): Promise<IGetItemResponse | null> {
         try{
             const path = `${env.BIER_HELD_API_URL}/v2/items/${id}`

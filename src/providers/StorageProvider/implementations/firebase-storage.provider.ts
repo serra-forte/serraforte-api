@@ -8,7 +8,7 @@ export class FirebaseStorageProvider implements IStorageProvider {
     private readonly storage: Bucket;
 
     constructor() {
-        this.storage = firebaseApp as unknown as Bucket;
+        this.storage = firebaseApp.storage().bucket() as unknown as Bucket;
     }
 
     async deleteFile(fileName: string, folderStorage: string){

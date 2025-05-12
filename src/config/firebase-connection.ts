@@ -11,5 +11,3 @@ export const firebaseApp = firebase
     }),
     storageBucket: env.FIREBASE_BUCKET,
   })
-  .storage()
-  .bucket();

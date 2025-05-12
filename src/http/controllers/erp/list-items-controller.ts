@@ -5,7 +5,7 @@ import { z } from 'zod'
 export async function ListItems(request: FastifyRequest, reply:FastifyReply){
     try {
         const itemsParams = z.object({
-                clientId: z.number().nonnegative(),
+                clientId: z.coerce.number().nonnegative(),
                 page: z.coerce.number().optional().default(1),
                 perPage: z.coerce.number().optional().default(10),
                 filterSearch: z.string().optional(),

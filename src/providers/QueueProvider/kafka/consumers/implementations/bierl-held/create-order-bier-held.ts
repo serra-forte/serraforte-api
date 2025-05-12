@@ -61,7 +61,7 @@ export class CreateOrderBierHeld {
                             reference_item_id: getItemBierHeld.id,
                             name: getItemBierHeld.name,
                             quantity: Number(item.quantity),
-                            price: getItemBierHeld.price
+                            price: Number(item.price)
                         })
                        
                     }

@@ -6,12 +6,45 @@ import { ICreateNaturalClientResponse } from "../interface/response/create-natur
 import { IUpdateNaturalClientRequest } from "../interface/request/update-natural-client-request-interface";
 import { ICreateOrderRequest } from '../interface/request/create-order-request-interface';
 import { IGetItemResponse } from "../interface/response/get-item-response-interface";
+import { IListItemsRequest } from "../interface/request/list-items-request-interface";
+import { IListItemsResponse } from "../interface/response/list-items-response-interface";
 
 export class BierHeldProvider implements IBierHeldProvider{
     client!: string;
     accessToken!: string;
 
     constructor(){}
+    
+    async litItems(data: IListItemsRequest): Promise<IListItemsResponse[]> {
+        try{
+            const path = `${env.BIER_HELD_API_URL}/v2/orders/order_related_items`
+
+            await this.verifyToken()
+
+            const response = await axios.get<IListItemsResponse[]>(path, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'access-token': this.accessToken,
+                    'client': this.client,
+                    'uid': env.BIER_HELD_CLIENT_ID
+                },
+                params: {
+                    client_id: data.client_id,
+                    per_page: data.per_page,
+                    'item_filters[search]': data.item_filters?.search
+                }
+            })
+            return response.data
+        }catch(error){
+            const errorHandler = await this.errorHandler(error)
+            if(errorHandler === true){
+                return await this.litItems(data)
+            }
+
+            throw errorHandler
+        }
+    }
+
     async getItem(id: number): Promise<IGetItemResponse | null> {
         try{
             const path = `${env.BIER_HELD_API_URL}/v2/items/${id}`

@@ -27,6 +27,7 @@ import { reviewsRoutes } from "./http/controllers/reviews/routes";
 import { discountCouponRoutes } from "./http/controllers/discountCoupons/routes";
 import { cancellationsRoutes } from "./http/controllers/cancellations/routes";
 import { notificationsRoutes } from "./http/controllers/notifications/routes";
+import { erpRoutes } from "./http/controllers/erp/routes";
 
 export const fastifyApp = fastify()
 
@@ -126,7 +127,9 @@ fastifyApp.register(notificationsRoutes, {
   prefix: 'notifications',
 })
 
-
+fastifyApp.register(erpRoutes, {
+  prefix: 'erp',
+})
 
 // Registrar o helper equals sem usar 'this'
 handlebars.registerHelper('isEqual', function (a, b) {

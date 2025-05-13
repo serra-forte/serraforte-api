@@ -6,6 +6,7 @@ export async function connectionNodeCron() {
   
         nodeCronProvider.checkPaymentAfter24Hours()
         nodeCronProvider.updateProducts()
+        nodeCronProvider.startSystemUpdating()
 
         console.log("Connected to NodeCron")
     } catch (error) {

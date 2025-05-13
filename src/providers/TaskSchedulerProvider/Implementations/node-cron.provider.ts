@@ -67,32 +67,43 @@ export class NodeCronProvider implements INodeCronProvider {
         );
 
     }
+    isSystemUpdating(): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async startSystemUpdating(): Promise<void> {
+        cron.schedule('* 3 * * * *', async () => {
+            try {
+                console.log('Começando atualização.. . .');
+                await this.systemProvider.updateSystemStatus(true);
+            } catch (error) {
+                console.error('Erro ao verificar reservas:', error);
+            }
+        })
+    }
     async updateProducts(): Promise<void> {
-        // Agendar a tarefa cron para ser executada ás 3h da manhã
-        cron.schedule('* * * * *', async () => {
+        // Agendar a tarefa cron para ser executada ás 3h e 05min da manhã
+        cron.schedule('5 3 * * *', async () => {
             try {
                 console.log('Atualizando produtos.. . .');
-                
-                await this.systemProvider.updateSystemStatus(true);
 
-                // const listProducts = await this.productRepository.listAll();
+                const listProducts = await this.productRepository.listAll();
 
-                // for(const product of listProducts){
-                //     if(product.erpProductId){
-                //         const getItemErp = await this.bierHeldProvider.getItem(product.erpProductId);
+                for(const product of listProducts){
+                    if(product.erpProductId){
+                        const getItemErp = await this.bierHeldProvider.getItem(product.erpProductId);
 
-                //         const productPrice = Number(product.price);
+                        const productPrice = Number(product.price);
 
-                //         if(getItemErp && getItemErp.price !== productPrice){
-                //             await this.productRepository.update({
-                //                 id: product.id,
-                //                 price: getItemErp?.price
-                //             })
-                //         }
-                //     }
-                // }
+                        if(getItemErp && getItemErp.price !== productPrice){
+                            await this.productRepository.update({
+                                id: product.id,
+                                price: getItemErp?.price
+                            })
+                        }
+                    }
+                }
 
-                // await this.systemProvider.updateSystemStatus(false);
+                await this.systemProvider.updateSystemStatus(false);
             } catch (error) {
                 console.error('Erro ao verificar reservas:', error);
             }

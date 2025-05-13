@@ -4,6 +4,16 @@ import { prisma } from "@/lib/prisma";
 import { ICartItemRelationsDTO } from "@/dtos/cart-item-relations.dto";
 
 export class PrismaCartItemRepository implements ICartItemRepository{
+    async updatePrice(id: string, price: number): Promise<CartItem> {
+        return prisma.cartItem.update({
+            where: {
+                id
+            },
+            data: {
+                price
+            }
+        })
+    }
     async create(data: Prisma.CartItemUncheckedCreateInput){
         const cartItem = await prisma.cartItem.create({
             data,

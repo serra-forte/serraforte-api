@@ -36,6 +36,8 @@ export class FindShoppingCartUseCase {
             }
 
             item.price = Number(findProductExists.product.price)
+
+            await this.cartItemRepository.updatePrice(item.id, item.price)
         }   
 
         // retornar carrinho

@@ -10,4 +10,5 @@ export interface ICartItemRepository {
     deleteAllCartItemByShoppingCartId(shoppingCartId: string): Promise<void>
     deleteById(id:string):Promise<void>
     deleteAllByShoppingCartId(shoppingCartId: string):Promise<void>
+    updatePrice(id: string, price: number): Promise<CartItem>
 }

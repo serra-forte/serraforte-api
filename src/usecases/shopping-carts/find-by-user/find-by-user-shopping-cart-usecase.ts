@@ -26,7 +26,7 @@ export class FindShoppingCartUseCase {
             throw new AppError('Carrinho não encontrado')
         }
 
-        let total = Number(findShoppingCartExists.total)
+        let total = 0;
 
         for(const item of findShoppingCartExists.cartItem){
             // buscar produto pelo id

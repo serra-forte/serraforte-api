@@ -26,6 +26,8 @@ export class FindShoppingCartUseCase {
             throw new AppError('Carrinho não encontrado')
         }
 
+        let total = Number(findShoppingCartExists.total)
+
         for(const item of findShoppingCartExists.cartItem){
             // buscar produto pelo id
             const findProductExists = await this.productRepository.findById(item.productId)
@@ -38,7 +40,11 @@ export class FindShoppingCartUseCase {
             item.price = Number(findProductExists.product.price)
 
             await this.cartItemRepository.updatePrice(item.id, item.price)
+
+            total += Number(item.price)
         }   
+
+        findShoppingCartExists.total = total
 
         // retornar carrinho
         return findShoppingCartExists

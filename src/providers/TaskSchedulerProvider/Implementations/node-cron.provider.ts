@@ -76,7 +76,6 @@ export class NodeCronProvider implements INodeCronProvider {
                 await this.systemProvider.updateSystemStatus(true);
 
                 const listProducts = await this.productRepository.listAll();
-                console.log(listProducts)
 
                 for(const product of listProducts){
                     if(product.erpProductId){

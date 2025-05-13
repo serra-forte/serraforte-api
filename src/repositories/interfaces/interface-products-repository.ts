@@ -26,6 +26,7 @@ export interface IProductsRepository {
     searchProducts(keyword:string): Promise<IResponseListProducts>
     filterProducts(filters: IFilterProducts): Promise<IResponseListProducts>
     list(page?: number | null): Promise<IResponseListProducts>
+    listAll(): Promise<Product[]>
     listByCategoryId(id: string, page?: number | null): Promise<IResponseListProducts>
     listBySales(page?: number | null): Promise<IResponseListProducts>
     listBySalesAndShopkeeperId(shopkeeperId: string, page?: number | null): Promise<IResponseListProducts>

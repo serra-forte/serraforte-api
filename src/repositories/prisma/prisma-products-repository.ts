@@ -1,9 +1,69 @@
 import { Category, Prisma, Product } from "@prisma/client";
-import { IFilterProducts, IProductsRepository } from "../interfaces/interface-products-repository";
+import { IFilterProducts, IProductsRepository, IResponseListProducts } from "../interfaces/interface-products-repository";
 import { prisma } from "@/lib/prisma";
 import { IProductRelationsDTO } from "@/dtos/product-relations.dto";
 
 export class PrismaProductsRepository  implements IProductsRepository{
+    async listAll(): Promise<Product[]> {
+        const products = await prisma.product.findMany({
+            orderBy: {
+                createdAt: 'desc'
+            },
+            select: {
+                id: true,
+                code: true,
+                width: true,
+                height: true,
+                length: true,
+                name: true,
+                description: true,
+                price: true,
+                sales: true,
+                active: true,
+                mainImage: true,
+                quantity: true,
+                weight: true,
+                createdAt: true,
+                averageRating:true,
+                boxes: true,
+                reviews: {
+                    select: {
+                        id: true,
+                        user: {
+                            select:{
+                                id: true,
+                                name: true,
+                                email: true,
+                                avatarUrl: true
+                            }
+                        },
+                        product: {
+                            select: {
+                                id: true,
+                                name: true
+                            }
+                        },
+                        comment: true,
+                        rating: true,
+                        createdAt: true,
+                    }
+                },
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        emailActive: true,
+                        role: true,
+                        avatarUrl: true
+                    }
+                },
+                category: true
+            }
+        }) as unknown as Product[];
+
+        return products
+    }
     async findByErpProductId(erpProductId: number): Promise<Product | null> {
         const product = await prisma.product.findUnique({
             where: {

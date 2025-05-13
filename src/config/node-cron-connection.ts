@@ -5,6 +5,7 @@ export async function connectionNodeCron() {
         const nodeCronProvider = new NodeCronProvider()
   
         nodeCronProvider.checkPaymentAfter24Hours()
+        nodeCronProvider.updateProducts()
 
         console.log("Connected to NodeCron")
     } catch (error) {

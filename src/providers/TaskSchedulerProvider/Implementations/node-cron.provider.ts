@@ -21,6 +21,10 @@ import { IMelhorEnvioProvider } from "@/providers/DeliveryProvider/interface-mel
 import { MelhorEnvioProvider } from "@/providers/DeliveryProvider/implementations/provider-melhor-envio";
 import { IRailwayProvider } from "@/providers/RailwayProvider/interface-railway-provider";
 import { RailwayProvider } from "@/providers/RailwayProvider/implementations/provider-railway";
+import { IBierHeldProvider } from "@/providers/BierHeldProvider/bier-held-interface";
+import { BierHeldProvider } from "@/providers/BierHeldProvider/implementations/bier-held-provider";
+import { RemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider";
+import { RemoteConfigProviderFirebase } from "@/providers/RemoteConfigProvider/implementations/provider-remote-config";
 
 export interface IBoxPriceRange{
     startRange: number
@@ -41,6 +45,8 @@ export class NodeCronProvider implements INodeCronProvider {
     asaasProvider: IAsaasProvider
     railwayProvider: IRailwayProvider
     melhorEnvio: IMelhorEnvioProvider
+    bierHeldProvider: IBierHeldProvider
+    systemProvider: RemoteConfigProvider
 
     constructor(
     ) {
@@ -52,6 +58,8 @@ export class NodeCronProvider implements INodeCronProvider {
         this.productRepository = new PrismaProductsRepository();
         this.asaasProvider = new AsaasProvider();
         this.railwayProvider = new RailwayProvider();
+        this.bierHeldProvider = new BierHeldProvider();
+        this.systemProvider = new RemoteConfigProviderFirebase();
         this.melhorEnvio = new MelhorEnvioProvider(
             this.railwayProvider,
             this.mailProvider,
@@ -59,53 +67,36 @@ export class NodeCronProvider implements INodeCronProvider {
         );
 
     }
-    async printingLabelGenerate(): Promise<void> {
-        // Agendar a tarefa cron para ser executada a cada minuto
-        // (minuto, hora, dia do mês, mês e dia da semana)
-        // cron.schedule('* /30 * * *', async () => {
+    async updateProducts(): Promise<void> {
+        // Agendar a tarefa cron para ser executada ás 3h da manhã
         cron.schedule('* * * * *', async () => {
             try {
-                console.log('Gerar etiquetas para impressão.. . .');
-                // buscar pedidos com status "AWAITING_LABEL_GENERATE"
-
-                // se existir pedidos com o status "AWAITING_LABEL_GENERATE" gerar etiquetas no Melhor Envio
-
-                // apos gerar estiqueta, também gera o link de impressão na Melhor Envio
-
-                // alterar pedido passando a url de impressão gerada apos gerar etiqueta e o link
-
-                // alterar status do pedido para "LABEL_GENERATED"
-            } catch (error) {
-                console.error('Erro ao verificar reservas:', error);
-            }
-        });
-    }
-
-    async labelPaymentProcess(): Promise<void> {
-        // Agendar a tarefa cron para ser executada a cada minuto
-        // (minuto, hora, dia do mês, mês e dia da semana)
-        // cron.schedule('* /25 * * *', async () => {
-        cron.schedule('* * * * *', async () => {
-            try {
-                console.log('Processar pagamento das etiquetas.. . .');
-                // buscar pedidos com status "AWAITING_LABEL_PAYMENT_PROCESS"
-
-                // se existir pedidos com o status "AWAITING_LABEL_PAYMENT_PROCESS" processar pagamento no Melhor Envio
-
-                    // gerar pagamento no Melhor Envio coms os itens no carrinho com os ids do cartLabelId
-
-                    // alterar status dos pedidos para "AWAITING_LABEL_GENERATED" se o pagamento for realizado,
-
-                        // alterar pedido com o id do cartLabelId no banco
-                    
-                    // senão enviar notificação para o ADMIN para inserir valor no painel do Melhor Envio
-            } catch (error) {
+                console.log('Atualizando produtos.. . .');
                 
+                await this.systemProvider.updateSystemStatus(true);
+
+                const listProducts = await this.productRepository.listAll();
+
+                for(const product of listProducts){
+                    if(product.erpProductId){
+                        const getItemErp = await this.bierHeldProvider.getItem(product.erpProductId);
+                        const productPrice = Number(product.price);
+
+                        if(getItemErp && getItemErp.price !== productPrice){
+                            await this.productRepository.update({
+                                id: product.id,
+                                price: getItemErp?.price
+                            })
+                        }
+                    }
+                }
+
+                await this.systemProvider.updateSystemStatus(false);
+            } catch (error) {
                 console.error('Erro ao verificar reservas:', error);
             }
         });
     }
-
     async checkPaymentAfter24Hours() {
         // Agendar a tarefa cron para ser executada a cada minuto
         // (minuto, hora, dia do mês, mês e dia da semana)

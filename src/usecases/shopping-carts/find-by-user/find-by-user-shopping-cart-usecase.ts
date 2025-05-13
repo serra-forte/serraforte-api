@@ -41,7 +41,7 @@ export class FindShoppingCartUseCase {
 
             await this.cartItemRepository.updatePrice(item.id, item.price)
 
-            total += Number(item.price)
+            total += Math.abs(Number(item.price) * Number(item.quantity))
         }   
 
         findShoppingCartExists.total = total

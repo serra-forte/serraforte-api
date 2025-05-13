@@ -1,4 +1,6 @@
 import { IShoppingCartRelationsDTO } from "@/dtos/shopping-cart-relations.dto";
+import { ICartItemRepository } from "@/repositories/interfaces/interface-cart-item-repository";
+import { IProductsRepository } from "@/repositories/interfaces/interface-products-repository";
 import { IShoppingCartRepository } from "@/repositories/interfaces/interface-shopping-cart-repository";
 import { AppError } from "@/usecases/errors/app-error";
 
@@ -9,6 +11,8 @@ export interface IRequestFindShoppingCart {
 export class FindShoppingCartUseCase {
     constructor(
         private shoppingCartsRepository: IShoppingCartRepository,
+        private productRepository: IProductsRepository,
+        private cartItemRepository: ICartItemRepository
     ) {}
 
     async execute({
@@ -21,6 +25,18 @@ export class FindShoppingCartUseCase {
         if(!findShoppingCartExists){
             throw new AppError('Carrinho não encontrado')
         }
+
+        for(const item of findShoppingCartExists.cartItem){
+            // buscar produto pelo id
+            const findProductExists = await this.productRepository.findById(item.productId)
+
+            // validar se produto existe
+            if(!findProductExists){
+                throw new AppError('Produto nao encontrado')
+            }
+
+            item.price = Number(findProductExists.product.price)
+        }   
 
         // retornar carrinho
         return findShoppingCartExists

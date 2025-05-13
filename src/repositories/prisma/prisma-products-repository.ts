@@ -11,6 +11,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
             },
             select: {
                 id: true,
+                erpProductId: true,
                 code: true,
                 width: true,
                 height: true,

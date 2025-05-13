@@ -10,56 +10,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
                 createdAt: 'desc'
             },
             select: {
-                id: true,
                 erpProductId: true,
-                code: true,
-                width: true,
-                height: true,
-                length: true,
-                name: true,
-                description: true,
-                price: true,
-                sales: true,
-                active: true,
-                mainImage: true,
-                quantity: true,
-                weight: true,
-                createdAt: true,
-                averageRating:true,
-                boxes: true,
-                reviews: {
-                    select: {
-                        id: true,
-                        user: {
-                            select:{
-                                id: true,
-                                name: true,
-                                email: true,
-                                avatarUrl: true
-                            }
-                        },
-                        product: {
-                            select: {
-                                id: true,
-                                name: true
-                            }
-                        },
-                        comment: true,
-                        rating: true,
-                        createdAt: true,
-                    }
-                },
-                user: {
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true,
-                        emailActive: true,
-                        role: true,
-                        avatarUrl: true
-                    }
-                },
-                category: true
             }
         }) as unknown as Product[];
 

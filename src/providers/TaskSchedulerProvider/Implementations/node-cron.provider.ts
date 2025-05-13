@@ -75,25 +75,24 @@ export class NodeCronProvider implements INodeCronProvider {
                 
                 await this.systemProvider.updateSystemStatus(true);
 
-                const listProducts = await this.productRepository.listAll();
+                // const listProducts = await this.productRepository.listAll();
 
-                for(const product of listProducts){
-                    if(product.erpProductId){
-                        const getItemErp = await this.bierHeldProvider.getItem(product.erpProductId);
+                // for(const product of listProducts){
+                //     if(product.erpProductId){
+                //         const getItemErp = await this.bierHeldProvider.getItem(product.erpProductId);
 
-                        console.log(getItemErp)
-                        const productPrice = Number(product.price);
+                //         const productPrice = Number(product.price);
 
-                        if(getItemErp && getItemErp.price !== productPrice){
-                            await this.productRepository.update({
-                                id: product.id,
-                                price: getItemErp?.price
-                            })
-                        }
-                    }
-                }
+                //         if(getItemErp && getItemErp.price !== productPrice){
+                //             await this.productRepository.update({
+                //                 id: product.id,
+                //                 price: getItemErp?.price
+                //             })
+                //         }
+                //     }
+                // }
 
-                await this.systemProvider.updateSystemStatus(false);
+                // await this.systemProvider.updateSystemStatus(false);
             } catch (error) {
                 console.error('Erro ao verificar reservas:', error);
             }

@@ -1,3 +1,6 @@
+import { SystemStatus } from "./interface/get-template-response";
+
 export interface RemoteConfigProvider {
-    getTemplate(): Promise<string>
+    getTemplate(): Promise<SystemStatus>
+    updateSystemStatus(isUpdating: boolean): Promise<void>
 }

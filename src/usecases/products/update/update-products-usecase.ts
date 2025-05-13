@@ -5,6 +5,7 @@ import { Product } from "@prisma/client"
 
 export interface IRequestUpdateProducts {
     id: string
+    erpProductId?: number | null
     name: string
     categoryId?: string | null
     description?: string | null
@@ -23,6 +24,7 @@ export class UpdateProductsUseCase {
 
     async execute({ 
         id,
+        erpProductId,
         name, 
         categoryId, 
         shopKeeperId,
@@ -75,6 +77,7 @@ export class UpdateProductsUseCase {
         // criar produto
         const product = await this.productsRepository.update({
             id,
+            erpProductId,
             name,
             description,
             user: shopKeeperId ? {

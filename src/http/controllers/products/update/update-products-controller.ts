@@ -7,6 +7,7 @@ export async function UpdateProduct(request: FastifyRequest, reply:FastifyReply)
         try {
             const productSchema = z.object({
                 id: z.string().uuid(),
+                erpProductId: z.coerce.number().nonnegative().optional().nullable(),
                 categoryId: z.string().optional().nullable(),
                 shopKeeperId: z.string().optional().nullable(),
                 name: z.string().min(4),
@@ -19,6 +20,7 @@ export async function UpdateProduct(request: FastifyRequest, reply:FastifyReply)
 
             const { 
                 id,
+                erpProductId,
                 name,
                 description,
                 price,
@@ -33,6 +35,7 @@ export async function UpdateProduct(request: FastifyRequest, reply:FastifyReply)
             
             const product = await updateProductUseCase.execute({
                 id,
+                erpProductId,
                 name,
                 description,
                 price,

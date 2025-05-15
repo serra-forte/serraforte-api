@@ -71,7 +71,7 @@ export class NodeCronProvider implements INodeCronProvider {
         throw new Error("Method not implemented.");
     }
     async startSystemUpdating(): Promise<void> {
-        cron.schedule('* 3 * * * *', async () => {
+        cron.schedule('* 12 * * * *', async () => {
             try {
                 console.log('Começando atualização.. . .');
                 await this.systemProvider.updateSystemStatus(true);
@@ -82,7 +82,7 @@ export class NodeCronProvider implements INodeCronProvider {
     }
     async updateProducts(): Promise<void> {
         // Agendar a tarefa cron para ser executada ás 3h e 05min da manhã
-        cron.schedule('5 3 * * *', async () => {
+        cron.schedule('5 12 * * *', async () => {
             try {
                 console.log('Atualizando produtos.. . .');
 

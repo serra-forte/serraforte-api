@@ -1,4 +1,4 @@
-import { makeGetItem } from '@/usecases/factories/erp/make-list-items-usercase'
+import { makeGetItem } from '@/usecases/factories/erp/make-get-item-usercase'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 

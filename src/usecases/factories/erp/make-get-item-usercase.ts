@@ -1,5 +1,5 @@
 import { BierHeldProvider } from "@/providers/BierHeldProvider/implementations/bier-held-provider"
-import { GetItemUseCase } from "@/usecases/erp/list-items-usecase"
+import { GetItemUseCase } from "@/usecases/erp/get-item-usecase"
 
 export async function makeGetItem(): Promise<GetItemUseCase>{
     const bierHeldProvider = new BierHeldProvider()

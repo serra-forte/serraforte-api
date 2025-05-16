@@ -29,6 +29,7 @@ import { cancellationsRoutes } from "./http/controllers/cancellations/routes";
 import { notificationsRoutes } from "./http/controllers/notifications/routes";
 import { erpRoutes } from "./http/controllers/erp/routes";
 import { systemRoutes } from "./http/controllers/system/routes";
+import { contactRoutes } from "./http/controllers/contact/routes";
 
 export const fastifyApp = fastify()
 
@@ -134,6 +135,10 @@ fastifyApp.register(erpRoutes, {
 
 fastifyApp.register(systemRoutes, {
   prefix: 'system',
+})
+
+fastifyApp.register(contactRoutes, {
+  prefix: 'contact',
 })
 
 // Registrar o helper equals sem usar 'this'

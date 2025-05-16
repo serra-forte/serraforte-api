@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<head>
+    <style>
+    body{
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+        }
+
+        .container{
+            font-family: Arial, Helvetica, sans-serif; 
+        }
+        #content{
+            width: 25rem;
+            color: black;
+        }
+        img{
+            display: block;
+        }
+        span{
+            margin: 1.5rem 0px;
+            display: block;
+        }
+        p{
+            text-align: justify;
+            line-height: 1.6;
+        }
+
+        #btn-ok{
+            background-color: black;
+            padding: 1.2rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: #ffff;
+            font-weight: bold;
+            margin: 1.3rem 0;
+            display: block;
+            width: 7rem;
+            text-align: center;
+
+        }
+       
+        @media (max-width: 576px) {
+            #content{
+            width: 25rem;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="align-image">
+            <img src="https://firebasestorage.googleapis.com/v0/b/test-2e44b.appspot.com/o/serraforte%2FDesign%20sem%20nome%20(5).png?alt=media&token=3d6f99c8-6CB0-43b4-89c6-317358fcd9a1" alt="logo ferramentas">
+        </span>
+
+        
+         <div id="content">
+            <p>
+                <span>Olá <strong>{{name}}</strong>,</span>
+    
+                <span>Recebemos uma mensagem de contato do site:</span>
+
+                <span> • Nome: {{variables.contact.name}}</span>
+                <span> • E-mail: {{variables.contact.email}}</span>
+                <span> • Telefone: {{variables.contact.phone}}</span>
+                <span> • Assunto: {{variables.contact.subject}}</span>
+                <span> • Mensagem: {{variables.contact.message}}</span>
+
+                <span>
+                    Este e-mail foi enviado automaticamente a partir do formulário de entrar em contato do site.
+                </span>
+            </p>
+        </div>
+        
+    </div>
+</body>
+</html>

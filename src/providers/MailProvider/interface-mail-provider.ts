@@ -10,6 +10,13 @@ export interface Variables {
     order?: IOrderRelationsDTO
     text?: string,
     message?: string | null
+    contact?:{
+        name: string
+        email: string
+        phone: string
+        subject: 'DUVIDA' | 'SUGESTAO' | 'RECLAMACAO' | 'OUTRO'
+        message: string
+    }
 }
 
 export interface IMailProvider {

@@ -31,7 +31,9 @@ export async function ContactUs(request: FastifyRequest, reply:FastifyReply){
             subject
         })
         
-        return reply.status(204).send()
+        return reply.status(200).send({
+            message: 'Mensagem enviada com sucesso!'
+        })
         
     } catch (error) {
         throw error

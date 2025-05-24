@@ -20,7 +20,6 @@ export async function CreateStore(request: FastifyRequest, reply:FastifyReply){
                 hasERPIntegration: z.boolean(),
                 name: z.string(),
                 stateRegister: z.string(),
-                userId: z.string().uuid(),
             })
 
             const { 
@@ -32,7 +31,6 @@ export async function CreateStore(request: FastifyRequest, reply:FastifyReply){
                 hasERPIntegration,
                 name,
                 stateRegister,
-                userId
             } = storeSchema.parse(request.body)
 
             const createProductUseCase = await makeCreateStore()
@@ -46,7 +44,7 @@ export async function CreateStore(request: FastifyRequest, reply:FastifyReply){
                 hasERPIntegration,
                 name,
                 stateRegister,
-                userId
+                userId: request.user.id
             })
 
             return reply.status(200).send(store)

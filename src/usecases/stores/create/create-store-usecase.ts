@@ -103,7 +103,7 @@ export class CreateStoreUseCase{
 
     private async createAddress(address: ICreateStoreRequest['address'], store: Store, userId: string): Promise<Address>{
          const createAddressMelhorEnvio = await this.melhorEnvioProvider.createStoreAddress({
-            store_id: store.id,
+            store_id: store.melhorEnvioId as string,
             address: address.street,
             number: address.number,
             city: address.city,

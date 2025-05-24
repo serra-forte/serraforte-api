@@ -511,7 +511,7 @@ model Store {
   hasERPIntegration Boolean? @map("has_erp_integration")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @unique
+  userId String
   
   name           String
   email          String

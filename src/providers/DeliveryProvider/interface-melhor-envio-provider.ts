@@ -1,7 +1,6 @@
 import { ICreateStoreAddressRequest } from "./interfaces/request/create-store-address-request";
 import { ICreateStoreRequest } from "./interfaces/request/create-store-request";
 import { ICreateStoreResponse } from "./interfaces/response/create-store-response";
-import { IListStoreResponse } from "./interfaces/response/list-store-response";
 
 export interface IRequestAuth {
     grant_type: string;
@@ -462,5 +461,4 @@ export interface IMelhorEnvioProvider {
     generateLabelLinkToPrinting(orderId: string): Promise<IResponseGenerateLabelLinkToPrinting | null>
     createStore(data: ICreateStoreRequest): Promise<ICreateStoreResponse>
     createStoreAddress(data: ICreateStoreAddressRequest): Promise<boolean>
-    listStore(): Promise<IListStoreResponse>
 }

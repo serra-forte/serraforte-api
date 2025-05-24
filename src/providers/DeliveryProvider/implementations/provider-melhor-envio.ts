@@ -8,7 +8,6 @@ import { IUsersRepository } from '@/repositories/interfaces/interface-users-repo
 import { ICreateStoreRequest } from '../interfaces/request/create-store-request';
 import { ICreateStoreResponse } from '../interfaces/response/create-store-response';
 import { ICreateStoreAddressRequest } from '../interfaces/request/create-store-address-request';
-import { IListStoreResponse } from '../interfaces/response/list-store-response';
 
 export class MelhorEnvioProvider implements IMelhorEnvioProvider {
   private accessToken: string | null = null;
@@ -17,35 +16,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
     private mailProvider: IMailProvider,
     private usersRepository: IUsersRepository
   ) {}
-  async listStore(): Promise<IListStoreResponse> {
-    try {
-      const response = await axios.get(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/companies`, {
-        headers: {
-          'Authorization': `Bearer ${process.env.MELHOR_ENVIO_ACCESS_TOKEN}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json', 
-          'User-Agent': 'Serra Forte/kaiomoreira.dev@gmail.com',
-        },
-      });
-      return response.data
-    } catch (error) {
-       console.log('Token expirado, renovando...');
-        // Tenta renovar o tokenn
-        try {
-          const response = await this.refreshToken();
-          console.log('Token renovado com sucesso');
-
-          if(response.access_token){
-            // Após renovar o token, tenta novamente calcular o frete
-            return this.listStore();
-          }
-        } catch (refreshError) {
-          console.error('Erro ao renovar o token:', refreshError);
-          // throw refreshError;
-        }
-        throw error
-      }
-  }
+ 
   async createStoreAddress(data: ICreateStoreAddressRequest): Promise<boolean> {
     try{
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/companies/${data.store_id}/addresses`, data, {

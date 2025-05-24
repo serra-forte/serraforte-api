@@ -68,7 +68,7 @@ export class NodeCronProvider implements INodeCronProvider {
 
     }
     async startSystemUpdating(): Promise<void> {
-        cron.schedule('0 12 * * * *', async () => {
+        cron.schedule('0 0 12 * * *', async () => {
             try {
                 console.log('Começando atualização.. . .');
                 await this.systemProvider.updateSystemStatus(true);

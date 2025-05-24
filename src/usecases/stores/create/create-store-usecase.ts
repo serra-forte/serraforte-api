@@ -51,17 +51,19 @@ export class CreateStoreUseCase{
             hasERPIntegration,
         })
 
-        if(!store){
-            throw new Error('Store not created')
-        }
+        console.log(store)
 
-        const addressCreated = await this.createAddress(address, store, userId)
+        // if(!store){
+        //     throw new Error('Store not created')
+        // }
 
-        if(!addressCreated){
-            throw new Error('Address not created')
-        }
+        // const addressCreated = await this.createAddress(address, store, userId)
 
-        return store
+        // if(!addressCreated){
+        //     throw new Error('Address not created')
+        // }
+
+        // return store
     }
 
     private async createStore({

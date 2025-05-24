@@ -9,26 +9,26 @@ export class RemoteConfigProviderFirebase implements RemoteConfigProvider {
     constructor(){
         this.remoteConfig = firebaseApp.remoteConfig()
     }
-    async getTemplate(): Promise<SystemStatus> {
-        try {
-          const template = await this.remoteConfig.getTemplate();
-    
-          const systemStatusParam = template as RemoteConfigTemplate;
+    async getTemplate(templateName: string): Promise<SystemStatus> {
+  try {
+    const template = await this.remoteConfig.getTemplate();
+    const parameters = (template as RemoteConfigTemplate).parameters;
 
-          const rawValue = systemStatusParam.parameters.systemStatus.defaultValue.value;
+   const param = parameters[templateName as keyof typeof parameters];
 
-          if (typeof rawValue !== 'string') {
-          throw new Error('O valor de "systemStatus" não está definido ou não é uma string.');
-          }
-
-          const systemStatus: SystemStatus = JSON.parse(rawValue);
-
-          return systemStatus
-        } catch (error) {
-          console.error('Erro ao buscar template:', error);
-          throw error;
-        }
+    if (!param || !param.defaultValue || typeof param.defaultValue.value !== 'string') {
+      throw new Error(`Parâmetro "${templateName}" não está definido corretamente no Remote Config.`);
     }
+
+    const systemStatus: SystemStatus = JSON.parse(param.defaultValue.value);
+
+    return systemStatus;
+  } catch (error) {
+    console.error(`Erro ao buscar template "${templateName}":`, error);
+    throw error;
+  }
+}
+
 
     async updateSystemStatus(isUpdating: boolean): Promise<void> {
         try {

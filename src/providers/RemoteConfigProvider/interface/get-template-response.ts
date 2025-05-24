@@ -7,6 +7,12 @@ export interface RemoteConfigTemplate {
         };
         valueType: 'JSON';
       };
+      hasErp: {
+        defaultValue: {
+          value: string; // JSON string que precisa ser parseado
+        };
+        valueType: 'JSON';
+      }
     };
     parameterGroups: Record<string, any>;
     etag: string;

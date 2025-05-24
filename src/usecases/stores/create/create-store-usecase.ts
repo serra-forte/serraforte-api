@@ -100,6 +100,8 @@ export class CreateStoreUseCase{
             hasERPIntegration
         })
 
+        console.log(store)
+
         return store
     }
 

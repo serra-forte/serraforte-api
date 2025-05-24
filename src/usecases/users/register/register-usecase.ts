@@ -9,6 +9,7 @@ import { AppError } from "@/usecases/errors/app-error";
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository";
 import { ITokensRepository } from "@/repositories/interfaces/interface-tokens-repository";
 import { IBierHeldProvider } from "@/providers/BierHeldProvider/bier-held-interface";
+import { RemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider";
 
 interface IRequestRegisterAccount {
     email: string,
@@ -24,7 +25,9 @@ export class RegisterUseCase{
         private dayjsDateProvider: IDateProvider,
         private usersTokensRepository: ITokensRepository,
         private sendMailProvider: IMailProvider,
-        private bierHeldProvider: IBierHeldProvider
+        private bierHeldProvider: IBierHeldProvider,
+        private remoteConfig: RemoteConfigProvider
+        
     ) {}
 
     async execute({
@@ -53,24 +56,34 @@ export class RegisterUseCase{
         
         const criptingPassword = await hash(password, 8)
 
-        // salva no bier held o usuário criado
-        const bierHeldResponse = await this.bierHeldProvider.createNaturalPerson({
-            fullName: name,
-            contactAttributes:[
-             {
-                 contact_type: 'email',
-                 value: email
-             }
-            ]
-         })
+        const hasErp = await this.remoteConfig.getTemplate('hasErp')
+        let erpClientId = 0
+        let erpUserId = 0
+        if(hasErp){
+            // salva no bier held o usuário criado
+            const bierHeldResponse = await this.bierHeldProvider.createNaturalPerson({
+                fullName: name,
+                contactAttributes:[
+                {
+                    contact_type: 'email',
+                    value: email
+                }
+                ]
+            })
 
-        if(bierHeldResponse instanceof Error){
-            throw new AppError('Erro ao cadastrar usuário, tente novamente mais tarde', 403)
+            if(bierHeldResponse instanceof Error){
+                throw new AppError('Erro ao cadastrar usuário, tente novamente mais tarde', 403)
+            }
+
+            erpClientId = bierHeldResponse.client_id as number
+            erpUserId = bierHeldResponse.id as number
         }
+
+        
        
         const user = await this.usersRepository.create({
-            erpUserId: bierHeldResponse.id,
-            erpClientId: bierHeldResponse.client_id,
+            erpUserId,
+            erpClientId,
             email,
             name,
             password: criptingPassword,

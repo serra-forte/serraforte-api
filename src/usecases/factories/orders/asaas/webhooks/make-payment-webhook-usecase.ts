@@ -6,8 +6,10 @@ import { MailProvider } from './../../../../../providers/MailProvider/implementa
 import { PaymentWebHookUseCases } from './../../../../orders/create/asaas/webhooks/payments-webhook-usecases';
 import { PrismaProductsRepository } from '@/repositories/prisma/prisma-products-repository';
 import { KafkaProducer } from '@/providers/QueueProvider/kafka/kafka-producer';
+import { RemoteConfigProviderFirebase } from '@/providers/RemoteConfigProvider/implementations/provider-remote-config';
 
 export async function makePaymentWebHook(): Promise<PaymentWebHookUseCases> {
+  const remoteConfigProvider = new RemoteConfigProviderFirebase()
   const paymentsRepository = new PrismaPaymentRepository
   const orderRepository = new PrismaOrderRepository()
   const mailProvider = new MailProvider()
@@ -23,7 +25,8 @@ export async function makePaymentWebHook(): Promise<PaymentWebHookUseCases> {
     userRepository,
     dayjsDateProvider,
     productRepository,
-    kafkaProvider
+    kafkaProvider,
+    remoteConfigProvider
   )
 
   return paymentWebHookUseCases

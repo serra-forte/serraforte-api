@@ -14,14 +14,12 @@ export class CreateOrderBierHeld {
     private orderRepository: IOrderRepository;
     private bierHeldProvider: IBierHeldProvider;
     private productRepository: IProductsRepository;
-    private remoteConfig: RemoteConfigProvider
 
     constructor() {
         this.kafkaConsumer = new KafkaConsumerCreateOrder();
         this.orderRepository = new PrismaOrderRepository();
         this.bierHeldProvider = new BierHeldProvider();
         this.productRepository = new PrismaProductsRepository();
-        this.remoteConfig = new RemoteConfigProviderFirebase()
     }
 
     async execute() {
@@ -48,28 +46,25 @@ export class CreateOrderBierHeld {
 
                     let bierHeldItems:{reference_item_id:number, name:string, quantity:number, price:number}[] = []
 
-                    const hasErp = await this.remoteConfig.getTemplate('hasErp')
-                    if(hasErp){
-                        for(const item of order.items){
-                            const findProduct = await this.productRepository.findById(item.productId)
+                    for(const item of order.items){
+                        const findProduct = await this.productRepository.findById(item.productId)
 
-                            if(!findProduct){
-                                throw new Error('Produto nao encontrado')
-                            }
-
-                            const getItemBierHeld = await this.bierHeldProvider.getItem(findProduct.product.erpProductId)
-    
-                            if(!getItemBierHeld){
-                                throw new Error('Item nao encontrado')
-                            }
-                            
-                            bierHeldItems.push({
-                                reference_item_id: getItemBierHeld.id,
-                                name: getItemBierHeld.name,
-                                quantity: Number(item.quantity),
-                                price: Number(item.price)
-                            })
+                        if(!findProduct){
+                            throw new Error('Produto nao encontrado')
                         }
+
+                        const getItemBierHeld = await this.bierHeldProvider.getItem(findProduct.product.erpProductId)
+
+                        if(!getItemBierHeld){
+                            throw new Error('Item nao encontrado')
+                        }
+                        
+                        bierHeldItems.push({
+                            reference_item_id: getItemBierHeld.id,
+                            name: getItemBierHeld.name,
+                            quantity: Number(item.quantity),
+                            price: Number(item.price)
+                        })
                     }
 
                     let delivery_method: 'delivery_by_shipper' | 'withdrawal_at_company' = 'delivery_by_shipper'

@@ -4,8 +4,10 @@ import { RegisterUseCase } from "@/usecases/users/register/register-usecase";
 import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
 import { PrismaTokensRepository } from "@/repositories/prisma/prisma-tokens-repository";
 import { BierHeldProvider } from "@/providers/BierHeldProvider/implementations/bier-held-provider";
+import { RemoteConfigProviderFirebase } from "@/providers/RemoteConfigProvider/implementations/provider-remote-config";
 
 export async function makeRegisterUser(): Promise<RegisterUseCase> {
+    const remoteConfigProvider = new RemoteConfigProviderFirebase()
     const usersRepository = new PrismaUsersRepository();
     const usersTokensRepository = new PrismaTokensRepository();
     const sendMailProvider = new MailProvider();
@@ -17,7 +19,8 @@ export async function makeRegisterUser(): Promise<RegisterUseCase> {
         dayjsDateProvider,
         usersTokensRepository,
         sendMailProvider,
-        bierHeldProvider
+        bierHeldProvider,
+        remoteConfigProvider
     )
 
     return registerUserUseCase

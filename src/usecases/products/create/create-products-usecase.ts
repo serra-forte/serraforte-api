@@ -1,3 +1,4 @@
+import { RemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider"
 import { ICategoriesRepository } from "@/repositories/interfaces/interface-categories-repository"
 import { IProductsRepository } from "@/repositories/interfaces/interface-products-repository"
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository"
@@ -25,6 +26,7 @@ export class CreateProductsUseCase {
         private productsRepository: IProductsRepository,
         private categoriesRepository: ICategoriesRepository,
         private usersRepository: IUsersRepository,
+        private remoteConfig: RemoteConfigProvider
     ){}
 
     async execute({ 
@@ -43,11 +45,15 @@ export class CreateProductsUseCase {
         shopKeeperId: userId
      }: IRequestCreateProducts): Promise<Product> {
         if(erpProductId){
-            const findProductErpExist = await this.productsRepository.findByErpProductId(erpProductId)
+            const hasErp = await this.remoteConfig.getTemplate('hasErp')
 
-            // validar se existe um produto com o mesmo erpProductId
-            if(findProductErpExist){
-                throw new AppError('Produto ja existe', 409)
+            if(hasErp){
+                const findProductErpExist = await this.productsRepository.findByErpProductId(erpProductId)
+
+                // validar se existe um produto com o mesmo erpProductId
+                if(findProductErpExist){
+                    throw new AppError('Produto ja existe', 409)
+                }
             }
         }
         

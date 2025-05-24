@@ -24,7 +24,6 @@ export async function CreateStore(request: FastifyRequest, reply:FastifyReply){
                     }
                 ),
                 email: z.string().email({message: "E-mail inválido"}),
-                hasERPIntegration: z.boolean(),
                 name: z.string(),
                 stateRegister: z.string(),
             })
@@ -35,7 +34,6 @@ export async function CreateStore(request: FastifyRequest, reply:FastifyReply){
                 description,
                 document,
                 email,
-                hasERPIntegration,
                 name,
                 stateRegister,
             } = storeSchema.parse(request.body)
@@ -48,7 +46,6 @@ export async function CreateStore(request: FastifyRequest, reply:FastifyReply){
                 description,
                 document,
                 email,
-                hasERPIntegration,
                 name,
                 stateRegister,
                 userId: request.user.id

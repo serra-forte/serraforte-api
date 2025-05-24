@@ -13,7 +13,6 @@ export class PrismaStoreRepository implements IStoreRepository{
                 companyName: true,
                 document: true,
                 stateRegister: true,
-                hasERPIntegration: true,
                 address: true,
             }
         }) as unknown as Store[]

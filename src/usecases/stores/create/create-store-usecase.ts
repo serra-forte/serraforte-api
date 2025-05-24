@@ -1,6 +1,7 @@
 import { IMelhorEnvioProvider } from "@/providers/DeliveryProvider/interface-melhor-envio-provider";
 import { IAddressesRepository } from "@/repositories/interfaces/interface-addresses-repository";
 import { IStoreRepository } from "@/repositories/interfaces/interface-store-repository";
+import { AppError } from "@/usecases/errors/app-error";
 import { Address, Store } from "@prisma/client";
 
 interface ICreateStoreRequest{
@@ -78,8 +79,8 @@ export class CreateStoreUseCase{
             state_register: stateRegister
         })
 
-        if(!storeCreated){
-            throw new Error('Store not created')
+        if(storeCreated instanceof AppError){
+            throw new AppError(storeCreated.message)
         }
 
         const store = await this.storeRepository.create({

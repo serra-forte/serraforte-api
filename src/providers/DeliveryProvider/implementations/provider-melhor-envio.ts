@@ -8,9 +8,12 @@ import { IUsersRepository } from '@/repositories/interfaces/interface-users-repo
 import { ICreateStoreRequest } from '../interfaces/request/create-store-request';
 import { ICreateStoreResponse } from '../interfaces/response/create-store-response';
 import { ICreateStoreAddressRequest } from '../interfaces/request/create-store-address-request';
+import { INVALID_EMAIL } from '../error/error-codes';
+import { AppError } from '@/usecases/errors/app-error';
 
 export class MelhorEnvioProvider implements IMelhorEnvioProvider {
   private accessToken: string | null = null;
+  
   constructor(
     private railwayProvider: IRailwayProvider, 
     private mailProvider: IMailProvider,
@@ -54,7 +57,7 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       throw error;
     }
   }
-  async createStore(data: ICreateStoreRequest): Promise<ICreateStoreResponse> {
+  async createStore(data: ICreateStoreRequest): Promise<ICreateStoreResponse | AppError> {
     try{
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/companies`, data, {
         headers: {
@@ -87,9 +90,9 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
           // throw refreshError;
         }
       }else if (error instanceof AxiosError && error.response?.status === 422){
-        console.log('Erro ao criar loja:', error.response.data);
+        return new AppError(INVALID_EMAIL, 422);
       }
-      throw error;
+      throw new AppError(error.response.data.message, error.response.status);
     }
   }
   async generateLabelLinkToPrinting(orderId: string): Promise<IResponseGenerateLabelLinkToPrinting | null> {

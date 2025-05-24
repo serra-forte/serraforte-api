@@ -1,3 +1,4 @@
+import { AppError } from "@/usecases/errors/app-error";
 import { ICreateStoreAddressRequest } from "./interfaces/request/create-store-address-request";
 import { ICreateStoreRequest } from "./interfaces/request/create-store-request";
 import { ICreateStoreResponse } from "./interfaces/response/create-store-response";
@@ -459,6 +460,6 @@ export interface IMelhorEnvioProvider {
     paymentToFreight(orderId: string): Promise<IPurchaseResponse | null>
     generateLabel(orderId: string): Promise<IResponseGenerateLabel | null>
     generateLabelLinkToPrinting(orderId: string): Promise<IResponseGenerateLabelLinkToPrinting | null>
-    createStore(data: ICreateStoreRequest): Promise<ICreateStoreResponse>
+    createStore(data: ICreateStoreRequest): Promise<ICreateStoreResponse | AppError>
     createStoreAddress(data: ICreateStoreAddressRequest): Promise<boolean>
 }

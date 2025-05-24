@@ -1,0 +1,1 @@
+export const INVALID_EMAIL = 'E-mail não é válido';

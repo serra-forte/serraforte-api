@@ -39,8 +39,6 @@ export class CreateStoreUseCase{
         address,
         hasERPIntegration,
     }: ICreateStoreRequest){
-        console.log(userId)
-
         const store = await this.createStore({
             userId,
             name,

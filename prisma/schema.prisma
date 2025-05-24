@@ -510,8 +510,8 @@ model Store {
   melhorEnvioId String? @map("melhor_envio_id")
   hasERPIntegration Boolean? @map("has_erp_integration")
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
   
   name           String
   email          String

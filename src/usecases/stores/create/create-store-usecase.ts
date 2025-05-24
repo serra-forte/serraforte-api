@@ -13,7 +13,7 @@ interface ICreateStoreRequest{
     stateRegister: string;
     hasERPIntegration: boolean   
     address: {
-        postalPode: string;   
+        postalCode: string;   
         street: string;       
         number: string;        
         complement: string;    
@@ -110,7 +110,7 @@ export class CreateStoreUseCase{
             number: address.number,
             city: address.city,
             state: address.state,
-            postal_code: address.postalPode,
+            postal_code: address.postalCode,
             complement: address.complement,
         })
 
@@ -123,7 +123,7 @@ export class CreateStoreUseCase{
             num: address.number,
             city: address.city,
             state: address.state,
-            zipCode: address.postalPode,
+            zipCode: address.postalCode,
             complement: address.complement,
             country: 'Brasil',
             neighborhood: '',

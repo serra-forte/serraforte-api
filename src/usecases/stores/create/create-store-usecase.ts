@@ -13,7 +13,6 @@ interface ICreateStoreRequest{
     stateRegister: string;
     hasERPIntegration: boolean   
     address: {
-        storeId: string; 
         postalPode: string;   
         street: string;       
         number: string;        

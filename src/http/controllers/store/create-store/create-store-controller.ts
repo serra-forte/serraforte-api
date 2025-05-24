@@ -6,7 +6,6 @@ export async function CreateStore(request: FastifyRequest, reply:FastifyReply){
         try {
             const storeSchema = z.object({
                 address: z.object({
-                    storeId: z.string().uuid(), 
                     postalPode: z.string(),    
                     street: z.string(),       
                     number: z.string(),         

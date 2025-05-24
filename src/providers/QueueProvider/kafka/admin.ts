@@ -21,7 +21,7 @@ export class KafkaAdmin{
                 {
                 topic,
                 numPartitions: 3,
-                replicationFactor: 2
+                replicationFactor: 1
             }]
          });
         console.log('Tópicos criados com sucesso!');

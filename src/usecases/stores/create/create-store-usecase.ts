@@ -39,6 +39,8 @@ export class CreateStoreUseCase{
         address,
         hasERPIntegration,
     }: ICreateStoreRequest){
+        console.log(userId)
+
         const store = await this.createStore({
             userId,
             name,
@@ -61,7 +63,6 @@ export class CreateStoreUseCase{
             throw new Error('Address not created')
         }
 
-        return store
     }
 
     private async createStore({
@@ -74,7 +75,6 @@ export class CreateStoreUseCase{
         stateRegister,
         hasERPIntegration
     }:ICreateStoreRequest): Promise<Store>{
-
          const storeCreated = await this.melhorEnvioProvider.createStore({
             name,
             email,
@@ -99,8 +99,6 @@ export class CreateStoreUseCase{
             stateRegister,
             hasERPIntegration
         })
-
-        console.log(store)
 
         return store
     }

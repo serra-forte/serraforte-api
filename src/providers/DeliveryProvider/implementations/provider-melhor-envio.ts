@@ -86,6 +86,8 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
           console.error('Erro ao renovar o token:', refreshError);
           // throw refreshError;
         }
+      }else if (error instanceof AxiosError && error.response?.status === 422){
+        console.log('Erro ao criar loja:', error.response.data);
       }
       throw error;
     }

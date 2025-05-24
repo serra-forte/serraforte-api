@@ -23,7 +23,7 @@ export async function CreateStore(request: FastifyRequest, reply:FastifyReply){
                         message: "CPF ou CNPJ inválido",
                     }
                 ),
-                email: z.string().email(),
+                email: z.string().email({message: "E-mail inválido"}),
                 hasERPIntegration: z.boolean(),
                 name: z.string(),
                 stateRegister: z.string(),

@@ -11,7 +11,6 @@ interface ICreateStoreRequest{
     companyName: string;    
     document: string;        
     stateRegister: string;
-    hasERPIntegration: boolean   
     address: {
         postalCode: string;   
         street: string;       
@@ -37,7 +36,6 @@ export class CreateStoreUseCase{
         document,
         stateRegister,
         address,
-        hasERPIntegration,
     }: ICreateStoreRequest){
         const store = await this.createStore({
             userId,
@@ -48,7 +46,6 @@ export class CreateStoreUseCase{
             document,
             stateRegister,
             address,
-            hasERPIntegration,
         })
 
         if(!store){
@@ -71,7 +68,6 @@ export class CreateStoreUseCase{
         companyName,
         document,
         stateRegister,
-        hasERPIntegration
     }:ICreateStoreRequest): Promise<Store>{
          const storeCreated = await this.melhorEnvioProvider.createStore({
             name,
@@ -95,7 +91,6 @@ export class CreateStoreUseCase{
             companyName,
             document,
             stateRegister,
-            hasERPIntegration
         })
 
         return store

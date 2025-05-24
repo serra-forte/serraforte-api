@@ -508,7 +508,6 @@ model SeviceDelivery{
 model Store {
   id             String @id @default(uuid())
   melhorEnvioId String? @map("melhor_envio_id")
-  hasERPIntegration Boolean? @map("has_erp_integration")
 
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String? 

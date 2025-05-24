@@ -1,3 +1,7 @@
+import { ICreateStoreAddressRequest } from "./interfaces/request/create-store-address-request";
+import { ICreateStoreRequest } from "./interfaces/request/create-store-request";
+import { ICreateStoreResponse } from "./interfaces/response/create-store-response";
+
 export interface IRequestAuth {
     grant_type: string;
     client_id: number;
@@ -455,4 +459,6 @@ export interface IMelhorEnvioProvider {
     paymentToFreight(orderId: string): Promise<IPurchaseResponse | null>
     generateLabel(orderId: string): Promise<IResponseGenerateLabel | null>
     generateLabelLinkToPrinting(orderId: string): Promise<IResponseGenerateLabelLinkToPrinting | null>
+    createStore(data: ICreateStoreRequest): Promise<ICreateStoreResponse>
+    createStoreAddress(data: ICreateStoreAddressRequest): Promise<boolean>
 }

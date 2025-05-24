@@ -5,6 +5,9 @@ import { IRailwayProvider } from '@/providers/RailwayProvider/interface-railway-
 import "dotenv/config"
 import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider';
 import { IUsersRepository } from '@/repositories/interfaces/interface-users-repository';
+import { ICreateStoreRequest } from '../interfaces/request/create-store-request';
+import { ICreateStoreResponse } from '../interfaces/response/create-store-response';
+import { ICreateStoreAddressRequest } from '../interfaces/request/create-store-address-request';
 
 export class MelhorEnvioProvider implements IMelhorEnvioProvider {
   private accessToken: string | null = null;
@@ -13,6 +16,81 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
     private mailProvider: IMailProvider,
     private usersRepository: IUsersRepository
   ) {}
+  async createStoreAddress(data: ICreateStoreAddressRequest): Promise<boolean> {
+    try{
+      const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/companies/${data.store_id}/addresses`, data, {
+        headers: {
+          'Authorization': `Bearer ${process.env.MELHOR_ENVIO_ACCESS_TOKEN}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json', 
+          'User-Agent': 'Serra Forte/kaiomoreira.dev@gmail.com',
+        },
+      });
+
+      if (response.status === 200) {
+        return true
+      }else{
+        return false
+      }
+    }catch(error: any){
+      // * Renovar o token caso seja o problema de token expirado
+      if (error instanceof AxiosError && error.response?.status === 401) {
+        console.log('Token expirado, renovando...');
+        // Tenta renovar o tokenn
+        try {
+          const response = await this.refreshToken();
+          console.log('Token renovado com sucesso');
+
+          if(response.access_token){
+            // Após renovar o token, tenta novamente calcular o frete
+            return this.createStoreAddress(data);
+          }
+        } catch (refreshError) {
+          console.error('Erro ao renovar o token:', refreshError);
+          // throw refreshError;
+        }
+      }
+      throw error;
+    }
+  }
+  async createStore(data: ICreateStoreRequest): Promise<ICreateStoreResponse> {
+    try{
+      const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/companies`, data, {
+        headers: {
+          'Authorization': `Bearer ${process.env.MELHOR_ENVIO_ACCESS_TOKEN}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json', 
+          'User-Agent': 'Serra Forte/kaiomoreira.dev@gmail.com',
+        },
+      });
+
+      if (response.status === 200) {
+        console.log(response.data)
+        return response.data;
+      }else{
+        console.log(response.data)
+        return response.data;
+      }
+    }catch(error: any){
+      if (error instanceof AxiosError && error.response?.status === 401) {
+        console.log('Token expirado, renovando...');
+        // Tenta renovar o tokenn
+        try {
+          const response = await this.refreshToken();
+          console.log('Token renovado com sucesso');
+
+          if(response.access_token){
+            // Após renovar o token, tenta novamente calcular o frete
+            return this.createStore(data);
+          }
+        } catch (refreshError) {
+          console.error('Erro ao renovar o token:', refreshError);
+          // throw refreshError;
+        }
+      }
+      throw error;
+    }
+  }
   async generateLabelLinkToPrinting(orderId: string): Promise<IResponseGenerateLabelLinkToPrinting | null> {
     try {
       const response = await axios.post(`${env.MELHOR_ENVIO_API_URL}/api/v2/me/shipment/print`, {

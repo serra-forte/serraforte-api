@@ -60,6 +60,7 @@ model User {
   discountCoupons      DiscountCoupon[]
   reviews              Review[]
   storeHours           StoreHours[]
+  stores               Store[]
 
   @@map("users")
 }
@@ -292,6 +293,9 @@ model Address {
   delivery   Delivery? @relation(fields: [deliveryId], references: [id])
   deliveryId String?   @unique
 
+  store   Store?   @relation(fields: [storeId], references: [id])
+  storeId String? @unique
+
   street       String?
   num          Decimal?
   city         String?
@@ -501,3 +505,26 @@ model SeviceDelivery{
 
   @@map("service_deliveries")
 }
+model Store {
+  id             String @id @default(uuid())
+  melhorEnvioId String? @map("melhor_envio_id") @unique
+  hasERPIntegration Boolean? @map("has_erp_integration")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  
+  name           String
+  email          String
+  description    String
+  companyName    String @map("company_name")
+  document       String
+  stateRegister  String @map("state_register")
+  
+  address Address[]
+
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("stores")
+}
+

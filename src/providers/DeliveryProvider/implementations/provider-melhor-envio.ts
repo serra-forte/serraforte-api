@@ -65,10 +65,8 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       });
 
       if (response.status === 200) {
-        console.log(response.data)
         return response.data;
       }else{
-        console.log(response.data)
         return response.data;
       }
     }catch(error: any){
@@ -105,10 +103,8 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       });
 
       if (response.status === 200) {
-        console.log(response.data)
         return response.data;
       }else{
-        console.log(response.data)
         return null
       }
     } catch (error: any) {
@@ -147,10 +143,8 @@ export class MelhorEnvioProvider implements IMelhorEnvioProvider {
       });
 
       if (response.status === 200) {
-        console.log(response.data)
         return response.data;
       }else{
-        console.log(response.data)
         return null
       }
     } catch (error: any) {

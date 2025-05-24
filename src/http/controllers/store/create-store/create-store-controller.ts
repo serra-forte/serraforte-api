@@ -1,5 +1,6 @@
 import { makeCreateStore } from '@/usecases/factories/stores/create-store-usecase'
 import { FastifyReply, FastifyRequest } from 'fastify'
+import { cpf, cnpj } from 'cpf-cnpj-validator';
 import { z } from 'zod'
 
 export async function CreateStore(request: FastifyRequest, reply:FastifyReply){
@@ -15,8 +16,14 @@ export async function CreateStore(request: FastifyRequest, reply:FastifyReply){
                 }),
                 companyName: z.string(),
                 description: z.string(),
-                document: z.string(),
-                email: z.string(),
+                document: z.string().refine((val) => {
+                        return cpf.isValid(val) || cnpj.isValid(val);
+                    }, 
+                    {
+                        message: "CPF ou CNPJ inválido",
+                    }
+                ),
+                email: z.string().email(),
                 hasERPIntegration: z.boolean(),
                 name: z.string(),
                 stateRegister: z.string(),

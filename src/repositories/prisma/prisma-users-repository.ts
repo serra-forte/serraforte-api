@@ -245,7 +245,7 @@ export class PrismaUsersRepository implements IUsersRepository{
                         createdAt: 'desc',
                     }
                 },
-                products: true
+                // products: true
             }
         }) as unknown as User
 

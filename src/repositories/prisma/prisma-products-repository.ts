@@ -241,7 +241,11 @@ export class PrismaProductsRepository  implements IProductsRepository{
             orderBy: orderByConditions
         })
 
+        console.log(countPage)
+
         const totalPages = countPage > 0 ? Math.ceil(countPage / 13) : 0
+
+        console.log(totalPages)
 
          // Calcular a média das avaliações para cada produto
          products.map(product => {

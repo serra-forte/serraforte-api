@@ -31,26 +31,26 @@ export class RemoteConfigProviderFirebase implements RemoteConfigProvider {
 
 
     async updateSystemStatus(isUpdating: boolean): Promise<void> {
-        try {
-          const template = await this.remoteConfig.getTemplate();
-    
-          const systemStatusParam = template as RemoteConfigTemplate;
-    
-          const newStatus: SystemStatus = {
-            isSystemUpdating: isUpdating
-          };
-    
-          systemStatusParam.parameters.systemStatus = {
-            defaultValue: {
-              value: JSON.stringify(newStatus)
-            },
-            valueType: 'JSON'
-          };
-    
-          await this.remoteConfig.publishTemplate(template);
-        } catch (error) {
-          console.error('Erro ao atualizar o status do sistema:', error);
-          throw error;
-        }
+      try {
+        const template = await this.remoteConfig.getTemplate();
+
+        const parameters = template.parameters;
+        const systemStatusParam = parameters['systemStatus' as keyof typeof parameters];
+
+        const newStatus: SystemStatus = {
+          isSystemUpdating: isUpdating
+        };
+
+        systemStatusParam.defaultValue = {
+          value: JSON.stringify(newStatus)
+        };
+        systemStatusParam.valueType = 'JSON';
+
+        await this.remoteConfig.publishTemplate(template);
+      } catch (error) {
+        console.error('Erro ao atualizar o status do sistema:', error);
+        throw error;
       }
+    }
+
 }

@@ -237,15 +237,11 @@ export class PrismaProductsRepository  implements IProductsRepository{
                   filters.category ? { categoryId: filters.category } : {},
                 ],
               },
-            // Adicionar ordenação condicional com base no filtro `sales`
-            orderBy: orderByConditions
         })
 
         console.log(countPage)
 
-        const totalPages = countPage > 0 ? Math.ceil(countPage / 13) : 0
-
-        console.log(totalPages)
+        const totalPages = countPage > 0 ? Math.ceil(countPage / 13) : 1;
 
          // Calcular a média das avaliações para cada produto
          products.map(product => {

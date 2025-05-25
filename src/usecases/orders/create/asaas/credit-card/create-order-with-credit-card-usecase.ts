@@ -16,6 +16,7 @@ import { IProductRelationsDTO } from '@/dtos/product-relations.dto';
 import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-discount-coupons-repository';
 import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementations/provider-melhor-envio';
 import { IDeliveryService } from '../pix/create-order-with-pix-usecase';
+import { IAddressesRepository } from '@/repositories/interfaces/interface-addresses-repository';
 
 export interface IRequestCreateOrderWithCreditCard {
     userId: string
@@ -36,6 +37,7 @@ export interface IRequestCreateOrderWithCreditCard {
         code?: string | null
     }[] | null
     address?: {
+        id: string
         street?: string | null
         num?: number | null
         neighborhood?: string | null
@@ -75,7 +77,7 @@ export class CreateOrderWithCreditCardUsecase {
         private asaasProvider: IAsaasProvider,
         private mailProvider: IMailProvider,
         private discountCoupon: IDiscountCouponsRepository,
-        private melhorEnvioProvider: MelhorEnvioProvider
+        private addressRepository: IAddressesRepository
     ) {}
 
     async execute({
@@ -387,6 +389,9 @@ export class CreateOrderWithCreditCardUsecase {
             total: Number(order.total), 
             items: order.items,
         } as unknown as IOrderRelationsDTO;
+
+        //  marcar endereço como usado por ultimo
+        await this.addressRepository.setLastUsedAddress(findUserExist.id)
 
         // retornar pedido criado
         return endOrder

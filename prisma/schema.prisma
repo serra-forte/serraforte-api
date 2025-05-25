@@ -306,6 +306,7 @@ model Address {
   complement   String?
   reference    String?
   active       Boolean? @default(true)
+  isLastUsed   Boolean?  @default(false)
 
   @@map("addresses")
 }

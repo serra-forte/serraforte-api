@@ -38,6 +38,7 @@ export async function CreateOrderWithAsaas(request: FastifyRequest, reply: Fasti
                 phone: z.string(),
             }).optional(),
             address: z.object({
+                id: z.string(),
                 street: z.string().optional().nullable(),
                 num: z.number().optional().nullable(),
                 neighborhood: z.string().optional().nullable(),

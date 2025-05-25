@@ -16,6 +16,7 @@ import { IOrderRelationsDTO } from '@/dtos/order-relations.dto';
 import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-discount-coupons-repository';
 import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementations/provider-melhor-envio';
 import { IDeliveryService } from '../pix/create-order-with-pix-usecase';
+import { IAddressesRepository } from '@/repositories/interfaces/interface-addresses-repository';
 
 export interface IRequestCreateOrderWithBoleto {
     userId: string
@@ -35,6 +36,7 @@ export interface IRequestCreateOrderWithBoleto {
         code?: string | null
     }[] | null
     address?: {
+        id: string
         street?: string | null
         num?: number | null
         neighborhood?: string | null
@@ -58,7 +60,7 @@ export class CreateOrderWithBoletoUsecase {
         private asaasProvider: IAsaasProvider,
         private mailProvider: IMailProvider,
         private discountCoupon: IDiscountCouponsRepository,
-        private melhorEnvioProvider: MelhorEnvioProvider
+        private addressRepository: IAddressesRepository
     ) {}
 
     async execute({
@@ -374,6 +376,9 @@ export class CreateOrderWithBoletoUsecase {
             endOrder.total += total;          // Acumula o total
             endOrder.items.push(...order.items); // spreed no array de items para acumular os items anteriores e os novos
         }
+
+         //  marcar endereço como usado por ultimo
+        await this.addressRepository.setLastUsedAddress(findUserExist.id)
 
         // criar variavel com caminho do template de email
         const templatePathApproved = './views/emails/confirmation-payment.hbs'

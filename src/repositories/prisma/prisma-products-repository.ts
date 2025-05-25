@@ -239,8 +239,6 @@ export class PrismaProductsRepository  implements IProductsRepository{
               },
         })
 
-        console.log(countPage)
-
         const totalPages = countPage > 0 ? Math.ceil(countPage / 13) : 1;
 
          // Calcular a média das avaliações para cada produto

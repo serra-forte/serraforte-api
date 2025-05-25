@@ -1,5 +1,5 @@
 import { IAsaasPayment } from '@/dtos/asaas-payment.dto';
-import { AsaasPaymentWallet, IAsaasProvider } from './../../../../../providers/PaymentProvider/interface-asaas-payment';
+import { IAsaasProvider } from './../../../../../providers/PaymentProvider/interface-asaas-payment';
 import { IShoppingCartRelationsDTO } from "@/dtos/shopping-cart-relations.dto";
 import { IDateProvider } from "@/providers/DateProvider/interface-date-provider";
 import { ICartItemRepository } from "@/repositories/interfaces/interface-cart-item-repository";
@@ -8,13 +8,12 @@ import { IProductsRepository, IResponseFindProductWithReviews } from "@/reposito
 import { IShoppingCartRepository } from "@/repositories/interfaces/interface-shopping-cart-repository";
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository";
 import { AppError } from "@/usecases/errors/app-error";
-import { Address, Box, BoxInProduct, CartItem, Item, PaymentMethod, User } from "@prisma/client";
+import { Address, PaymentMethod } from "@prisma/client";
 import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider';
 import { IOrderRelationsDTO } from '@/dtos/order-relations.dto';
 import { IUserRelations } from '@/dtos/user-relations.dto';
 import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-discount-coupons-repository';
-import { MelhorEnvioProvider } from '@/providers/DeliveryProvider/implementations/provider-melhor-envio';
-import { IDeliveryRepository } from '@/repositories/interfaces/interface-deliveries-repository';
+import { IAddressesRepository } from '@/repositories/interfaces/interface-addresses-repository';
 
 export interface IDeliveryService{
     serviceId: number
@@ -31,11 +30,6 @@ interface IITemRelation{
     price: number,
     mainImage: string
     quantity: number,
-    boxes: {
-        id: string
-        productId: string
-        boxId: string
-    }[]
 }
 export interface IFreight{
     userId: string
@@ -59,6 +53,7 @@ export interface IRequestCreateOrderWithPix {
         code?: string | null
     }[] | null
     address?: {
+        id: string
         street?: string | null
         num?: number | null
         neighborhood?: string | null
@@ -84,6 +79,7 @@ export class CreateOrderWithPixUsecase {
         private asaasProvider: IAsaasProvider,
         private mailProvider: IMailProvider,
         private discountCoupon: IDiscountCouponsRepository,
+        private addressRepository: IAddressesRepository
     ) {}
 
     async execute({
@@ -376,6 +372,9 @@ export class CreateOrderWithPixUsecase {
             total: Number(order.total), 
             items: order.items,
         } as unknown as IOrderRelationsDTO;
+
+        //  marcar endereço como usado por ultimo
+        await this.addressRepository.setLastUsedAddress(findUserExist.id)
         
 
         // criar variavel com caminho do template de email

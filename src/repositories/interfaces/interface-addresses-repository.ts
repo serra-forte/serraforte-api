@@ -7,4 +7,5 @@ export interface IAddressesRepository {
     updateById(data:Prisma.AddressUncheckedUpdateInput):Promise<Address>
     listByUser(userId:string):Promise<Address[]>
     deleteById(id: string): Promise<void>
+    setLastUsedAddress(addressId: string): Promise<void>
 }

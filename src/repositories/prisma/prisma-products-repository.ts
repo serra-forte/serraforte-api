@@ -272,6 +272,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
             select:{
                 id: true,
                 code:true,
+                erpProductId: true,
                 name: true,
                 description: true,
                 price: true,
@@ -320,6 +321,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
             select:{
                 id: true,
                 code:true,
+                erpProductId: true,
                 name: true,
                 description: true,
                 price: true,
@@ -605,6 +607,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
             select:{
                 id: true,
                 code:true,
+                erpProductId: true,
                 name: true,
                 description: true,
                 price: true,
@@ -638,6 +641,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
             select:{
                 id: true,
                 code:true,
+                erpProductId: true,
                 name: true,
                 description: true,
                 price: true,
@@ -774,6 +778,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
             select:{
                 id: true,
                 code:true,
+                erpProductId: true,
                 name: true,
                 description: true,
                 price: true,

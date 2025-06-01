@@ -374,10 +374,11 @@ export class CreateOrderWithPixUsecase {
             items: order.items,
         } as unknown as IOrderRelationsDTO;
 
-        //  marcar endereço como usado por ultimo
-        await this.addressRepository.setLastUsedAddress(findUserExist.id)
+        if(address){
+            //  marcar endereço como usado por ultimo
+            await this.addressRepository.setLastUsedAddress(address.id)
+        }
         
-
         // criar variavel com caminho do template de email
         const templatePathApproved = './views/emails/confirmation-payment.hbs'
 

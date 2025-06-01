@@ -9,7 +9,7 @@ import { AppError } from "@/usecases/errors/app-error";
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository";
 import { ITokensRepository } from "@/repositories/interfaces/interface-tokens-repository";
 import { IBierHeldProvider } from "@/providers/BierHeldProvider/bier-held-interface";
-import { RemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider";
+import { IRemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider";
 
 interface IRequestRegisterAccount {
     email: string,
@@ -26,7 +26,7 @@ export class RegisterUseCase{
         private usersTokensRepository: ITokensRepository,
         private sendMailProvider: IMailProvider,
         private bierHeldProvider: IBierHeldProvider,
-        private remoteConfig: RemoteConfigProvider
+        private remoteConfig: IRemoteConfigProvider
         
     ) {}
 

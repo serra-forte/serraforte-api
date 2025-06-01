@@ -9,7 +9,7 @@ import { Status } from '@prisma/client';
 import 'dotenv/config';
 import { IProductsRepository } from '@/repositories/interfaces/interface-products-repository';
 import { KafkaProducer } from '@/providers/QueueProvider/kafka/kafka-producer';
-import { RemoteConfigProvider } from '@/providers/RemoteConfigProvider/interface-remote-config-provider';
+import { IRemoteConfigProvider } from '@/providers/RemoteConfigProvider/interface-remote-config-provider';
 
 export interface IRequestReceiveEvent {
   event: string
@@ -39,7 +39,7 @@ export class PaymentWebHookUseCases {
     private dayjsProvider: IDateProvider,
     private productRepository: IProductsRepository,
     private kafkaProducer: KafkaProducer,
-    private remoteConfig: RemoteConfigProvider
+    private remoteConfig: IRemoteConfigProvider
   ) {}
 
   async execute({ event, payment:paymenAsaas }: IRequestReceiveEvent): Promise<void> {

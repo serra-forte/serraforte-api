@@ -6,8 +6,6 @@ import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 import { KafkaConsumerCreateOrder } from "../../interface/bier-held/kafka-consumer-create-order";
 import { IProductsRepository } from "@/repositories/interfaces/interface-products-repository";
 import { PrismaProductsRepository } from "@/repositories/prisma/prisma-products-repository";
-import { RemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider";
-import { RemoteConfigProviderFirebase } from "@/providers/RemoteConfigProvider/implementations/provider-remote-config";
 
 export class CreateOrderBierHeld {
     private kafkaConsumer: KafkaConsumerCreateOrder;

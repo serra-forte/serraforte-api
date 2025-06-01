@@ -1,9 +1,9 @@
-import { RemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider";
+import { IRemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider";
 import { SystemStatus } from "@/providers/RemoteConfigProvider/interface/get-template-response";
 
 export class IsSystemUpdatingUseCase {
     constructor(
-        private remoteConfig: RemoteConfigProvider
+        private remoteConfig: IRemoteConfigProvider
     ){}
 
     async execute(): Promise<SystemStatus> {

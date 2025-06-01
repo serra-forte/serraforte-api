@@ -23,7 +23,7 @@ import { IRailwayProvider } from "@/providers/RailwayProvider/interface-railway-
 import { RailwayProvider } from "@/providers/RailwayProvider/implementations/provider-railway";
 import { IBierHeldProvider } from "@/providers/BierHeldProvider/bier-held-interface";
 import { BierHeldProvider } from "@/providers/BierHeldProvider/implementations/bier-held-provider";
-import { RemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider";
+import { IRemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider";
 import { RemoteConfigProviderFirebase } from "@/providers/RemoteConfigProvider/implementations/provider-remote-config";
 
 export interface IBoxPriceRange{
@@ -46,7 +46,7 @@ export class NodeCronProvider implements INodeCronProvider {
     railwayProvider: IRailwayProvider
     melhorEnvio: IMelhorEnvioProvider
     bierHeldProvider: IBierHeldProvider
-    systemProvider: RemoteConfigProvider
+    systemProvider: IRemoteConfigProvider
 
     constructor(
     ) {

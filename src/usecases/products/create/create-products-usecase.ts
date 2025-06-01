@@ -1,4 +1,4 @@
-import { RemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider"
+import { IRemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider"
 import { ICategoriesRepository } from "@/repositories/interfaces/interface-categories-repository"
 import { IProductsRepository } from "@/repositories/interfaces/interface-products-repository"
 import { IUsersRepository } from "@/repositories/interfaces/interface-users-repository"
@@ -26,7 +26,7 @@ export class CreateProductsUseCase {
         private productsRepository: IProductsRepository,
         private categoriesRepository: ICategoriesRepository,
         private usersRepository: IUsersRepository,
-        private remoteConfig: RemoteConfigProvider
+        private remoteConfig: IRemoteConfigProvider
     ){}
 
     async execute({ 

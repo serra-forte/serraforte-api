@@ -1,9 +1,9 @@
 import { firebaseApp } from "@/config/firebase-connection";
-import { RemoteConfigProvider } from "../interface-remote-config-provider";
+import { IRemoteConfigProvider } from "../interface-remote-config-provider";
 import { RemoteConfig } from "firebase-admin/lib/remote-config/remote-config";
 import { RemoteConfigTemplate, SystemStatus } from "../interface/get-template-response";
 
-export class RemoteConfigProviderFirebase implements RemoteConfigProvider {
+export class RemoteConfigProviderFirebase implements IRemoteConfigProvider {
     remoteConfig: RemoteConfig
 
     constructor(){

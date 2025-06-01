@@ -7,6 +7,6 @@ export class IsSystemUpdatingUseCase {
     ){}
 
     async execute(): Promise<SystemStatus> {
-        return await this.remoteConfig.getTemplate('isSystemUpdating')
+        return await this.remoteConfig.getTemplate('systemStatus')
     }
 }

@@ -17,7 +17,7 @@ export class BierHeldProvider implements IBierHeldProvider{
     
     async getItem(id: number): Promise<IGetItemResponse | null> {
         try{
-            const path = `${env.BIER_HELD_API_URL}/v2/items/${id}`
+            const path = `${env.BIER_HELD_API_URL}/v2/items/find_by_code/${id}`
 
             await this.verifyToken()
 

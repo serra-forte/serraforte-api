@@ -434,7 +434,8 @@ export class PrismaProductsRepository  implements IProductsRepository{
         // Buscar produtos pela categoria com avaliações
         const products = await prisma.product.findMany({
             where: {
-                categoryId: id
+                categoryId: id,
+                active: true
             },
             take: 13,
             skip: page ? (page - 1) * 13 : 0,

@@ -20,7 +20,7 @@ export async function CreateOrderWithAsaas(request: FastifyRequest, reply: Fasti
                     id: z.number(),
                     name: z.string(),
                 })
-            }),
+            }).optional().nullable(),
             creditCard: z.object({
                 holderName: z.string().optional(),
                 number: z.string().optional(),

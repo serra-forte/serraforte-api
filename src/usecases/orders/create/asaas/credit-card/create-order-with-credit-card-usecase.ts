@@ -20,7 +20,7 @@ import { IAddressesRepository } from '@/repositories/interfaces/interface-addres
 
 export interface IRequestCreateOrderWithCreditCard {
     userId: string
-    freight: {
+    freight?: {
         id: number
         name: string
         price: number
@@ -29,7 +29,7 @@ export interface IRequestCreateOrderWithCreditCard {
             id: number
             name: string
         }
-    }
+    } | null
     remoteIp: string
     installmentCount?: number | null,
     withdrawStore: boolean
@@ -156,7 +156,8 @@ export class CreateOrderWithCreditCardUsecase {
             throw new AppError("Lojista não encontrado", 404)
         }
 
-        deliveryService.push({
+        if(freight){
+            deliveryService.push({
             shopkeeperId: findShopKeeperExist.id,
             serviceId: freight.id,
             serviceName: freight.name,
@@ -165,6 +166,7 @@ export class CreateOrderWithCreditCardUsecase {
         })
 
         total += freight.price
+        }
 
         if(coupons && coupons.length > 0) {
             // filtrar cupom de desconto pelo id do lojista no array de cupons
@@ -294,18 +296,18 @@ export class CreateOrderWithCreditCardUsecase {
             // description,
             delivery: {
                 create: {
-                    shippingDate: this.dateProvider.addDays(freight.delivery_time),
+                    shippingDate: freight ?  this.dateProvider.addDays(freight.delivery_time) : undefined,
                     address: {
                         create: address ? address as Address : undefined
                     },
-                    serviceDelivery:{
-                        create:{
+                    serviceDelivery: freight ? {
+                         create:{
                             companyName: freight.company.name,
                             serviceId: freight.id,
                             price: freight.price,
                             serviceName: freight.name
                         }
-                    }
+                    } : undefined
                 }
             },
             items: {

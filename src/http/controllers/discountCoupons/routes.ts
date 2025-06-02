@@ -16,7 +16,7 @@ export async function discountCouponRoutes(fastifyApp: FastifyInstance) {
   fastifyApp.post(
     '/',
     {
-      onRequest: [verifyTokenJWT, verifyUserRole('SHOPKEEPER', 'ADMIN', 'SUPER')],
+      onRequest: [verifyTokenJWT, verifyUserRole('ADMIN', 'SUPER')],
     },
     CreateDiscountCounpon,
   )
@@ -25,7 +25,7 @@ export async function discountCouponRoutes(fastifyApp: FastifyInstance) {
   fastifyApp.get(
     '/',
     {
-      onRequest: [verifyTokenJWT, verifyUserRole('SHOPKEEPER','ADMIN', 'SUPER')],
+      onRequest: [verifyTokenJWT, verifyUserRole('ADMIN', 'SUPER')],
     },
     ListDiscountCounpon,
   )
@@ -34,7 +34,7 @@ export async function discountCouponRoutes(fastifyApp: FastifyInstance) {
   fastifyApp.get(
     '/shopkeeper',
     {
-      onRequest: [verifyTokenJWT, verifyUserRole('SHOPKEEPER','ADMIN', 'SUPER')],
+      onRequest: [verifyTokenJWT, verifyUserRole('ADMIN', 'SUPER')],
     },
     ListByShopkeeper,
   )
@@ -43,7 +43,7 @@ export async function discountCouponRoutes(fastifyApp: FastifyInstance) {
   fastifyApp.get(
     '/:id',
     {
-      onRequest: [verifyTokenJWT, verifyUserRole('SHOPKEEPER','ADMIN', 'SUPER')],
+      onRequest: [verifyTokenJWT, verifyUserRole('ADMIN', 'SUPER')],
     },
     FindDiscountCounponById,
   )
@@ -55,7 +55,7 @@ export async function discountCouponRoutes(fastifyApp: FastifyInstance) {
   fastifyApp.delete(
     '/:id',
     {
-      onRequest: [verifyTokenJWT, verifyUserRole('SHOPKEEPER','ADMIN', 'SUPER')],
+      onRequest: [verifyTokenJWT, verifyUserRole('ADMIN', 'SUPER')],
     },
     DeleteDiscountCounpon,
   )

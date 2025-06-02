@@ -61,7 +61,7 @@ export class CreateDiscountCounponUseCase {
     }
 
     // verificar se o valor minimo para uso do cupom é maior que o desconto
-    if (minValue < discount) {
+    if(type !== 'PERCENTAGE' && minValue < discount ){
       throw new AppError('O valor minimo para uso do cupom deve ser maior que o desconto', 400)
     }
 

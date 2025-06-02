@@ -25,11 +25,12 @@ export class FindDiscountCounponByCodeUseCase {
   constructor(
     private discountCoupon: IDiscountCouponsRepository,
     private dateProvider: IDateProvider,
+    private shopingCartRepository: IShoppingCartRepository
   ) {}
 
   async execute({
     code,
-  }: IRequestFindDiscountCoupon): Promise<boolean> {
+  }: IRequestFindDiscountCoupon): Promise<DiscountCoupon> {
     // buscar se o coupon ja existe pelo code
     const findCouponExist = await this.discountCoupon.findByCode(
       code,
@@ -62,6 +63,6 @@ export class FindDiscountCounponByCodeUseCase {
     }
 
     // retornar varial true ou false
-    return true
+    return findCouponExist
   }
 }

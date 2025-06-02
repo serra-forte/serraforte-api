@@ -7,6 +7,7 @@ import { IShoppingCartRelationsDTO } from '@/dtos/shopping-cart-relations.dto'
 
 interface IRequestFindDiscountCoupon {
   code: string
+  userId: string
 }
 
 export interface CouponFormatted {
@@ -30,6 +31,7 @@ export class FindDiscountCounponByCodeUseCase {
 
   async execute({
     code,
+    userId
   }: IRequestFindDiscountCoupon): Promise<DiscountCoupon> {
     // buscar se o coupon ja existe pelo code
     const findCouponExist = await this.discountCoupon.findByCode(
@@ -60,6 +62,20 @@ export class FindDiscountCounponByCodeUseCase {
     // validar se o coupon expirou
     if (!isValidCoupon) {
       throw new AppError('Cupom expirado', 410)
+    }
+
+    const findShoppingCart = await this.shopingCartRepository.findByUserId(userId)
+
+    if(!findShoppingCart){
+      throw new AppError('Carrinho de compras nao encontrado', 404)
+    }
+
+    const total = Number(findShoppingCart.total)
+
+    const minValeForDiscount = findCouponExist.type === 'percent' ? total * Number(findCouponExist.discount) / 100 : Number(findCouponExist.discount)
+
+    if(total < minValeForDiscount){
+      throw new AppError('Cupom nao pode ser utilizado com o valor atual', 400)
     }
 
     // retornar varial true ou false

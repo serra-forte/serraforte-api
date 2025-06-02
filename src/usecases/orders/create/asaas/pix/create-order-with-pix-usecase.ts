@@ -251,6 +251,8 @@ export class CreateOrderWithPixUsecase {
 
         let countBooking = await this.orderRepository.countOrders()
         let code = `#${countBooking + 1}`
+
+        console.log(code)
         let stopVerifyCode = false
         // fazer laço para buscar reserva através do code para ve se existe
         // enquanto existir alterar o valor do code e pesquisar novamente
@@ -267,7 +269,6 @@ export class CreateOrderWithPixUsecase {
                 stopVerifyCode = true
             }
         }while(!stopVerifyCode)
-        console.log(code)
 
         // criar pedido passando lista de itens para criar juntos
         const order = await this.orderRepository.create({

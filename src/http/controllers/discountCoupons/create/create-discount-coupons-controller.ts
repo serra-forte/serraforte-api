@@ -17,10 +17,9 @@ export async function CreateDiscountCounpon(
       quantity: z.number().positive().int(),
       type: z.enum(['FIXED', 'PERCENTAGE']),
       minValue: z.number().positive(),
-      userId: z.string().uuid(),
     })
 
-    const { name, code, discount, expireDate, startDate, active, quantity, type, minValue, userId } =
+    const { name, code, discount, expireDate, startDate, active, quantity, type, minValue } =
       discountCouponSchemaBody.parse(request.body)
 
     const createDiscountCouponUseCase = await makeCreateDiscountCoupon()
@@ -31,7 +30,7 @@ export async function CreateDiscountCounpon(
   
 
     const discountCoupon = await createDiscountCouponUseCase.execute({
-      userId,
+      userId: request.user.id,
       name,
       code,
       discount,

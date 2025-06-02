@@ -62,7 +62,7 @@ export class CreateDiscountCounponUseCase {
 
     // verificar se o valor minimo para uso do cupom é maior que o desconto
     if(type !== 'PERCENTAGE' && minValue < discount ){
-      throw new AppError('O valor minimo para uso do cupom deve ser maior que o desconto', 400)
+      throw new AppError('O valor minimo para uso do cupom deve ser maior que o desconto Fixo', 400)
     }
 
     // validar se a data inicial é anterior a data atual

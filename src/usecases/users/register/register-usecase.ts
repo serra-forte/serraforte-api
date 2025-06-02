@@ -59,7 +59,8 @@ export class RegisterUseCase{
         const hasErp = await this.remoteConfig.getTemplate('hasErp')
         let erpClientId = 0
         let erpUserId = 0
-        if(hasErp){
+        
+        if(hasErp.isValid){
             // salva no bier held o usuário criado
             const bierHeldResponse = await this.bierHeldProvider.createNaturalPerson({
                 fullName: name,

@@ -29,6 +29,6 @@ export interface RemoteConfigTemplate {
   
   // Interface para o valor parseado de systemStatus
   export interface SystemStatus {
-    isSystemUpdating: boolean;
+    isValid: boolean;
   }
   

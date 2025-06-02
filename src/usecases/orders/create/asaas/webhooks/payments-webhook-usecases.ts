@@ -251,7 +251,7 @@ export class PaymentWebHookUseCases {
         }
        
         const hasErp = await this.remoteConfig.getTemplate('hasErp')
-        if(hasErp){
+        if(hasErp.isValid){
           // chamar producer para enviar pedido para o ERP(bier-held)
           await this.kafkaProducer.execute('CREATE_ORDER_BIER_HELD', endOrder)
         }

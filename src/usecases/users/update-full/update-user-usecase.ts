@@ -168,7 +168,7 @@ export class UpdateUserUseCase{
         
         const hasErp = await this.remoteConfig.getTemplate('hasErp')
 
-        if(hasErp){
+        if(hasErp.isValid === true){
                 await this.bierHeldProvider.updateNaturalPerson({
                 id: findUserByEmail?.erpUserId as number,
                 fullName: name,

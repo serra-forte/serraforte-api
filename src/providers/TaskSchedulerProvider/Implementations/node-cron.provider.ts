@@ -98,9 +98,12 @@ export class NodeCronProvider implements INodeCronProvider {
                             })
                         }
                     }
-                }
 
-                await this.systemProvider.updateSystemStatus(false);
+                    // ultima posição do array
+                    if(product.erpProductId === listProducts[listProducts.length - 1].erpProductId){
+                        await this.systemProvider.updateSystemStatus(false);
+                    }
+                }
             } catch (error) {
                 console.error('Erro ao verificar reservas:', error);
             }

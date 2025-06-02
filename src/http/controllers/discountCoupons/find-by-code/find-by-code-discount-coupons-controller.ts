@@ -17,7 +17,6 @@ export async function FindDiscountCounponByCode(
 
     const discountCoupons = await findDiscountCouponUseCase.execute({
       code,
-      shopingCartId: request.user.shoppingCartId,
     })
 
     return reply.status(201).send(discountCoupons)

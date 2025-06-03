@@ -146,15 +146,16 @@ export class CreateOrderWithPixUsecase {
             throw new AppError("Lojista não encontrado", 404)
         }
 
-            if(freight){
-                deliveryService.push({
-                shopkeeperId: findShopKeeperExist.id,
-                serviceId: freight.id,
-                serviceName: freight.name,
-                companyName: freight.company.name,
-                price: freight.price
-            })
-            total += freight.price
+        if(freight){
+            deliveryService.push({
+            shopkeeperId: findShopKeeperExist.id,
+            serviceId: freight.id,
+            serviceName: freight.name,
+            companyName: freight.company.name,
+            price: freight.price
+        })
+        total += freight.price
+        
         }
         if(coupons && coupons.length > 0) {
             // filtrar cupom de desconto pelo id do lojista no array de cupons

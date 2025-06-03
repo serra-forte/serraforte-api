@@ -177,7 +177,7 @@ model CartItem {
 }
 
 model Order {
-  id             String       @id @unique @default(uuid())
+  id             String       @id @default(uuid())
   code           String?      @unique
   shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id])
   shoppingCartId String       @map("shopping_cart_id")

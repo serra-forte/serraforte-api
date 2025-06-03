@@ -177,7 +177,7 @@ model CartItem {
 }
 
 model Order {
-  id             String       @id @default(uuid())
+  id             String       @id @unique @default(uuid())
   code           String?      @unique
   shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id])
   shoppingCartId String       @map("shopping_cart_id")
@@ -497,7 +497,7 @@ model SeviceDelivery{
   id          String  @id @default(uuid())
 
   delivery Delivery @relation(fields: [deliveryId], references: [id])
-  deliveryId String  @unique
+  deliveryId String @unique
 
   serviceId Decimal? @map("service_id")
   serviceName String? @map("service_name")

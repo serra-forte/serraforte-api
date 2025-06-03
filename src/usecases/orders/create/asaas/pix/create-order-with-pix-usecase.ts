@@ -271,8 +271,54 @@ export class CreateOrderWithPixUsecase {
             }
         }while(!stopVerifyCode)
 
+        let order = {} as IOrderRelationsDTO;
+
         // criar pedido passando lista de itens para criar juntos
-        const order = await this.orderRepository.create({
+        if(withdrawStore === false){
+            order = await this.orderRepository.create({
+            userId: findUserExist.id,
+            code,
+            shoppingCartId: findShoppingCartExist.id,
+            total,
+            withdrawStore,
+            // description,
+            items: {
+                createMany: {
+                    data: findShoppingCartExist.cartItem.map(item => {
+                        return {
+                            productId: item.productId,
+                            userId: item.userId as string,
+                            quantity: item.quantity,
+                            name: item.name,
+                            price: Number(item.price),
+                            mainImage: item.mainImage,
+                            height: Number(item.height),
+                            width: Number(item.width),
+                            length: Number(item.length),
+                            weight: Number(item.weight),
+                        } 
+                    })
+                }
+            },
+            payment: {
+                create: {
+                    asaasPaymentId: paymentAsaas.id,
+                    userId: findUserExist.id,
+                    paymentMethod: PaymentMethod.PIX,
+                    invoiceUrl: paymentAsaas.invoiceUrl,
+                    value: total,
+                    discount: discountCoupomValue,
+                }
+            },
+            createdAt: dateNow
+        }) as unknown as IOrderRelationsDTO
+
+          if(!order) {
+            throw new AppError('Error create order', 400)
+        }
+
+        }else if(withdrawStore === true && freight){
+            order = await this.orderRepository.create({
             userId: findUserExist.id,
             code,
             shoppingCartId: findShoppingCartExist.id,
@@ -281,18 +327,18 @@ export class CreateOrderWithPixUsecase {
             // description,
              delivery: {
                 create: {
-                    shippingDate: freight && withdrawStore === false ?  this.dateProvider.addDays(freight.delivery_time) : undefined,
+                    shippingDate: this.dateProvider.addDays(freight.delivery_time),
                     address: {
                         create: address ? address as Address : undefined
                     },
-                    // serviceDelivery: freight ? {
-                    //      create:{
-                    //         companyName: freight.company.name,
-                    //         serviceId: freight.id,
-                    //         price: freight.price,
-                    //         serviceName: freight.name
-                    //     }
-                    // } : undefined
+                    serviceDelivery: {
+                         create:{
+                            companyName: freight.company.name,
+                            serviceId: freight.id,
+                            price: freight.price,
+                            serviceName: freight.name
+                        }
+                    } 
                 }
             },
             items: {
@@ -326,9 +372,12 @@ export class CreateOrderWithPixUsecase {
             createdAt: dateNow
         }) as unknown as IOrderRelationsDTO
 
-        if(!order) {
+          if(!order) {
             throw new AppError('Error create order', 400)
+           }
+        
         }
+      
 
         // decrementar quantidade no estoque
         for(let item of findShoppingCartExist.cartItem) {

@@ -14,6 +14,7 @@ import { IOrderRelationsDTO } from '@/dtos/order-relations.dto';
 import { IUserRelations } from '@/dtos/user-relations.dto';
 import { IDiscountCouponsRepository } from '@/repositories/interfaces/interface-discount-coupons-repository';
 import { IAddressesRepository } from '@/repositories/interfaces/interface-addresses-repository';
+import { IServiceDeliveryRepository } from '@/repositories/interfaces/service-delivery-repository';
 
 export interface IDeliveryService{
     serviceId: number
@@ -79,7 +80,8 @@ export class CreateOrderWithPixUsecase {
         private asaasProvider: IAsaasProvider,
         private mailProvider: IMailProvider,
         private discountCoupon: IDiscountCouponsRepository,
-        private addressRepository: IAddressesRepository
+        private addressRepository: IAddressesRepository,
+        private serviceDelivery: IServiceDeliveryRepository
     ) {}
 
     async execute({
@@ -318,7 +320,7 @@ export class CreateOrderWithPixUsecase {
         }
 
         }else if(withdrawStore === false && freight){
-            order = await this.orderRepository.create({
+            await this.orderRepository.create({
             userId: findUserExist.id,
             code,
             shoppingCartId: findShoppingCartExist.id,
@@ -331,14 +333,6 @@ export class CreateOrderWithPixUsecase {
                     address: {
                         create: address ? address as Address : undefined
                     },
-                    serviceDelivery: {
-                         create:{
-                            companyName: freight.company.name,
-                            serviceId: freight.id,
-                            price: freight.price,
-                            serviceName: freight.name
-                        }
-                    } 
                 }
             },
             items: {
@@ -375,7 +369,14 @@ export class CreateOrderWithPixUsecase {
           if(!order) {
             throw new AppError('Error create order', 400)
            }
-        
+
+           await this.serviceDelivery.create({
+               deliveryId: order.delivery.id,
+               companyName: freight.company.name,
+               serviceId: freight.id,
+               price: freight.price,
+               serviceName: freight.name
+           })
         }
       
 

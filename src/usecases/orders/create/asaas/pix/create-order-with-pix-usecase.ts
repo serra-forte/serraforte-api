@@ -279,22 +279,22 @@ export class CreateOrderWithPixUsecase {
             total,
             withdrawStore,
             // description,
-             delivery: {
-                create: {
-                    shippingDate: freight ?  this.dateProvider.addDays(freight.delivery_time) : undefined,
-                    address: {
-                        create: address ? address as Address : undefined
-                    },
-                    serviceDelivery: freight ? {
-                         create:{
-                            companyName: freight.company.name,
-                            serviceId: freight.id,
-                            price: freight.price,
-                            serviceName: freight.name
-                        }
-                    } : undefined
-                }
-            },
+            //  delivery: {
+            //     create: {
+            //         shippingDate: freight ?  this.dateProvider.addDays(freight.delivery_time) : undefined,
+            //         address: {
+            //             create: address ? address as Address : undefined
+            //         },
+            //         serviceDelivery: freight ? {
+            //              create:{
+            //                 companyName: freight.company.name,
+            //                 serviceId: freight.id,
+            //                 price: freight.price,
+            //                 serviceName: freight.name
+            //             }
+            //         } : undefined
+            //     }
+            // },
             items: {
                 createMany: {
                     data: findShoppingCartExist.cartItem.map(item => {

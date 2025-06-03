@@ -369,7 +369,7 @@ export class CreateOrderWithPixUsecase {
           if(!order) {
             throw new AppError('Error create order', 400)
            }
-
+           console.log(order.delivery.id)
            await this.serviceDelivery.create({
                deliveryId: order.delivery.id,
                companyName: freight.company.name,

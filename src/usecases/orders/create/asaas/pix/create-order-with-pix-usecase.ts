@@ -274,7 +274,7 @@ export class CreateOrderWithPixUsecase {
         let order = {} as IOrderRelationsDTO;
 
         // criar pedido passando lista de itens para criar juntos
-        if(withdrawStore === false){
+        if(withdrawStore === true){
             order = await this.orderRepository.create({
             userId: findUserExist.id,
             code,
@@ -317,7 +317,7 @@ export class CreateOrderWithPixUsecase {
             throw new AppError('Error create order', 400)
         }
 
-        }else if(withdrawStore === true && freight){
+        }else if(withdrawStore === false && freight){
             order = await this.orderRepository.create({
             userId: findUserExist.id,
             code,

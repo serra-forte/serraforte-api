@@ -702,9 +702,15 @@ export class PrismaOrderRepository implements IOrderRepository {
         
         return {
             orders: orders.map(order => {
+                let total = 0
+
+                if(order.delivery.freights.length > 0){
+                    total = order.delivery.freights.reduce((acc, freight) => acc + Number(freight.price), 0)
+                }
+                
                 return{
                     ...order,
-                    total: Number(order.total) + Number(order.delivery.freights.reduce((acc, freight) => acc + Number(freight.price), 0))
+                    total
                 }
             }),
             totalPages

@@ -8,6 +8,7 @@ import { PrismaCartItemRepository } from "@/repositories/prisma/prisma-cart-item
 import { PrismaDiscountCounpons } from "@/repositories/prisma/prisma-discount-counpons-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { PrismaProductsRepository } from "@/repositories/prisma/prisma-products-repository";
+import { PrismaServiceDeliveryRepository } from "@/repositories/prisma/prisma-service-delivery-repository";
 import { PrismaShoppingCartRepository } from "@/repositories/prisma/prisma-shopping-cart-repository";
 import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
 import { CreateOrderWithPixUsecase } from "@/usecases/orders/create/asaas/pix/create-order-with-pix-usecase";
@@ -23,6 +24,7 @@ export async function makeCreateOrderWithPixUsecase(): Promise<CreateOrderWithPi
         const sendGridProvider = new MailProvider()
         const discountCouponRepository = new PrismaDiscountCounpons()
         const addressRepository = new PrismaAddressesRepository()
+        const serviceDelivery = new PrismaServiceDeliveryRepository()
 
         const createOrderWithPixUsecase = new CreateOrderWithPixUsecase(
             orderRepository,
@@ -34,7 +36,8 @@ export async function makeCreateOrderWithPixUsecase(): Promise<CreateOrderWithPi
             asaasProvider,
             sendGridProvider,
             discountCouponRepository,
-            addressRepository
+            addressRepository,
+            serviceDelivery
         )
         return createOrderWithPixUsecase
 }

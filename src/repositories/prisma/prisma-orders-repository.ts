@@ -2,6 +2,7 @@ import { Box, Order, Prisma, Status, User } from "@prisma/client";
 import { IFilterOrders, IOrderRepository, IResponseListOrders } from "../interfaces/interface-order-repository";
 import { prisma } from "@/lib/prisma";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
+import { randomUUID } from "node:crypto";
 
 export class PrismaOrderRepository implements IOrderRepository {
     async addBierHeldOrderId(id: string, erpOrderId: number): Promise<void> {
@@ -495,7 +496,10 @@ export class PrismaOrderRepository implements IOrderRepository {
     }
     async create(data: Prisma.OrderUncheckedCreateInput){
         const order = await prisma.order.create({
-            data,
+            data:{
+                ...data,
+                id: randomUUID()
+            },
             select:{
                 id: true,
                 shoppingCartId: true,

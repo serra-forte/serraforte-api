@@ -273,84 +273,28 @@ export class CreateOrderWithPixUsecase {
             }
         }while(!stopVerifyCode)
 
-        let order = {} as IOrderRelationsDTO;
-
-        // criar pedido passando lista de itens para criar juntos
-        if(withdrawStore === true){
-            order = await this.orderRepository.create({
+         // criar pedido passando lista de itens para criar juntos
+        const order = await this.orderRepository.create({
             userId: findUserExist.id,
             code,
             shoppingCartId: findShoppingCartExist.id,
             total,
             withdrawStore,
             // description,
-            items: {
-                createMany: {
-                    data: findShoppingCartExist.cartItem.map(item => {
-                        return {
-                            productId: item.productId,
-                            userId: item.userId as string,
-                            quantity: item.quantity,
-                            name: item.name,
-                            price: Number(item.price),
-                            mainImage: item.mainImage,
-                            height: Number(item.height),
-                            width: Number(item.width),
-                            length: Number(item.length),
-                            weight: Number(item.weight),
-                        } 
-                    })
-                }
-            },
-            payment: {
+            delivery: {
                 create: {
-                    asaasPaymentId: paymentAsaas.id,
-                    userId: findUserExist.id,
-                    paymentMethod: PaymentMethod.PIX,
-                    invoiceUrl: paymentAsaas.invoiceUrl,
-                    value: total,
-                    discount: discountCoupomValue,
-                }
-            },
-            createdAt: dateNow
-        }) as unknown as IOrderRelationsDTO
-
-          if(!order) {
-            throw new AppError('Error create order', 400)
-        }
-
-        }else if(withdrawStore === false && freight && address){
-            console.log("freight")
-            console.log(address)
-            await this.orderRepository.create({
-            userId: findUserExist.id,
-            code,
-            shoppingCartId: findShoppingCartExist.id,
-            total,
-            withdrawStore,
-            // description,
-             delivery: {
-                create: {
-                    shippingDate: this.dateProvider.addDays(freight.delivery_time),
+                    shippingDate: freight ?  this.dateProvider.addDays(freight.delivery_time) : undefined,
                     address: {
-                        create:{
-                            zipCode: address.zipCode,
-                            city: address.city,
-                            num: address.num,
-                            state: address.state,
-                            street: address.street,
-                            neighborhood: address.neighborhood,
-                            complement: address.complement,
-                        }
+                        create: address ? address as Address : undefined
                     },
-                    serviceDelivery: {
-                        create: {
+                    serviceDelivery: freight ? {
+                         create:{
                             companyName: freight.company.name,
                             serviceId: freight.id,
                             price: freight.price,
                             serviceName: freight.name
                         }
-                    }
+                    } : undefined
                 }
             },
             items: {
@@ -375,7 +319,7 @@ export class CreateOrderWithPixUsecase {
                 create: {
                     asaasPaymentId: paymentAsaas.id,
                     userId: findUserExist.id,
-                    paymentMethod: PaymentMethod.PIX,
+                    paymentMethod: PaymentMethod.CREDIT_CARD,
                     invoiceUrl: paymentAsaas.invoiceUrl,
                     value: total,
                     discount: discountCoupomValue,
@@ -384,12 +328,10 @@ export class CreateOrderWithPixUsecase {
             createdAt: dateNow
         }) as unknown as IOrderRelationsDTO
 
-          if(!order) {
+        if(!order) {
             throw new AppError('Error create order', 400)
-           }
         }
       
-        console.log('log 1')
         // decrementar quantidade no estoque
         for(let item of findShoppingCartExist.cartItem) {
             await this.productsRepository.decrementQuantity(item.productId, item.quantity)
@@ -411,11 +353,9 @@ export class CreateOrderWithPixUsecase {
                 await this.productsRepository.updateStatus(product.id, false)
             }
         }
-        console.log('log 2')
 
         // esvaziar o carrinho
         await this.cartItemRepository.deleteAllByShoppingCartId(findShoppingCartExist.id)
-console.log('log 3')
         // limpar total
         await this.shoppingCartRepository.updateTotal(findShoppingCartExist.id, 0)
 
@@ -437,10 +377,10 @@ console.log('log 3')
             items: order.items,
         } as unknown as IOrderRelationsDTO;
 
-        if(withdrawStore === false){
-            //  marcar endereço como usado por ultimo
-            await this.addressRepository.setLastUsedAddress(order.delivery.address.id, findUserExist.id)
-        }
+        // if(withdrawStore === false){
+        //     //  marcar endereço como usado por ultimo
+        //     await this.addressRepository.setLastUsedAddress(order.delivery.address.id, findUserExist.id)
+        // }
         
         // criar variavel com caminho do template de email
         const templatePathApproved = './views/emails/confirmation-payment.hbs'

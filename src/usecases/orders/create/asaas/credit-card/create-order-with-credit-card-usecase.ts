@@ -392,10 +392,10 @@ export class CreateOrderWithCreditCardUsecase {
             items: order.items,
         } as unknown as IOrderRelationsDTO;
 
-       if(address){
-            //  marcar endereço como usado por ultimo
-            await this.addressRepository.setLastUsedAddress(address.id)
-        }
+    //    if(address){
+    //         //  marcar endereço como usado por ultimo
+    //         await this.addressRepository.setLastUsedAddress(address.id)
+    //     }
 
         // retornar pedido criado
         return endOrder

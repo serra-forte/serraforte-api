@@ -4,17 +4,19 @@ import { IAddressesRepository } from "../interfaces/interface-addresses-reposito
 
 export class PrismaAddressesRepository implements IAddressesRepository{
   async setLastUsedAddress(addressId: string, userId: string): Promise<void> {
-        await prisma.address.updateMany({
-            where:{
-                userId
-            },
-            data: { isLastUsed: false }
-        });
-
-        await prisma.address.update({
-            where: { id: addressId },
-            data: { isLastUsed: true }
-        });
+        await prisma.$transaction([
+            prisma.address.updateMany({
+                where: {
+                userId,
+                isLastUsed: true
+                },
+                data: { isLastUsed: false }
+            }),
+            prisma.address.update({
+                where: { id: addressId },
+                data: { isLastUsed: true }
+            })
+        ]);
     }
 
     async listByUser(userId: string): Promise<Address[]> {

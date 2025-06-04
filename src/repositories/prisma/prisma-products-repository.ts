@@ -710,6 +710,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
                     },
                     select: {
                         id: true,
+                        active: true,
                         user: {
                             select:{
                                 id: true,

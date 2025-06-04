@@ -776,10 +776,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         }) as unknown as IOrderRelationsDTO
        
         
-        return {
-            ...order,
-            total: Number(order.total) + Number(order.delivery.serviceDelivery.price)
-        }
+        return order
     }
     async findByCode(code: string){
         const order = await prisma.order.findUnique({

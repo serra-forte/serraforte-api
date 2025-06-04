@@ -298,7 +298,15 @@ export class CreateOrderWithCreditCardUsecase {
                 create: {
                     shippingDate: freight ?  this.dateProvider.addDays(freight.delivery_time) : undefined,
                     address: {
-                        create: address ? address as Address : undefined
+                        create: address ? {
+                            zipCode: address.zipCode,
+                            city: address.city,
+                            num: address.num,
+                            state: address.state,
+                            street: address.street,
+                            neighborhood: address.neighborhood,
+                            complement: address.complement,
+                        } : undefined
                     },
                     serviceDelivery: freight ? {
                          create:{

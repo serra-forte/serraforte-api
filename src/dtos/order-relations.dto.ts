@@ -23,6 +23,7 @@ export interface IOrderRelationsDTO{
         freights: Freight[],
         serviceDelivery: SeviceDelivery 
         address:{
+            id: string
             street?: string | null;
             num?: number | null;
             neighborhood?: string | null;

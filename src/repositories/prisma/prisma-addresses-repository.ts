@@ -3,8 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { IAddressesRepository } from "../interfaces/interface-addresses-repository";
 
 export class PrismaAddressesRepository implements IAddressesRepository{
-  async setLastUsedAddress(addressId: string): Promise<void> {
+  async setLastUsedAddress(addressId: string, userId: string): Promise<void> {
         await prisma.address.updateMany({
+            where:{
+                userId
+            },
             data: { isLastUsed: false }
         });
 

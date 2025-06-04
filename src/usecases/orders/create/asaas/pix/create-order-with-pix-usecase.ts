@@ -437,10 +437,9 @@ console.log('log 3')
             items: order.items,
         } as unknown as IOrderRelationsDTO;
 
-        if(address){
+        if(withdrawStore === false){
             //  marcar endereço como usado por ultimo
-            await this.addressRepository.setLastUsedAddress(address.id)
-            console.log('log 4')
+            await this.addressRepository.setLastUsedAddress(order.delivery.address.id, findUserExist.id)
         }
         
         // criar variavel com caminho do template de email

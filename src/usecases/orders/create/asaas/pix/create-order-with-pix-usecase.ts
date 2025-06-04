@@ -320,7 +320,7 @@ export class CreateOrderWithPixUsecase {
         }
 
         }else if(withdrawStore === false && freight && address){
-            await this.orderRepository.create({
+           order = await this.orderRepository.create({
             userId: findUserExist.id,
             code,
             shoppingCartId: findShoppingCartExist.id,

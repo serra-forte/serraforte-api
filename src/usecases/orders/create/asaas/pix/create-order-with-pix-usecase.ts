@@ -332,7 +332,7 @@ export class CreateOrderWithPixUsecase {
                 create: {
                     shippingDate: this.dateProvider.addDays(freight.delivery_time),
                     address: {
-                        create: address ? address as Address : undefined
+                        create: address as Address
                     },
                 }
             },
@@ -371,13 +371,13 @@ export class CreateOrderWithPixUsecase {
             throw new AppError('Error create order', 400)
            }
            console.log(order.delivery.id)
-           await this.serviceDelivery.create({
-               deliveryId: order.delivery.id,
-               companyName: freight.company.name,
-               serviceId: freight.id,
-               price: freight.price,
-               serviceName: freight.name
-           })
+        //    await this.serviceDelivery.create({
+        //        deliveryId: order.delivery.id,
+        //        companyName: freight.company.name,
+        //        serviceId: freight.id,
+        //        price: freight.price,
+        //        serviceName: freight.name
+        //    })
         }
       
 

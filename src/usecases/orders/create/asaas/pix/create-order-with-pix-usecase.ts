@@ -333,17 +333,23 @@ export class CreateOrderWithPixUsecase {
                 create: {
                     shippingDate: this.dateProvider.addDays(freight.delivery_time),
                     address: {
-                    connect: {
-                        id: address.id // aqui você conecta o address existente
-                    }
+                        create:{
+                            zipCode: address.zipCode,
+                            city: address.city,
+                            num: address.num,
+                            state: address.state,
+                            street: address.street,
+                            neighborhood: address.neighborhood,
+                            complement: address.complement,
+                        }
                     },
                     serviceDelivery: {
-                    create: {
-                        companyName: freight.company.name,
-                        serviceId: freight.id,
-                        price: freight.price,
-                        serviceName: freight.name
-                    }
+                        create: {
+                            companyName: freight.company.name,
+                            serviceId: freight.id,
+                            price: freight.price,
+                            serviceName: freight.name
+                        }
                     }
                 }
             },

@@ -414,6 +414,7 @@ export class CreateOrderWithPixUsecase {
         // limpar total
         await this.shoppingCartRepository.updateTotal(findShoppingCartExist.id, 0)
 
+        console.log(order)
         const endOrder: IOrderRelationsDTO = {
             user: {
                 id: order.user.id,

@@ -189,11 +189,18 @@ export class PaymentWebHookUseCases {
           new Date(this.dayjsProvider.addDays(0)),
         )
 
-        // [x] atualizar status de pedido para "AWAITING_LABEL" no banco de dados
-        await this.orderRepository.updateStatus(
-          findOrderExist.id,
-          Status.AWAITING_LABEL
-        )
+        if(findOrderExist.withdrawStore){
+          await this.orderRepository.updateStatus(
+            findOrderExist.id,
+            Status.DONE
+          )
+        }else{
+          // [x] atualizar status de pedido para "AWAITING_LABEL" no banco de dados
+          await this.orderRepository.updateStatus(
+            findOrderExist.id,
+            Status.AWAITING_LABEL
+          )
+        }
 
         // atualizar mais vendidos do produto com a quantidade de vendas no pedido
         for(let product of findOrderExist.items) {

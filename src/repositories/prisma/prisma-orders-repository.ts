@@ -619,16 +619,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         const totalPages = countPage > 0 ? Math.ceil(countPage / 13) : 0;
         
         return {
-            orders: orders.map(order => {
-                const boxFormated = order.boxes as unknown as {
-                    box: Box;
-                }[];
-                return {
-                    ...order,
-                    total: Number(order.total) + Number(order.delivery.freights.reduce((acc, freight) => acc + Number(freight.price), 0)),
-                    boxes: boxFormated.map(box => box.box)
-                };
-            }),
+            orders,
             totalPages
         } as unknown as IResponseListOrders
         
@@ -701,17 +692,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         const totalPages = countPage > 0 ? Math.ceil(countPage / 13) : 0;
         
         return {
-            orders: orders.map(order => {
-                let total = 0
-
-                // if(order.delivery.freights.length > 0){
-                //     total = order.delivery.freights.reduce((acc, freight) => acc + Number(freight.price), 0)
-                // }
-                
-                return{
-                    ...order,
-                }
-            }),
+            orders,
             totalPages
         } as unknown as IResponseListOrders
     }

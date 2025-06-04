@@ -332,17 +332,17 @@ export class CreateOrderWithPixUsecase {
              delivery: {
                 create: {
                     shippingDate: this.dateProvider.addDays(freight.delivery_time),
-                    address: {
-                        create:{
-                            zipCode: address.zipCode,
-                            city: address.city,
-                            num: address.num,
-                            state: address.state,
-                            street: address.street,
-                            neighborhood: address.neighborhood,
-                            complement: address.complement,
-                        }
-                    },
+                    // address: {
+                    //     create:{
+                    //         zipCode: address.zipCode,
+                    //         city: address.city,
+                    //         num: address.num,
+                    //         state: address.state,
+                    //         street: address.street,
+                    //         neighborhood: address.neighborhood,
+                    //         complement: address.complement,
+                    //     }
+                    // },
                     serviceDelivery: {
                         create: {
                             companyName: freight.company.name,

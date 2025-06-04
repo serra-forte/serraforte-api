@@ -332,17 +332,17 @@ export class CreateOrderWithPixUsecase {
              delivery: {
                 create: {
                     shippingDate: this.dateProvider.addDays(freight.delivery_time),
-                    // address: {
-                    //     create:{
-                    //         zipCode: address.zipCode,
-                    //         city: address.city,
-                    //         num: address.num,
-                    //         state: address.state,
-                    //         street: address.street,
-                    //         neighborhood: address.neighborhood,
-                    //         complement: address.complement,
-                    //     }
-                    // },
+                    address: {
+                        create:{
+                            zipCode: address.zipCode,
+                            city: address.city,
+                            num: address.num,
+                            state: address.state,
+                            street: address.street,
+                            neighborhood: address.neighborhood,
+                            complement: address.complement,
+                        }
+                    },
                     serviceDelivery: {
                         create: {
                             companyName: freight.company.name,
@@ -389,13 +389,13 @@ export class CreateOrderWithPixUsecase {
            }
         }
       
-
+        console.log('log 1')
         // decrementar quantidade no estoque
         for(let item of findShoppingCartExist.cartItem) {
             await this.productsRepository.decrementQuantity(item.productId, item.quantity)
 
             const response = await this.productsRepository.findById(item.productId) as IResponseFindProductWithReviews
-
+ 
             const {
                 product
             } = response
@@ -411,10 +411,11 @@ export class CreateOrderWithPixUsecase {
                 await this.productsRepository.updateStatus(product.id, false)
             }
         }
+        console.log('log 2')
 
         // esvaziar o carrinho
         await this.cartItemRepository.deleteAllByShoppingCartId(findShoppingCartExist.id)
-
+console.log('log 3')
         // limpar total
         await this.shoppingCartRepository.updateTotal(findShoppingCartExist.id, 0)
 
@@ -439,6 +440,7 @@ export class CreateOrderWithPixUsecase {
         if(address){
             //  marcar endereço como usado por ultimo
             await this.addressRepository.setLastUsedAddress(address.id)
+            console.log('log 4')
         }
         
         // criar variavel com caminho do template de email
@@ -455,7 +457,7 @@ export class CreateOrderWithPixUsecase {
                 order
             }
         )
-
+console.log('log 5')
         // retornar pedido criado
         return endOrder
     }

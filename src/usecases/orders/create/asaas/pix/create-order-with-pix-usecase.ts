@@ -321,6 +321,7 @@ export class CreateOrderWithPixUsecase {
 
         }else if(withdrawStore === false && freight && address){
             console.log("freight")
+            console.log(address)
             await this.orderRepository.create({
             userId: findUserExist.id,
             code,

@@ -386,11 +386,12 @@ export class CreateOrderWithBoletoUsecase {
             endOrder.total += total;          // Acumula o total
             endOrder.items.push(...order.items); // spreed no array de items para acumular os items anteriores e os novos
         }
-
-    //    if(address){
-    //         //  marcar endereço como usado por ultimo
-    //         await this.addressRepository.setLastUsedAddress(address.id)
-    //     }
+        
+        if(withdrawStore === false && address) {
+            //  marcar endereço como usado por ultimo
+            await this.addressRepository.setLastUsedAddress(address.id, findUserExist.id)
+        }
+        
 
         // criar variavel com caminho do template de email
         const templatePathApproved = './views/emails/confirmation-payment.hbs'

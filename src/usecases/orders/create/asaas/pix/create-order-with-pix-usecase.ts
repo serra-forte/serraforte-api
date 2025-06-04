@@ -319,7 +319,7 @@ export class CreateOrderWithPixUsecase {
             throw new AppError('Error create order', 400)
         }
 
-        }else if(withdrawStore === false && freight){
+        }else if(withdrawStore === false && freight && address){
             console.log("freight")
             await this.orderRepository.create({
             userId: findUserExist.id,
@@ -332,8 +332,18 @@ export class CreateOrderWithPixUsecase {
                 create: {
                     shippingDate: this.dateProvider.addDays(freight.delivery_time),
                     address: {
-                        create: address as Address
+                        connect:{
+                            id: address.id
+                        }
                     },
+                    serviceDelivery:{
+                        create:{
+                            companyName: freight.company.name,
+                            serviceId: freight.id,
+                            price: freight.price,
+                            serviceName: freight.name
+                        }
+                    }
                 }
             },
             items: {
@@ -371,13 +381,13 @@ export class CreateOrderWithPixUsecase {
             throw new AppError('Error create order', 400)
            }
            console.log(order.delivery.id)
-        //    await this.serviceDelivery.create({
-        //        deliveryId: order.delivery.id,
-        //        companyName: freight.company.name,
-        //        serviceId: freight.id,
-        //        price: freight.price,
-        //        serviceName: freight.name
-        //    })
+           await this.serviceDelivery.create({
+               deliveryId: order.delivery.id,
+               companyName: freight.company.name,
+               serviceId: freight.id,
+               price: freight.price,
+               serviceName: freight.name
+           })
         }
       
 

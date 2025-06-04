@@ -194,13 +194,13 @@ export class PaymentWebHookUseCases {
             findOrderExist.id,
             Status.DONE
           )
-        }else{
-          // [x] atualizar status de pedido para "AWAITING_LABEL" no banco de dados
+        }
+        
+         // [x] atualizar status de pedido para "AWAITING_LABEL" no banco de dados
           await this.orderRepository.updateStatus(
             findOrderExist.id,
             Status.AWAITING_LABEL
           )
-        }
 
         // atualizar mais vendidos do produto com a quantidade de vendas no pedido
         for(let product of findOrderExist.items) {

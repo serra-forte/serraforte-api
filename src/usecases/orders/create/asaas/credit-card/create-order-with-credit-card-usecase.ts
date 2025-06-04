@@ -294,7 +294,7 @@ export class CreateOrderWithCreditCardUsecase {
             total,
             withdrawStore,
             // description,
-            delivery: {
+            delivery: address ? {
                 create: {
                     shippingDate: freight ?  this.dateProvider.addDays(freight.delivery_time) : undefined,
                     address: {
@@ -317,7 +317,7 @@ export class CreateOrderWithCreditCardUsecase {
                         }
                     } : undefined
                 }
-            },
+            } : undefined,
             items: {
                 createMany: {
                     data: findShoppingCartExist.cartItem.map(item => {

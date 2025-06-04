@@ -298,7 +298,7 @@ export class CreateOrderWithBoletoUsecase {
             total,
             withdrawStore,
             // description,
-            delivery: {
+            delivery: address ? {
                 create: {
                     shippingDate: freight ?  this.dateProvider.addDays(freight.delivery_time) : undefined,
                     address: {
@@ -321,7 +321,7 @@ export class CreateOrderWithBoletoUsecase {
                         }
                     } : undefined
                 }
-            },
+            } : undefined,
             items: {
                 createMany: {
                     data: findShoppingCartExist.cartItem.map(item => {

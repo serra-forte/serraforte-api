@@ -191,7 +191,7 @@ export class PaymentWebHookUseCases {
           new Date(this.dayjsProvider.addDays(0)),
         )
 
-        if(findOrderExist.withdrawStore === false){
+        if(findOrderExist.withdrawStore === true){
           console.log('log 2')
           await this.orderRepository.updateStatus(
             findOrderExist.id,
@@ -206,7 +206,7 @@ export class PaymentWebHookUseCases {
           )
         }
          
-console.log('log 4')
+        console.log('log 4')
         // atualizar mais vendidos do produto com a quantidade de vendas no pedido
         for(let product of findOrderExist.items) {
           const quantity = Number(product.quantity)
@@ -272,7 +272,7 @@ console.log('log 4')
           }
         }
 
-        if (findOrderExist.withdrawStore) {
+        if (findOrderExist.withdrawStore === false) {
           try {
             await this.kafkaProducer.execute('SEPARATE_PACKAGE', endOrder);
           } catch (error) {

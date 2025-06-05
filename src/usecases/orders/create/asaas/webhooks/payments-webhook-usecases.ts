@@ -258,14 +258,21 @@ export class PaymentWebHookUseCases {
         }
        
         const hasErp = await this.remoteConfig.getTemplate('hasErp')
-        if(hasErp.isValid){
-          // chamar producer para enviar pedido para o ERP(bier-held)
-          await this.kafkaProducer.execute('CREATE_ORDER_BIER_HELD', endOrder)
+        if (hasErp.isValid) {
+          try {
+            await this.kafkaProducer.execute('CREATE_ORDER_BIER_HELD', endOrder);
+          } catch (error) {
+            console.error('Erro ao enviar para o ERP:', error);
+            // Você pode optar por continuar mesmo com erro, ou lançar para parar tudo
+          }
         }
 
-        if(findOrderExist.withdrawStore){
-          // chamar producer para enviar endOrder para o consumer enviar um frete para o carrinho da melhor envio
-          await this.kafkaProducer.execute('SEPARATE_PACKAGE', endOrder)
+        if (findOrderExist.withdrawStore) {
+          try {
+            await this.kafkaProducer.execute('SEPARATE_PACKAGE', endOrder);
+          } catch (error) {
+            console.error('Erro ao enviar para Melhor Envio:', error);
+          }
         }
       }      
     }

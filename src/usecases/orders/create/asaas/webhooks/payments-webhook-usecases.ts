@@ -113,8 +113,6 @@ export class PaymentWebHookUseCases {
           }
       }
 
-      console.log(findOrderExist)
-
       // [x] criar variavel com caminho do templeate de email de pagamento reprovado
       const templatePathUserReproved =
       './views/emails/admin-payment-reproved.hbs'
@@ -185,7 +183,6 @@ export class PaymentWebHookUseCases {
         (event === 'PAYMENT_RECEIVED' && paymenAsaas.billingType === 'BOLETO') ||
         (event === 'PAYMENT_CONFIRMED' && paymenAsaas.billingType === 'CREDIT_CARD'))
 		{ 
-      console.log('log 1')
         // [x] atualizar status de pagamento para "APPROVED" no banco de dados
         await this.paymentsRepository.updateById(
           payment.id,
@@ -194,13 +191,11 @@ export class PaymentWebHookUseCases {
         )
 
         if(findOrderExist.withdrawStore === true){
-          console.log('log 2')
           await this.orderRepository.updateStatus(
             findOrderExist.id,
             Status.DONE
           )
         }else{
-          console.log('log 3')
           // [x] atualizar status de pedido para "AWAITING_LABEL" no banco de dados
           await this.orderRepository.updateStatus(
             findOrderExist.id,
@@ -208,7 +203,6 @@ export class PaymentWebHookUseCases {
           )
         }
          
-        console.log('log 4')
         // atualizar mais vendidos do produto com a quantidade de vendas no pedido
         for(let product of findOrderExist.items) {
           const quantity = Number(product.quantity)

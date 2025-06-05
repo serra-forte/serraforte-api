@@ -72,6 +72,8 @@ export class PaymentWebHookUseCases {
       if (!findOrderExist) {
         throw new AppError('Pedido não encontrado', 404)
       }
+
+      console.log(findOrderExist)
       // [x] buscar todos os usuarios administradores
       const listUsersAdmin = await this.userRepository.listAdmins()
 

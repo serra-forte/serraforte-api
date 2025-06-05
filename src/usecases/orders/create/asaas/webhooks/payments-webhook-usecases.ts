@@ -73,7 +73,6 @@ export class PaymentWebHookUseCases {
         throw new AppError('Pedido não encontrado', 404)
       }
 
-      console.log(findOrderExist)
       // [x] buscar todos os usuarios administradores
       const listUsersAdmin = await this.userRepository.listAdmins()
 
@@ -83,13 +82,13 @@ export class PaymentWebHookUseCases {
         id: findOrderExist.id,
         user: findOrderExist.user,
         erpClientId: findOrderExist.user.erpClientId,
-        delivery: {
+        delivery: findOrderExist.delivery ? {
             id: findOrderExist.delivery.id,
             address: findOrderExist.delivery.address ? findOrderExist.delivery.address : undefined,
             freights: findOrderExist.delivery.freights,
             shippingDate: findOrderExist.delivery.shippingDate,
             serviceDelivery: findOrderExist.delivery.serviceDelivery
-        },
+        } : undefined,
         withdrawStore: findOrderExist.withdrawStore,
         boxes: findOrderExist.boxes,
         payment: orders[0].payment,
@@ -113,6 +112,9 @@ export class PaymentWebHookUseCases {
             listShopkeeper.push(findShopkeeper)
           }
       }
+
+      console.log(findOrderExist)
+
       // [x] criar variavel com caminho do templeate de email de pagamento reprovado
       const templatePathUserReproved =
       './views/emails/admin-payment-reproved.hbs'

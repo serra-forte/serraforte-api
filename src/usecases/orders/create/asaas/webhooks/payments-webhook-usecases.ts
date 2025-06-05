@@ -190,7 +190,7 @@ export class PaymentWebHookUseCases {
           new Date(this.dayjsProvider.addDays(0)),
         )
 
-        if(findOrderExist.withdrawStore){
+        if(findOrderExist.withdrawStore === false){
           await this.orderRepository.updateStatus(
             findOrderExist.id,
             Status.DONE

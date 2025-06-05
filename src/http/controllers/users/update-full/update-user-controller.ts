@@ -14,7 +14,7 @@ export async function UpdateUser (request: FastifyRequest, reply:FastifyReply){
               avatarUrl: z.string().optional().nullable(),
               hasDeliveryMan: z.boolean(),
               address: z.object({
-                street: z.string(),
+                street: z.string().optional().nullable(),
                 num: z.number().nonnegative().optional().nullable(),
                 neighborhood: z.string().optional().nullable(),
                 city: z.string().optional().nullable(),

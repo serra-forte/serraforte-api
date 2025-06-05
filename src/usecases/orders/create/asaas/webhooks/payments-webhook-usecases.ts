@@ -181,8 +181,6 @@ export class PaymentWebHookUseCases {
         (event === 'PAYMENT_RECEIVED' && paymenAsaas.billingType === 'BOLETO') ||
         (event === 'PAYMENT_CONFIRMED' && paymenAsaas.billingType === 'CREDIT_CARD'))
 		{ 
-      console.log('Pagamento aprovado')
-      console.log(findOrderExist)
         // [x] atualizar status de pagamento para "APPROVED" no banco de dados
         await this.paymentsRepository.updateById(
           payment.id,
@@ -195,13 +193,14 @@ export class PaymentWebHookUseCases {
             findOrderExist.id,
             Status.DONE
           )
-        }
-
-         // [x] atualizar status de pedido para "AWAITING_LABEL" no banco de dados
+        }else{
+          // [x] atualizar status de pedido para "AWAITING_LABEL" no banco de dados
           await this.orderRepository.updateStatus(
             findOrderExist.id,
             Status.AWAITING_LABEL
           )
+        }
+         
 
         // atualizar mais vendidos do produto com a quantidade de vendas no pedido
         for(let product of findOrderExist.items) {

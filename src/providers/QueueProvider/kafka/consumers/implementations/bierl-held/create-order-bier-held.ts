@@ -112,7 +112,7 @@ export class CreateOrderBierHeld {
                         throw new Error('Erro ao criar pedido na bier held')
                     }
 
-                    await this.orderRepository.addBierHeldOrderId(order.id, createdOrderBierHeld.id);
+                    await this.orderRepository.addBierHeldOrderId(order.id, createdOrderBierHeld.id, createdOrderBierHeld.invoice_id);
 
                     console.info('[Consumer - Create order ERP] Pedido criado com sucesso');
 

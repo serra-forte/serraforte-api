@@ -4,11 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 
 export class PrismaOrderRepository implements IOrderRepository {
-    async addBierHeldOrderId(id: string, erpOrderId: number): Promise<void> {
+    async addBierHeldOrderId(id: string, erpOrderId: number, invoiceId: number): Promise<void> {
         await prisma.order.update({
             where: { id },
             data: {
-                erpOrderId
+                erpOrderId,
+                invoiceIdErp: invoiceId
             }
         })
     }

@@ -182,6 +182,7 @@ model Order {
   shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id])
   shoppingCartId String       @map("shopping_cart_id")
   erpOrderId Int?         @map("erp_order_id") @unique
+  invoiceIdErp     Int?         @map("invoice_id_erp")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @map("user_id")

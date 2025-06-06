@@ -69,6 +69,8 @@ export class CreateOrderBierHeld {
 
                     if(order.withdrawStore === true){
                         delivery_method = 'withdrawal_at_company'
+                    }else{
+                        delivery_method = 'delivery_by_shipper'
                     }
 
                     let payTypeId = 39
@@ -85,17 +87,17 @@ export class CreateOrderBierHeld {
                         order:{
                             client_id: order.user.erpClientId as number,
                             order_value: order.total,
-                            delivery_value: Number(order.delivery.serviceDelivery.price),
-                            return_value: 100,
+                            delivery_value: order.delivery ? Number(order.delivery.serviceDelivery.price) : 0,
+                            return_value: 0,
                             total_value: order.total,
-                            delivery_date_time: String(order.delivery.shippingDate),
+                            delivery_date_time: order.delivery ? String(order.delivery.shippingDate) : '',
                             delivery_method,
-                            address_attributes: {
+                            address_attributes: order.delivery ? {
                                 street: order.delivery.address.street as string,
                                 number: String(order.delivery.address.num as number),
                                 complement: order.delivery.address.complement as string,
                                 district: order.delivery.address.neighborhood as string,
-                            },
+                            } : undefined,
                             order_items_attributes: bierHeldItems,
                             payments_attributes: [
                                 {

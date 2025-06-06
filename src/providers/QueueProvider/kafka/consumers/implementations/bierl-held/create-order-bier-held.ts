@@ -87,10 +87,10 @@ export class CreateOrderBierHeld {
                         order:{
                             client_id: order.user.erpClientId as number,
                             order_value: order.total,
-                            delivery_value: order.delivery ? Number(order.delivery.serviceDelivery.price) : 0,
+                            delivery_value: order.delivery ? Number(order.delivery.serviceDelivery.price) :  0,
                             return_value: 0,
                             total_value: order.total,
-                            delivery_date_time: order.delivery ? String(order.delivery.shippingDate) : '',
+                            delivery_date_time: order.delivery ? String(order.delivery.shippingDate) : new Date().toISOString(),
                             delivery_method,
                             address_attributes: order.delivery ? {
                                 street: order.delivery.address.street as string,

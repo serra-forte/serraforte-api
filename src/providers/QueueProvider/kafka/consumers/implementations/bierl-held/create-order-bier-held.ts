@@ -112,9 +112,11 @@ export class CreateOrderBierHeld {
 
                     await this.orderRepository.addBierHeldOrderId(order.id, createdOrderBierHeld.id);
 
+                    console.info('[Consumer - Create order ERP] Pedido criado com sucesso');
+
                 } catch (error) {
                     console.log(error);
-                    console.error('[Consumer - Create order] Erro ao processar mensagem:', error);
+                    console.error('[Consumer - Create orde ERP] Erro ao processar mensagem:', error);
                 }
             },
         });

@@ -14,7 +14,6 @@ interface IRequestUpdateUser {
     dateBirth?: Date | null,
     cpf?: string | null,
     avatarUrl?: string | null,
-    hasDeliveryMan: boolean,
     address?: {
         street?: string | null,
         num?: number | null,
@@ -49,7 +48,6 @@ export class UpdateUserUseCase{
         name,
         email,
         phone,
-        hasDeliveryMan,
         dateBirth,
         cpf,
         address,
@@ -141,7 +139,6 @@ export class UpdateUserUseCase{
         phone,
         dateBirth,
         cpf,
-        hasDeliveryMan,
         emailActive,
         avatarUrl,
         storeHours: {

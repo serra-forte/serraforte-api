@@ -12,7 +12,6 @@ export async function UpdateUser (request: FastifyRequest, reply:FastifyReply){
               phone: z.string().optional().nullable(), 
               dateBirth: z.string().optional().nullable(),
               avatarUrl: z.string().optional().nullable(),
-              hasDeliveryMan: z.boolean(),
               address: z.object({
                 street: z.string().optional().nullable(),
                 num: z.number().nonnegative().optional().nullable(),
@@ -46,7 +45,6 @@ export async function UpdateUser (request: FastifyRequest, reply:FastifyReply){
                 phone,
                 dateBirth,
                 cpf,
-                hasDeliveryMan,
                 email,
                 address,
                 avatarUrl,
@@ -59,7 +57,6 @@ export async function UpdateUser (request: FastifyRequest, reply:FastifyReply){
                 id,
                 name,
                 phone,
-                hasDeliveryMan,
                 email,
                 dateBirth: dateBirth ? new Date(dateBirth) : null,
                 cpf: CPF.format(cpf as string) ? CPF.format(cpf as string) : null,

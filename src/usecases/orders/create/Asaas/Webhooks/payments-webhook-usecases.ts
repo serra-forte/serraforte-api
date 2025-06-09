@@ -90,12 +90,6 @@ export class PaymentWebHookUseCases {
         items: []
       } as unknown as IOrderRelationsDTO;
 
-      for (let order of orders) {
-          let total = Number(order.total);  // Certifica que 'total' é um número
-          endOrder.total += total;         // Acumula o total
-          endOrder.items.push(...order.items); // spreed no array de items para acumular os items anteriores e os novos
-      }
-
      console.log('log4')
       if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') { 
         this.evetBus.updateOrderReprovedEvent(endOrder)

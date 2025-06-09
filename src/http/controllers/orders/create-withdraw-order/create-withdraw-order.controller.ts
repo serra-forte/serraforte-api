@@ -10,26 +10,26 @@ export async function CreateWithdrawOrder(request: FastifyRequest, reply: Fastif
             coupom: z.object({
                 code: z.string(),
             }).optional().nullable(),
-            creditCard: z.object({
-                holderName: z.string(),
-                number: z.string(),
-                expiryMonth: z.string(),
-                expiryYear: z.string(),
-                ccv: z.string(),
-            }).optional(),
-            creditCardHolderInfo: z.object({
+            creditCardData: z.object({
+                creditCard: z.object({
+                     holderName: z.string(),
+                    number: z.string(),
+                    expiryMonth: z.string(),
+                    expiryYear: z.string(),
+                    ccv: z.string(),
+                }),
+                creditCardHolderInfo: z.object({
                 postalCode: z.string(),
                 addressNumber: z.string(),
                 addressComplement: z.string(),
+                }),
+                installmentCount: z.number().int().positive().optional(),
             }).optional(),
-            installmentCount: z.number().int().positive().optional(),
         })
     
         const { 
-            creditCard,
-            creditCardHolderInfo,
+            creditCardData,
             billingType, 
-            installmentCount,
             coupom
         } = orderSchemaBody.parse(request.body)
     
@@ -40,11 +40,7 @@ export async function CreateWithdrawOrder(request: FastifyRequest, reply: Fastif
             remoteIp: String(request.socket.remoteAddress),
             paymentMethod: billingType,
             coupom,
-            creditCardData: { 
-                creditCard, 
-                creditCardHolderInfo, 
-                installmentCount
-            },
+            creditCardData,
         })
 
         return reply.status(201).send(order)

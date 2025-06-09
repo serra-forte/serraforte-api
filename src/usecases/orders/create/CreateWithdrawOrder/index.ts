@@ -68,12 +68,7 @@ export class CreateWithdrawOrderUseCase {
                 description: `Pedido #${order.code} - ${user.name}`,
                 value: total,
                 dueDate: new Date().toISOString(),
-                creditCardData:{
-                    creditCard: creditCardData?.creditCard,
-                    creditCardHolderInfo: creditCardData?.creditCardHolderInfo,
-                    installmentCount: creditCardData?.installmentCount,
-                    installmentValue: total
-                }
+                creditCardData
             })
             
             // enviar mensagem por email no evento

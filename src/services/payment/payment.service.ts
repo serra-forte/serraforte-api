@@ -154,7 +154,7 @@ export class PaymentService implements PaymentServiceBase{
                     email: data.user.email
                 },
                 installmentCount: data.creditCardData?.installmentCount,
-                installmentValue: data.creditCardData?.installmentValue
+                installmentValue: data.value
             })
 
             return result

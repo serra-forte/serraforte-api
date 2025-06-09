@@ -20,5 +20,4 @@ export interface ICreditCardPaymentData {
     creditCard?: ICreditCard
     creditCardHolderInfo?: ICardHolder
     installmentCount?: number
-    installmentValue?: number
 }

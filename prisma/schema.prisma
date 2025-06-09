@@ -191,7 +191,7 @@ model Order {
   total             Decimal
   status            Status         @default(CREATED)
   items             Item[]
-  createdAt         DateTime?      @map("created_at") @db.Timestamptz()
+  createdAt         DateTime?    @default(now()) @map("created_at") @db.Timestamptz()
   payment           Payment?
   delivery          Delivery?
   description       String?
@@ -264,7 +264,7 @@ enum Status {
 
 model Payment {
   id             String  @id @unique @default(uuid())
-  asaasPaymentId String?
+  asaasPaymentId String? @unique
 
   users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @map("user_id")

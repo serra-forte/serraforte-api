@@ -1,9 +1,6 @@
 import { IOrderRelationsDTO } from '@/dtos/order-relations.dto';
 import { IOrderRepository } from '../../../../../repositories/interfaces/interface-order-repository';
-import { IDateProvider } from '@/providers/DateProvider/interface-date-provider';
-import { IMailProvider } from '@/providers/MailProvider/interface-mail-provider';
 import { IPaymentsRepository } from '@/repositories/interfaces/interface-payments-repository';
-import { IUsersRepository } from '@/repositories/interfaces/interface-users-repository';
 import { AppError } from '@/usecases/errors/app-error';
 import { Status } from '@prisma/client';
 import 'dotenv/config';
@@ -40,59 +37,32 @@ export class PaymentWebHookUseCases {
   ) {}
 
   async execute({ event, payment:paymenAsaas }: IRequestReceiveEvent): Promise<void> {
-    let paymenAsaasId = String(paymenAsaas.id)
-
-    // [x] buscar pagamento pelo id
-    const findPaymentsExist = await this.paymentsRepository.listByAsaasPaymentId(
-      paymenAsaasId,
+    const foundPaymentExist = await this.paymentsRepository.findByAsaasPaymentId(
+      paymenAsaas.id,
     )
 
-    for(let payment of findPaymentsExist) {
-      // buscar pelo id
-      const findPaymentExist = await this.paymentsRepository.findById(
-        String(payment.id),
-      )
+    if (!foundPaymentExist) {
+      throw new AppError('Pagamento não encontrado', 404)
+    }
 
-      // [x] validar se o pagamento existe
-      if (!findPaymentExist) {
+      if (!foundPaymentExist) {
         throw new AppError('Pagamento não encontrado', 404)
       }
-      // [x] validar se o pagamento já foi aprovado
-      if (payment.paymentStatus === Status.APPROVED) {
+
+      if (foundPaymentExist.paymentStatus === Status.APPROVED) {
         throw new AppError('Pagamento já foi feito', 400)
       }
-      // [x] buscar pedido pelo id
-      const findOrderExist = await this.orderRepository.findById(payment.orderId) as unknown as IOrderRelationsDTO
 
-      // [x] validar se o pedido existe
+      const findOrderExist = await this.orderRepository.findById(foundPaymentExist.orderId) as unknown as IOrderRelationsDTO
+
       if (!findOrderExist) {
         throw new AppError('Pedido não encontrado', 404)
       }
 
-       const orders = await this.orderRepository.listByAsaasPaymentId(paymenAsaasId)
-
-       const endOrder: IOrderRelationsDTO = {
-        id: findOrderExist.id,
-        user: findOrderExist.user,
-        erpClientId: findOrderExist.user.erpClientId,
-        delivery: findOrderExist.delivery ? {
-            id: findOrderExist.delivery.id,
-            address: findOrderExist.delivery.address ? findOrderExist.delivery.address : undefined,
-            freights: findOrderExist.delivery.freights,
-            shippingDate: findOrderExist.delivery.shippingDate,
-            serviceDelivery: findOrderExist.delivery.serviceDelivery
-        } : undefined,
-        withdrawStore: findOrderExist.withdrawStore,
-        boxes: findOrderExist.boxes,
-        payment: orders[0].payment,
-        total: 0,
-        items: []
-      } as unknown as IOrderRelationsDTO;
-
       if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') { 
-        this.evetBus.updateOrderReprovedEvent(endOrder)
+        this.evetBus.updateOrderReprovedEvent(findOrderExist)
 
-        this.evetBus.sendOrderReprovedEmailEvent(endOrder)
+        this.evetBus.sendOrderReprovedEmailEvent(findOrderExist)
         
         return
       }else if (
@@ -100,27 +70,26 @@ export class PaymentWebHookUseCases {
         (event === 'PAYMENT_RECEIVED' && paymenAsaas.billingType === 'BOLETO') ||
         (event === 'PAYMENT_CONFIRMED' && paymenAsaas.billingType === 'CREDIT_CARD'))
 		{ 
-      this.evetBus.updateOrderConfirmedEvent(endOrder)
+		this.evetBus.updateOrderConfirmedEvent(findOrderExist)
 
-      this.evetBus.sendOrderApprovedEmailEvent(endOrder)
-       
-      const hasErp = await this.remoteConfig.getTemplate('hasErp')
-      if (hasErp.isValid) {
-        try {
-          await this.kafkaProducer.execute('CREATE_ORDER_BIER_HELD', endOrder);
-        } catch (error) {
-          console.error('Erro ao enviar para o ERP:', error);
-        }
-      }
+		this.evetBus.sendOrderApprovedEmailEvent(findOrderExist)
+		
+		const hasErp = await this.remoteConfig.getTemplate('hasErp')
+		if (hasErp.isValid) {
+			try {
+			await this.kafkaProducer.execute('CREATE_ORDER_BIER_HELD', findOrderExist);
+			} catch (error) {
+			console.error('Erro ao enviar para o ERP:', error);
+			}
+		}
 
-      if (findOrderExist.withdrawStore === false) {
-        try {
-          await this.kafkaProducer.execute('SEPARATE_PACKAGE', endOrder);
-        } catch (error) {
-          console.error('Erro ao enviar para Melhor Envio:', error);
-        }
-      }
+		if (findOrderExist.withdrawStore === false) {
+			try {
+			await this.kafkaProducer.execute('SEPARATE_PACKAGE', findOrderExist);
+			} catch (error) {
+			console.error('Erro ao enviar para Melhor Envio:', error);
+			}
+		}
       }      
-    }
   }
 }

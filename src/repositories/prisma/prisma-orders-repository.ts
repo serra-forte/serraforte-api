@@ -633,7 +633,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 userId: idUser
             },
             orderBy: {
-                createdAt: 'desc'
+                code: 'desc'
             },
             take,
             skip: (page - 1) * take,

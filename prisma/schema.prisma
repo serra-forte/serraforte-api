@@ -178,7 +178,7 @@ model CartItem {
 
 model Order {
   id             String       @id @unique @default(uuid())
-  code           String?      @unique
+  code           Int      @unique @default(autoincrement())
   shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id])
   shoppingCartId String       @map("shopping_cart_id")
   erpOrderId Int?         @map("erp_order_id") @unique
@@ -528,4 +528,3 @@ model Store {
 
   @@map("stores")
 }
-

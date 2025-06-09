@@ -13,6 +13,6 @@ export interface IDiscountCouponsRepository {
   list(page?: number | null): Promise<IResponseListDiscountCoupons>
   listByShopkeerperId(id: string, page?: number | null): Promise<IResponseListDiscountCoupons>
   updateById(data: Prisma.DiscountCouponUncheckedUpdateInput): Promise<DiscountCoupon>
-  decrementQuantity(id: string): Promise<void>
+  decrementQuantity(id: string): Promise<boolean>
   delete(id: string): Promise<void>
 }

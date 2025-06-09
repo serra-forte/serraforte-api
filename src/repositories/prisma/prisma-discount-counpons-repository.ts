@@ -43,7 +43,7 @@ export class PrismaDiscountCounpons implements IDiscountCouponsRepository {
         totalPages
     }
   }
-  async decrementQuantity(id: string): Promise<void> {
+  async decrementQuantity(id: string): Promise<boolean> {
     await prisma.discountCoupon.update({
       where: { id },
       data: {
@@ -52,6 +52,8 @@ export class PrismaDiscountCounpons implements IDiscountCouponsRepository {
         },
       },
     })
+
+    return true
   }
   async findById(id: string) {
     const discountCounpo = (await prisma.discountCoupon.findUnique({

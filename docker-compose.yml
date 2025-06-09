@@ -8,7 +8,6 @@ services:
       - POSTGRESQL_USERNAME=serraforte
       - POSTGRESQL_PASSWORD=b8564569-8559-4614-9192-f5fc6e2f5a46
       - POSTGRESQL_DATABASE=serraforte_db
-      
   redis:
         image: redis:alpine
         container_name: redis

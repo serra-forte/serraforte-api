@@ -60,52 +60,49 @@
             </span>
 
             {{!-- Detalhes pedidos  --}}
-            {{!-- <span>
+            <span>
                 <p>
-                    • Camping: {{variables.booking.camping.name}}
+                    • Cliente: {{variables.order.user.name}}
                 </p>
                 <p>
-                    • Data de Check-in: {{variables.checkIn}}
+                    • E-mail: {{variables.order.user.email}}
                 </p>
-                <p>
-                    • Data de Check-out: {{variables.checkOut}}
-                </p>
-                <p>
-                    • Telefone: {{variables.booking.camping.phone}}
-                </p>
-                <p>
-                    • Endereço: {{variables.booking.camping.address.street}}, {{variables.booking.camping.address.num}} - {{variables.booking.camping.address.district}} - {{variables.booking.camping.address.city}} - {{variables.booking.camping.address.state}}
-                </p>
-                <p>
-                    • Pessoas: {{variables.booking.guestAmount}}
-                </p>
-                <p>
-                    • Box: {{variables.boxFormatted.name}}
-                </p>
-                    
-                    • Veículos:
-                {{#each variables.booking.vehicles}}
-                        <p style="padding-left: 1rem;">• {{this.vehicle.plate}}</p>
-                {{/each}}
-
-                    • Acompanhantes:
-                {{#each variables.booking.companions}}
-                    <p style="padding-left: 1rem;">• {{this.name}}</p>
-                {{/each}}
 
                 <p>
-                    • Pagamento: Pix
+                    • Whatapp: {{variables.order.user.phone}}
                 </p>
+                {{#if (isNotNull variables.order.delivery.address) }}
+                   <p>
+                    • Endereço de entrega: {{variables.order.delivery.address.street}}, {{variables.order.delivery.address.num}} - {{variables.order.delivery.address.zipCode}} - {{variables.order.delivery.address.city}} - {{variables.order.delivery.address.state}}
+                </p>
+                {{else}}
+                   <p>
+                    • Endereço de entrega: Retira pedido na loja
+                   </p>
+                {{/if}}
+
                 <p>
-                    • Cobrança por: {{variables.text}}
+                    • Items:
+                {{#each variables.order.items}}
+                    <p style="padding-left: 1rem;">• {{this.name}}({{this.quantity}}) - {{formatCurrency this.price "R$"}}</p>
+                {{/each}}
+
                 </p>
+               {{#if (isNotNull link) }}
+                    <p>• Fatura: <a href="{{link}}">{{link}}</a></p>
+                {{else}}
+                    <!-- Caso contrário, não exibe nada -->
+                {{/if}}
+
                 <p>
-                    • Fatura: <a href="{{link}}">{{link}}</a>
+                    • Forma de pagamento: {{formatPaymentMethod variables.order.payment.paymentMethod}}
                 </p>
+
+
                 <p>
-                    • Preço: R$ {{variables.booking.price}}
+                    • Preço: {{formatCurrency variables.order.total "R$"}}
                 </p>
-            </span> --}}
+            </span>
 
             <span></span>
 

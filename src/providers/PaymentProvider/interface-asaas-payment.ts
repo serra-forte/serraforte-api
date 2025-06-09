@@ -1,3 +1,5 @@
+import { ICardHolder } from "@/interfaces/credit-card.interface"
+
 export interface AsaasPaymentWallet {
   userId: string
   walletId: string // Identificador da carteira Asaas que será transferido o valor da cobrança
@@ -25,15 +27,7 @@ export interface IChargeData {
     expiryYear?: string
     ccv: string
   }
-  creditCardHolderInfo?: {
-    name: string
-    email: string
-    cpfCnpj: string
-    postalCode: string
-    addressNumber: string
-    addressComplement: string
-    phone: string
-  }
+  creditCardHolderInfo?: ICardHolder | null
   discount?: {
     value: number
     dueDateLimitDays: number
@@ -141,11 +135,40 @@ export interface IResponseDeletedPayment{
   id: string;
 }
 
+export interface ICustomerResponse {
+  object: "customer";
+  id: string;
+  dateCreated: string; // formato "YYYY-MM-DD"
+  name: string;
+  email: string;
+  phone: string;
+  mobilePhone: string;
+  address: string;
+  addressNumber: string;
+  complement: string;
+  province: string;
+  city: string;
+  cityName: string;
+  state: string;
+  country: string;
+  postalCode: string;
+  cpfCnpj: string;
+  personType: "FISICA" | "JURIDICA";
+  deleted: boolean;
+  additionalEmails: string;
+  externalReference: string;
+  notificationDisabled: boolean;
+  observations: string;
+  foreignCustomer: boolean;
+}
+
+
 export interface IAsaasProvider {
   createPayment(data: IChargeData): Promise<any | undefined>
-  createCustomer(data: ICustomerData): Promise<ICustomerData | undefined>
+  createCustomer(data: ICustomerData): Promise<ICustomerResponse>
   findUniqueInstallments(idInstallment: string): Promise<any | null>
   refundPayment(data: IRefundPayment): Promise<any | undefined>
   createSubAccountToSplitPayment(accountUser: ICreateSubAccountToSplitPayment): Promise<IResponseCreateSubAccountToSplitPayment | undefined>
   cancelPayment(idAsaasPayment: string): Promise<IResponseDeletedPayment | undefined>
+  getCustomer(customerId: string): Promise<ICustomerResponse | null>
 }

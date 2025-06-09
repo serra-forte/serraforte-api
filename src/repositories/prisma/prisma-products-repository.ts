@@ -409,7 +409,8 @@ export class PrismaProductsRepository  implements IProductsRepository{
         return product
     }
     async incrementQuantity(id: string, quantity: number){
-        const product = await prisma.product.update({
+        try {
+            const product = await prisma.product.update({
             where: {id},
             data: {
                 quantity: {
@@ -417,10 +418,16 @@ export class PrismaProductsRepository  implements IProductsRepository{
                 }
             }
         })
-        return product
+
+        return true
+
+        } catch (error) {
+            throw error
+        }
     }
     async decrementQuantity(id: string, quantity: number){
-        const product = await prisma.product.update({
+        try {
+            await prisma.product.update({
             where: {id},
             data: {
                 quantity: {
@@ -428,7 +435,10 @@ export class PrismaProductsRepository  implements IProductsRepository{
                 }
             }
         })
-        return product
+        return true
+        } catch (error) {
+            throw error
+        }
     }
     async listByCategoryId(id: string, page?: number | null) {
         // Buscar produtos pela categoria com avaliações
@@ -737,7 +747,7 @@ export class PrismaProductsRepository  implements IProductsRepository{
         const countPages = await prisma.review.count({
             where: { productId: id }
         });
-
+        
         // Calcular o total de páginas
         const totalPages = countPages > 0 ? Math.ceil(countPages / 13) : 0;
 

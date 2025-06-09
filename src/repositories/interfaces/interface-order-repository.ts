@@ -17,7 +17,7 @@ export interface IFilterOrders {
 }
 
 export interface IOrderRepository {
-    create(data: Prisma.OrderUncheckedCreateInput):Promise<Order>
+    create(data: Prisma.OrderUncheckedCreateInput):Promise<IOrderRelationsDTO>
     countBySentAndUserId(userId:string):Promise<number>
     list(page?: number | null):Promise<IResponseListOrders>
     listByShoppKeeper(userId: string, page?: number | null):Promise<IResponseListOrders>
@@ -29,7 +29,7 @@ export interface IOrderRepository {
     filterOrders(filters: IFilterOrders):Promise<IResponseListOrders>
     listByPaymentWithoutPaying24Hours():Promise<IOrderRelationsDTO[]>
     listByIds(orderIds:string[]):Promise<Order[]>
-    deleteById(id:string):Promise<void>
+    deleteById(id:string):Promise<boolean>
     updateStatus(id: string, status: Status): Promise<void>
     countOrders(): Promise<number>
     addDescription(id: string, description: string): Promise<void>

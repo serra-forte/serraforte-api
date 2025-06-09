@@ -169,6 +169,18 @@ handlebars.registerHelper('formatCurrency', function (number, currencySymbol = '
   return `${currencySymbol} ${Number(number).toFixed(2)}`;
 });
 
+handlebars.registerHelper('formatPaymentMethod', (method: string) => {
+  switch (method) {
+    case 'PIX':
+      return 'Pix';
+    case 'CREDIT_CARD':
+      return 'Cartão de Crédito';
+    case 'BOLETO':
+      return 'Boleto';
+    default:
+      return method;
+  }
+});
 
 
 fastifyApp.setErrorHandler((error:FastifyError,request:FastifyRequest, reply: FastifyReply)=>{

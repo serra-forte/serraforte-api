@@ -73,13 +73,15 @@ export class CreateOrderBierHeld {
                         delivery_method = 'delivery_by_shipper'
                     }
 
-                    let payTypeId = 5750
+                    let payTypeId = 0
 
                    if(order.payment.paymentMethod === 'BOLETO'){
                         payTypeId = 5751
                    }else if(order.payment.paymentMethod === 'CREDIT_CARD'){
                         payTypeId = 7196 
-                   } 
+                   } else{
+                        payTypeId = 5750
+                   }
 
                     const createdOrderBierHeld = await this.bierHeldProvider.createOrder({
                         send_order_mail: true,
@@ -102,7 +104,7 @@ export class CreateOrderBierHeld {
                             payments_attributes: [
                                 {
                                    pay_type_id: payTypeId,
-                                   value: order.total
+                                   value: order.total,
                                 }
                             ]
                         }

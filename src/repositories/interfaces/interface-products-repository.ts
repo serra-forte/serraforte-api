@@ -32,8 +32,8 @@ export interface IProductsRepository {
     listBySalesAndShopkeeperId(shopkeeperId: string, page?: number | null): Promise<IResponseListProducts>
     findByName(name: string): Promise<Product | null>
     update(data: Prisma.ProductUpdateInput): Promise<Product>
-    decrementQuantity(id: string, quantity: number): Promise<Product>
-    incrementQuantity(id: string, quantity: number): Promise<Product>
+    decrementQuantity(id: string, quantity: number): Promise<boolean>
+    incrementQuantity(id: string, quantity: number): Promise<boolean>
     updateStatus(id: string, status: boolean): Promise<Product>
     updateSales(id: string, sales: number): Promise<void>
     delete(id: string): Promise<void>

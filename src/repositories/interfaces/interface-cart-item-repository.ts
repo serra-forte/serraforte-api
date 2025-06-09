@@ -7,7 +7,7 @@ export interface ICartItemRepository {
     findById(id:string):Promise<CartItem | null>
     incrementCartItemById(id: string, value:number): Promise<CartItem>
     decrementCartItemById(id: string, value:number): Promise<CartItem>
-    deleteAllCartItemByShoppingCartId(shoppingCartId: string): Promise<void>
+    deleteAllCartItemByShoppingCartId(shoppingCartId: string): Promise<boolean>
     deleteById(id:string):Promise<void>
     deleteAllByShoppingCartId(shoppingCartId: string):Promise<void>
     updatePrice(id: string, price: number): Promise<CartItem>

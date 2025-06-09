@@ -15,4 +15,6 @@ export interface IPaymentsRepository {
   updateStatus(paymentId: string, status: Status): Promise<void>
 
   deleteById(id: string): Promise<void>
+    updateInvoiceUrl(id: string, invoiceUrl: string): Promise<boolean>
+
 }

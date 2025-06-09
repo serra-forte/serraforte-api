@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 
 export class PrismaOrderRepository implements IOrderRepository {
+
     async addBierHeldOrderId(id: string, erpOrderId: number, invoiceId: number): Promise<void> {
         await prisma.order.update({
             where: { id },
@@ -112,7 +113,8 @@ export class PrismaOrderRepository implements IOrderRepository {
                 orderByConditions.push({ createdAt: 'desc' });
             }
         }
-        
+        const formatCode = Number(filters.code?.replace('#', ''))
+
         // Construir o objeto de filtros para o Prisma
         const orders = await prisma.order.findMany({
             orderBy: orderByConditions,
@@ -120,7 +122,7 @@ export class PrismaOrderRepository implements IOrderRepository {
             skip: (page - 1) * 13,
             where: {
                 AND: [
-                    filters.code ? { code: filters.code } : {},
+                    filters.code ? { code: formatCode } : {},
                     filters.date ? { createdAt: { gte: dateFormat } } : {},
                     filters.client ? { 
                         user: { 
@@ -193,7 +195,7 @@ export class PrismaOrderRepository implements IOrderRepository {
         const countPage = await prisma.order.count({
             where: {
                 AND: [
-                    filters.code ? { code: filters.code } : {},
+                    filters.code ? { code: formatCode } : {},
                     filters.date ? { createdAt: { gte: new Date(filters.date).toISOString() } } : {},
                     filters.client ? { 
                         user: { 
@@ -547,7 +549,7 @@ export class PrismaOrderRepository implements IOrderRepository {
                 status:true,
                 createdAt: true
             }
-        }) as unknown as Order
+        }) as unknown as IOrderRelationsDTO
 
         return order
     }
@@ -761,8 +763,10 @@ export class PrismaOrderRepository implements IOrderRepository {
         return order
     }
     async findByCode(code: string){
+        const formatCode = Number(code.replace('#', ''))
+
         const order = await prisma.order.findUnique({
-            where: {code},
+            where: {code: formatCode},
             select: {
                 id: true,
                 withdrawStore: true,
@@ -822,6 +826,8 @@ export class PrismaOrderRepository implements IOrderRepository {
     }
     async deleteById(id: string){
         await prisma.order.delete({where: {id}})
+
+        return true
     }
     async updateStatus(id: string, status: Status){
         await prisma.order.update({

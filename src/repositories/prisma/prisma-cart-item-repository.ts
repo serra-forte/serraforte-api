@@ -165,6 +165,8 @@ export class PrismaCartItemRepository implements ICartItemRepository{
                 shoppingCartId
             }
         })
+
+        return true
     }
     async deleteById(id: string){
         await prisma.cartItem.delete({

@@ -1,5 +1,6 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import {
+  ICustomerResponse,
   IAsaasProvider,
   IChargeData,
   ICreateSubAccountToSplitPayment,
@@ -8,16 +9,33 @@ import {
 } from '../interface-asaas-payment'
 import 'dotenv/config'
 
-// interface ResponseRefundPayment {
-//   status: number
-//   data: any
-//   error: {
-//     code: number
-//     message: string
-//   }
-// }
-
 export class AsaasProvider implements IAsaasProvider {
+  async getCustomer(customerId: string): Promise<ICustomerResponse | null> {
+    try{
+      const responseCustomer = await axios
+        .get(`${process.env.ASAAS_API_URL}/customers/${customerId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            access_token: `${process.env.ASAAS_API_KEY}`,
+          },
+        })
+        .then((response) => {
+          if(response.status === 404){
+            return null
+          }
+          return response.data
+        })
+      return responseCustomer
+    } catch (error) {
+
+      if(error instanceof AxiosError && error.response?.status === 404){
+        return null
+      }
+      
+      throw error
+    }
+  }
+  
   async cancelPayment(idAsaasPayment: string){
     try {
       const responseDeletePayment = await axios
@@ -36,6 +54,7 @@ export class AsaasProvider implements IAsaasProvider {
       return undefined
     }
   }
+
   async createSubAccountToSplitPayment({
     address,
     addressNumber,
@@ -91,6 +110,7 @@ export class AsaasProvider implements IAsaasProvider {
       return undefined
     }
   }
+
   async refundPayment({
     idPayment,
     value,
@@ -163,6 +183,7 @@ export class AsaasProvider implements IAsaasProvider {
 
   async createCustomer(data: ICustomerData) {
     try {
+      console.log(data)
       const responseCreateCustomer = await axios
         .post(`${process.env.ASAAS_API_URL}/customers`, data, {
           headers: {
@@ -176,8 +197,7 @@ export class AsaasProvider implements IAsaasProvider {
       return responseCreateCustomer
     } catch (error) {
       console.log(error)
-
-      return undefined
+      throw error
     }
   }
 }

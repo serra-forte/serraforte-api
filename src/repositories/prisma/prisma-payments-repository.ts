@@ -3,6 +3,17 @@ import { IPaymentsRepository } from '../interfaces/interface-payments-repository
 import { prisma } from '@/lib/prisma'
 
 export class PrismaPaymentRepository implements IPaymentsRepository {
+
+  async updateInvoiceUrl(id: string, invoiceUrl: string): Promise<boolean> {
+          await prisma.payment.update({
+              where: { id },
+              data: {
+                invoiceUrl
+              }
+          })
+  
+          return true
+      }
   async listByAsaasPaymentId(id: string){
     const payment = await prisma.payment.findMany({
       where: {

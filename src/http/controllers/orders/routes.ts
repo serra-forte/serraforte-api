@@ -1,7 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { ListOrderByUser } from "./list-by-user/list-by-user-order-controller";
 import { ListOrder } from "./list/list-order-controller";
-import { CreateOrderWithAsaas } from "./create/asaas/create-order-with-asaas-controller";
 import { verifyTokenJWT } from "@/http/middlewares/verify-token-jwt";
 import { FindOrderById } from "./find-by-id/find-by-id-order-controller";
 import { PaymentWebHook } from "./webhooks/asaas/events-webhook-payments-controller";
@@ -16,19 +15,10 @@ import { FilterOrder } from "./filter/filter-orders-controller";
 import { CountBySent } from "./count-by-sent/count-by-sent-reviews-controller";
 import { ConfirmWithdrawedStore } from "./confirm-withadrawed-store/confirm-withdrawed-store-order-controller";
 import { verifyUserRole } from "@/http/middlewares/verify-user-role";
+import { CreateDeliveryOrder } from "./create-delivery-order/create-delivery-order.controller";
+import { CreateWithdrawOrder } from "./create-withdraw-order/create-withdraw-order.controller";
 
 export async function ordersRoutes(fastifyApp: FastifyInstance) {
-    // criar order
-    fastifyApp.post('/', {
-        onRequest: [verifyTokenJWT],
-        config: {
-            rateLimit: {
-                max: 5,
-                timeWindow: '1 minute'
-            }
-        }
-    }, CreateOrderWithAsaas)
-
     // listar orders pelo user
     fastifyApp.get('/user', {
         onRequest: [verifyTokenJWT]
@@ -83,6 +73,26 @@ export async function ordersRoutes(fastifyApp: FastifyInstance) {
     fastifyApp.get('/count-sent', {
         onRequest: [verifyTokenJWT],
     }, CountBySent)
+
+    fastifyApp.post('/delivery', {
+        onRequest: [verifyTokenJWT],
+        config: {
+            rateLimit: {
+                max: 5,
+                timeWindow: '1 minute'
+            }
+        }
+    }, CreateDeliveryOrder)
+
+    fastifyApp.post('/withdraw', {
+        onRequest: [verifyTokenJWT],
+        config: {
+            rateLimit: {
+                max: 5,
+                timeWindow: '1 minute'
+            }
+        }
+    }, CreateWithdrawOrder)
 
     // ===== Ver Item =====
     fastifyApp.get('/item/:id', {

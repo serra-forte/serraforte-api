@@ -66,6 +66,7 @@ export class CreateDeliveryOrderUseCase {
 
             // Criar pagamento
             const payment = await this.paymentService.resolvePaymentMethod({
+                orderId: order.id,
                 user,
                 billingType: paymentMethod,
                 remoteIp,

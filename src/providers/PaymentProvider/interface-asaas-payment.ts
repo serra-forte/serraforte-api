@@ -1,3 +1,4 @@
+import { IAsaasPayment } from "@/dtos/asaas-payment.dto"
 import { ICardHolder } from "@/interfaces/credit-card.interface"
 
 export interface AsaasPaymentWallet {
@@ -164,7 +165,7 @@ export interface ICustomerResponse {
 
 
 export interface IAsaasProvider {
-  createPayment(data: IChargeData): Promise<any | undefined>
+  createPayment(data: IChargeData): Promise<IAsaasPayment | null>
   createCustomer(data: ICustomerData): Promise<ICustomerResponse>
   findUniqueInstallments(idInstallment: string): Promise<any | null>
   refundPayment(data: IRefundPayment): Promise<any | undefined>

@@ -5,6 +5,7 @@ import { PaymentMethod } from "@prisma/client";
 export interface ICreatePaymentAsaas {
     customer?: string | null
     user: IUserRelations,
+    orderId: string,
     billingType: PaymentMethod,
     dueDate: string,
     value: number,

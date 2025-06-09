@@ -8,11 +8,13 @@ import { AppError } from "@/usecases/errors/app-error";
 import { IUserRelations } from "@/dtos/user-relations.dto";
 import { ICardHolder } from "@/interfaces/credit-card.interface";
 import { UserService } from "../user/user.service";
+import { IPaymentsRepository } from "@/repositories/interfaces/interface-payments-repository";
 
 export class PaymentService implements PaymentServiceBase{
     constructor(
         private asaasProvider: IAsaasProvider,
-        private userService: UserService
+        private userService: UserService,
+        private paymentRepository: IPaymentsRepository
     ) {}
     
     async createCustomer(data: ICreateCustomer, userId: string): Promise<ICustomerResponse> {
@@ -65,10 +67,6 @@ export class PaymentService implements PaymentServiceBase{
                         customer: customer.id
                     })
 
-                    if(!pix){
-                        throw new AppError('Erro ao criar pagamento com pix', 500)
-                    }
-
                     return pix
                 }
                 case PaymentMethod.BOLETO:{
@@ -77,10 +75,6 @@ export class PaymentService implements PaymentServiceBase{
                         customer: customer.id
                     })
 
-                    if(!boleto){
-                        throw new AppError('Erro ao criar pagamento com boleto', 500)
-                    }
-
                     return boleto
                 }
                 case PaymentMethod.CREDIT_CARD:{
@@ -88,10 +82,6 @@ export class PaymentService implements PaymentServiceBase{
                         ...data,
                         customer: customer.id
                     })
-
-                    if(!creditCard){
-                        throw new AppError('Erro ao criar pagamento com cartão de crédito', 500)
-                    }
 
                     return creditCard
                 }
@@ -112,6 +102,12 @@ export class PaymentService implements PaymentServiceBase{
                 description: data.description,
             })
 
+            if(!result){
+                throw new AppError('Erro ao criar pagamento com pix', 500)
+            }
+
+            await this.updatePaymentOrderId(result.id, data.orderId)
+
             return result
         }catch(error){
             throw error;
@@ -130,6 +126,12 @@ export class PaymentService implements PaymentServiceBase{
                 installmentCount: 1,
                 installmentValue: data.value
             })
+
+            if(!result){
+                throw new AppError('Erro ao criar pagamento com boleto', 500)
+            }
+
+            await this.updatePaymentOrderId(result.id, data.orderId)
 
             return result
         }catch(error){
@@ -157,9 +159,30 @@ export class PaymentService implements PaymentServiceBase{
                 installmentValue: data.value
             })
 
+            if(!result){
+                throw new AppError('Erro ao criar pagamento com cartão de crédito', 500)
+            }
+
+            await this.updatePaymentOrderId(result.id, data.orderId)
+
             return result
         }catch(error){
             console.log(error)
+            throw error;
+        }
+    }
+
+    private async updatePaymentOrderId(asaasPaymentId: string, orderId: string): Promise<void> {
+        try{
+            const result = await this.paymentRepository.updateByOrderId({
+                orderId,
+                asaasPaymentId
+            })
+
+            if(!result){
+                throw new AppError('Erro ao atualizar o pagamento do pedido', 500)
+            }
+        }catch(error){
             throw error;
         }
     }

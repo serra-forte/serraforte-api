@@ -4,6 +4,7 @@ import { AsaasProvider } from "@/providers/PaymentProvider/implementations/provi
 import { PrismaCartItemRepository } from "@/repositories/prisma/prisma-cart-item-repository"
 import { PrismaDiscountCounpons } from "@/repositories/prisma/prisma-discount-counpons-repository"
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository"
+import { PrismaPaymentRepository } from "@/repositories/prisma/prisma-payments-repository"
 import { PrismaProductsRepository } from "@/repositories/prisma/prisma-products-repository"
 import { PrismaShoppingCartRepository } from "@/repositories/prisma/prisma-shopping-cart-repository"
 import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository"
@@ -25,13 +26,14 @@ export async function makeCreateDeliveryOrder(): Promise<CreateDeliveryOrderUseC
     const userRepository = new PrismaUsersRepository()
     const asaasProvider = new AsaasProvider()
     const dayjsDateProvider = new DayjsDateProvider()
+    const paymentRepository = new PrismaPaymentRepository()
 
     const orderService = new OrderService(orderRepository, dayjsDateProvider)
     const stockService = new StockService(productRepository)
     const shoppingCartService = new ShoppingCartService(shoppingCartRepository, cartItemRepository)
     const discountService = new CoupomService(discountCouponRepository)
     const userService = new UserService(userRepository)
-    const paymentService = new PaymentService(asaasProvider, userService)
+    const paymentService = new PaymentService(asaasProvider, userService, paymentRepository)
 
     const eventBus = new EventBus()
 

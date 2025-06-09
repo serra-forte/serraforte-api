@@ -3,6 +3,15 @@ import { IPaymentsRepository } from '../interfaces/interface-payments-repository
 import { prisma } from '@/lib/prisma'
 
 export class PrismaPaymentRepository implements IPaymentsRepository {
+  async updateByOrderId(data: Prisma.PaymentUncheckedUpdateInput): Promise<boolean> {
+    const payment = await prisma.payment.update({
+      where: {
+        orderId: data.orderId as string,
+      },
+      data,
+    })
+    return true
+  }
 
   async updateInvoiceUrl(id: string, invoiceUrl: string): Promise<boolean> {
           await prisma.payment.update({

@@ -8,6 +8,7 @@ import {
   IRefundPayment,
 } from '../interface-asaas-payment'
 import 'dotenv/config'
+import { IAsaasPayment } from '@/dtos/asaas-payment.dto'
 
 export class AsaasProvider implements IAsaasProvider {
   async getCustomer(customerId: string): Promise<ICustomerResponse | null> {
@@ -172,12 +173,15 @@ export class AsaasProvider implements IAsaasProvider {
           },
         })
         .then((response) => {
-          return response.data
+          return response.data as IAsaasPayment
         })
       return responseCreatePayment
     } catch (error) {
-      console.log(error)
-      return undefined
+      if(error instanceof AxiosError && error.response?.status){
+        return null
+      }
+      
+      throw error
     }
   }
 
@@ -192,11 +196,18 @@ export class AsaasProvider implements IAsaasProvider {
           },
         })
         .then((response) => {
+          if(response.status === 404){
+            return null
+          }
           return response.data
         })
       return responseCreateCustomer
     } catch (error) {
-      console.log(error)
+      
+      if(error instanceof AxiosError && error.response?.status){
+        return null
+      }
+      
       throw error
     }
   }

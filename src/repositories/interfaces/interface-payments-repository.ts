@@ -17,4 +17,6 @@ export interface IPaymentsRepository {
   deleteById(id: string): Promise<void>
     updateInvoiceUrl(id: string, invoiceUrl: string): Promise<boolean>
 
+  updateByOrderId(data: Prisma.PaymentUncheckedUpdateInput): Promise<boolean>
+
 }

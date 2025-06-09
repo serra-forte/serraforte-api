@@ -61,7 +61,6 @@ export class PaymentWebHookUseCases {
       if (payment.paymentStatus === Status.APPROVED) {
         throw new AppError('Pagamento já foi feito', 400)
       }
-
       // [x] buscar pedido pelo id
       const findOrderExist = await this.orderRepository.findById(payment.orderId) as unknown as IOrderRelationsDTO
 
@@ -90,7 +89,6 @@ export class PaymentWebHookUseCases {
         items: []
       } as unknown as IOrderRelationsDTO;
 
-     console.log('log4')
       if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') { 
         this.evetBus.updateOrderReprovedEvent(endOrder)
 
@@ -102,15 +100,10 @@ export class PaymentWebHookUseCases {
         (event === 'PAYMENT_RECEIVED' && paymenAsaas.billingType === 'BOLETO') ||
         (event === 'PAYMENT_CONFIRMED' && paymenAsaas.billingType === 'CREDIT_CARD'))
 		{ 
-      console.log('log1')
-
       this.evetBus.updateOrderConfirmedEvent(endOrder)
-
-       console.log('log2')
 
       this.evetBus.sendOrderApprovedEmailEvent(endOrder)
        
-       console.log('log3')
       const hasErp = await this.remoteConfig.getTemplate('hasErp')
       if (hasErp.isValid) {
         try {

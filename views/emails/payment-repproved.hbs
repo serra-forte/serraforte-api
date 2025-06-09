@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+       body{
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+        }
+        .container{
+            font-family: Arial, Helvetica, sans-serif; 
+        }
+        #content{
+            width: 25rem;
+            color: black;
+        }
+        
+        .details > span{
+            margin: 0.5rem 0px;
+        }
+
+        img{
+            display: block;
+        }
+        span{
+            margin: 1rem 0px;
+            display: block;
+        }
+        p{
+            text-align: justify;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 576px) {
+            #content{
+            width: 20rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="align-image">
+            <img src="https://firebasestorage.googleapis.com/v0/b/test-2e44b.appspot.com/o/serraforte%2FDesign%20sem%20nome%20(5).png?alt=media&token=3d6f99c8-6CB0-43b4-89c6-317358fcd9a1" alt="logo ferramentas">
+        </span>
+
+        <div id="content">
+            <span>
+                <p>
+                    Olá {{name}},
+                </p>
+            </span>
+
+            <span>
+                <p>
+                    Seu pedido foi reprovado. Mas voce pode fazer uma nova compra.
+                </p>
+            </span>
+            
+            <span>
+                <p>Detalhes do pedido:</p>
+            </span>
+
+            <span>
+                <p>
+                    • Cliente: {{variables.order.user.name}}
+                </p>
+                <p>
+                    • E-mail: {{variables.order.user.email}}
+                </p>
+
+                <p>
+                    • Whatapp: {{variables.order.user.phone}}
+                </p>
+                {{#if (isNotNull variables.order.delivery.address) }}
+                   <p>
+                    • Endereço de entrega: {{variables.order.delivery.address.street}}, {{variables.order.delivery.address.num}} - {{variables.order.delivery.address.zipCode}} - {{variables.order.delivery.address.city}} - {{variables.order.delivery.address.state}}
+                </p>
+                {{else}}
+                   <p>
+                    • Endereço de entrega: Retira pedido na loja
+                   </p>
+                {{/if}}
+
+                <p>
+                    • Items:
+                {{#each variables.order.items}}
+                    <p style="padding-left: 1rem;">• {{this.name}} - ({{this.quantity}}) - {{formatCurrency this.price "R$"}}</p>
+                {{/each}}
+
+                </p>
+               {{#if (isNotNull link) }}
+                    <p>• Fatura: <a href="{{link}}">{{link}}</a></p>
+                {{else}}
+                    <!-- Caso contrário, não exibe nada -->
+                {{/if}}
+
+                <p>
+                    • Preço: {{formatCurrency variables.order.total "R$"}}
+                </p>
+            </span>
+
+            <span>
+                Atenciosamente,<br>
+                A equipe da <strong>Serra Forte</strong>
+        </span>
+        </div>
+    </div>
+</body>
+</html>

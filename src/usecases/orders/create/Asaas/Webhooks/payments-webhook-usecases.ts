@@ -56,12 +56,10 @@ export class PaymentWebHookUseCases {
         throw new AppError('Pedido não encontrado', 404)
       }
 
-      console.log(findOrderExist)
-
       if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') { 
-        this.evetBus.updateOrderReprovedEvent(findOrderExist)
+		this.evetBus.updateOrderReprovedEvent(findOrderExist)
 
-        this.evetBus.sendOrderReprovedEmailEvent(findOrderExist)
+		this.evetBus.sendOrderReprovedEmailEvent(findOrderExist)
         
         return
       }else if (
@@ -69,26 +67,27 @@ export class PaymentWebHookUseCases {
         (event === 'PAYMENT_RECEIVED' && paymenAsaas.billingType === 'BOLETO') ||
         (event === 'PAYMENT_CONFIRMED' && paymenAsaas.billingType === 'CREDIT_CARD'))
 		{ 
-		this.evetBus.updateOrderConfirmedEvent(findOrderExist)
+			this.evetBus.updateOrderConfirmedEvent(findOrderExist)
 
-		this.evetBus.sendOrderApprovedEmailEvent(findOrderExist)
-		
-		const hasErp = await this.remoteConfig.getTemplate('hasErp')
-		if (hasErp.isValid) {
-			try {
-			await this.kafkaProducer.execute('CREATE_ORDER_BIER_HELD', findOrderExist);
-			} catch (error) {
-			console.error('Erro ao enviar para o ERP:', error);
-			}
-		}
+			this.evetBus.sendOrderApprovedEmailEvent(findOrderExist)
+			
+			const hasErp = await this.remoteConfig.getTemplate('hasErp')
 
-		if (findOrderExist.withdrawStore === false) {
-			try {
-			await this.kafkaProducer.execute('SEPARATE_PACKAGE', findOrderExist);
-			} catch (error) {
-			console.error('Erro ao enviar para Melhor Envio:', error);
+			if (hasErp.isValid) {
+				try {
+					await this.kafkaProducer.execute('CREATE_ORDER_BIER_HELD', findOrderExist);
+				} catch (error) {
+					console.error('Erro ao enviar para o ERP:', error);
+				}
 			}
-		}
-      }      
-  }
+
+			if (findOrderExist.withdrawStore === false) {
+				try {
+					await this.kafkaProducer.execute('SEPARATE_PACKAGE', findOrderExist);
+				} catch (error) {
+					console.error('Erro ao enviar para Melhor Envio:', error);
+				}
+			}
+		}      
+    }
 }

@@ -19,7 +19,7 @@ export class SendOrderReprovedEmailListener {
         const listUsersAdmin = await this.usersRepository.listAdmins()
 
         const templatePathUserReproved =
-        './views/emails/admin-payment-reproved.hbs'
+        './views/emails/payment-repproved.hbs'
 
           await this.mailProvider.sendEmail(
             order.user.email,

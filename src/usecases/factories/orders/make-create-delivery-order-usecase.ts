@@ -1,6 +1,7 @@
 import { EventBus } from "@/events/event-bus.provider"
 import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs"
 import { AsaasProvider } from "@/providers/PaymentProvider/implementations/provider-asaas-payment"
+import { PrismaAddressesRepository } from "@/repositories/prisma/prisma-addresses-repository"
 import { PrismaCartItemRepository } from "@/repositories/prisma/prisma-cart-item-repository"
 import { PrismaDiscountCounpons } from "@/repositories/prisma/prisma-discount-counpons-repository"
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository"
@@ -12,7 +13,6 @@ import { CoupomService } from "@/services/coupom/coupom.service"
 import { OrderService } from "@/services/order/order.service"
 import { PaymentService } from "@/services/payment/payment.service"
 import { ShoppingCartService } from "@/services/shopping-cart/shopping-car.service"
-import { StockServiceBase } from "@/services/stock/stock.base"
 import { StockService } from "@/services/stock/stock.service"
 import { UserService } from "@/services/user/user.service"
 import { CreateDeliveryOrderUseCase } from "@/usecases/orders/create/CreateDeliveryOrder"
@@ -27,6 +27,7 @@ export async function makeCreateDeliveryOrder(): Promise<CreateDeliveryOrderUseC
     const asaasProvider = new AsaasProvider()
     const dayjsDateProvider = new DayjsDateProvider()
     const paymentRepository = new PrismaPaymentRepository()
+    const addressRepository = new PrismaAddressesRepository()
 
     const orderService = new OrderService(orderRepository, dayjsDateProvider)
     const stockService = new StockService(productRepository)
@@ -44,6 +45,7 @@ export async function makeCreateDeliveryOrder(): Promise<CreateDeliveryOrderUseC
         discountService,
         orderService,
         paymentService,
+        addressRepository,
         eventBus
     )
 

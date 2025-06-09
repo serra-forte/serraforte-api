@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { IAddressesRepository } from "../interfaces/interface-addresses-repository";
 
 export class PrismaAddressesRepository implements IAddressesRepository{
-  async setLastUsedAddress(addressId: string, userId: string): Promise<void> {
+  async setLastUsedAddress(addressId: string, userId: string): Promise<boolean> {
         await prisma.$transaction([
             prisma.address.updateMany({
                 where: {
@@ -17,6 +17,8 @@ export class PrismaAddressesRepository implements IAddressesRepository{
                 data: { isLastUsed: true }
             })
         ]);
+
+        return true
     }
 
     async listByUser(userId: string): Promise<Address[]> {

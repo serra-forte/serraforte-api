@@ -1,6 +1,7 @@
 import { EventBusBase } from "@/events/event-bus.base";
 import { IDeliveryOrderRequest } from "@/interfaces/request/delivery-order-request.interface";
 import { IOrderResponse } from "@/interfaces/response/order-response.interface copy";
+import { IAddressesRepository } from "@/repositories/interfaces/interface-addresses-repository";
 import { CoupomServiceBase } from "@/services/coupom/coupom.base";
 import { OrderServiceBase } from "@/services/order/order.base";
 import { PaymentService } from "@/services/payment/payment.service";
@@ -19,6 +20,7 @@ export class CreateDeliveryOrderUseCase {
         private coupomService: CoupomServiceBase,
         private orderService: OrderServiceBase,
         private paymentService: PaymentService,
+        private addressRepository: IAddressesRepository,
         private eventBus: EventBusBase
     ) {}
 
@@ -64,6 +66,9 @@ export class CreateDeliveryOrderUseCase {
                 paymentMethod,
                 shoppingCartId: user.shoppingCart.id
             })
+
+            // Setar ultimo endereço usado no pedido do usuário
+            await this.addressRepository.setLastUsedAddress(address.id, user.id)
 
             // Criar pagamento
             const payment = await this.paymentService.resolvePaymentMethod({

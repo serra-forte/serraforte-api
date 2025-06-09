@@ -9,7 +9,7 @@ import { IDateProvider } from "@/providers/DateProvider/interface-date-provider"
 export class OrderService implements OrderServiceBase{
     constructor (
         private orderRepository: IOrderRepository,
-        private dayjsProvider: IDateProvider
+        private dayjsProvider: IDateProvider,
     ) {}
 
     async deleteById(id: string): Promise<boolean> {
@@ -85,11 +85,16 @@ export class OrderService implements OrderServiceBase{
                 }
             });
 
+            if(!result){
+                throw new Error('Erro ao criar o pedido de entrega')
+            }
+
             return result
         }catch(error){
             throw error
         }
     }
+
     async createWithdrawOrder(data: ICreatePickUpOrderRequest): Promise<IOrderRelationsDTO> {
          try{
             const result = await this.orderRepository.create({
@@ -125,6 +130,11 @@ export class OrderService implements OrderServiceBase{
                     }
                 }
             });
+
+            if(!result){
+                throw new Error('Erro ao criar o pedido de retirada')
+            }
+
             return result
         }catch(error){
             throw error

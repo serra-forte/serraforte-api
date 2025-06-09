@@ -25,7 +25,7 @@ export async function makeCreateWithdrawOrderUseCase(): Promise<CreateWithdrawOr
     const userRepository = new PrismaUsersRepository()
     const asaasProvider = new AsaasProvider()
     const dayjsDateProvider = new DayjsDateProvider()
-    const paymentRepository = new PrismaPaymentRepository()
+    const paymentRepository = new PrismaPaymentRepository() //
 
     const orderService = new OrderService(orderRepository, dayjsDateProvider)
     const stockService = new StockService(productRepository)

@@ -55,9 +55,8 @@ export class PaymentWebHookUseCases {
       if (!findOrderExist) {
         throw new AppError('Pedido não encontrado', 404)
       }
-	  console.log(event)
-      if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') { 
-		console.log('REPROVADO')
+
+	  if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') { 
 		this.evetBus.updateOrderReprovedEvent(findOrderExist)
 
 		this.evetBus.sendOrderReprovedEmailEvent(findOrderExist)
@@ -68,7 +67,6 @@ export class PaymentWebHookUseCases {
         (event === 'PAYMENT_RECEIVED' && paymenAsaas.billingType === 'BOLETO') ||
         (event === 'PAYMENT_CONFIRMED' && paymenAsaas.billingType === 'CREDIT_CARD'))
 		{ 
-			console.log('APROVADO')
 			this.evetBus.updateOrderConfirmedEvent(findOrderExist)
 
 			this.evetBus.sendOrderApprovedEmailEvent(findOrderExist)

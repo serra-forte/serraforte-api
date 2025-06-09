@@ -12,7 +12,7 @@ export class SendOrderReprovedEmailListener {
         this.mailProvider = new MailProvider()
         this.usersRepository = new PrismaUsersRepository()
 
-        eventBus.on('send.order.approved', this.execute.bind(this));
+        eventBus.on('send.order.reproved', this.execute.bind(this));
     }
     private async execute(order: IOrderRelationsDTO) {
         try{

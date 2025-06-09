@@ -6,8 +6,6 @@ import { ICreateNaturalClientResponse } from "../interface/response/create-natur
 import { IUpdateNaturalClientRequest } from "../interface/request/update-natural-client-request-interface";
 import { ICreateOrderRequest } from '../interface/request/create-order-request-interface';
 import { IGetItemResponse } from "../interface/response/get-item-response-interface";
-import { IListItemsRequest } from "../interface/request/list-items-request-interface";
-import { IListItemsResponse } from "../interface/response/list-items-response-interface";
 
 export class BierHeldProvider implements IBierHeldProvider{
     client!: string;

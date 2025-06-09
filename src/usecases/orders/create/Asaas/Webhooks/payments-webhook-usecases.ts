@@ -41,23 +41,22 @@ export class PaymentWebHookUseCases {
       paymenAsaas.id,
     )
 
-    if (!foundPaymentExist) {
-      throw new AppError('Pagamento não encontrado', 404)
-    }
-
       if (!foundPaymentExist) {
         throw new AppError('Pagamento não encontrado', 404)
       }
+
 
       if (foundPaymentExist.paymentStatus === Status.APPROVED) {
         throw new AppError('Pagamento já foi feito', 400)
       }
 
-      const findOrderExist = await this.orderRepository.findById(foundPaymentExist.orderId) as unknown as IOrderRelationsDTO
-
+      const findOrderExist = await this.orderRepository.findById(foundPaymentExist.orderId)
+      
       if (!findOrderExist) {
         throw new AppError('Pedido não encontrado', 404)
       }
+
+      console.log(findOrderExist)
 
       if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') { 
         this.evetBus.updateOrderReprovedEvent(findOrderExist)

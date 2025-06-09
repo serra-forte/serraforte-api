@@ -7,6 +7,7 @@ import { PaymentService } from "@/services/payment/payment.service";
 import { ShoppingCartServiceBase } from "@/services/shopping-cart/shopping-cart.base";
 import { StockServiceBase } from "@/services/stock/stock.base";
 import { UserServiceBase } from "@/services/user/user.base";
+import { PaymentMethod } from "@prisma/client";
 
 export class CreateDeliveryOrderUseCase {
     private discount = 0
@@ -76,12 +77,14 @@ export class CreateDeliveryOrderUseCase {
                 creditCardData
             })
             
-            // enviar mensagem por email no evento
-            this.eventBus.sendOrderConfirmationEmailEvent({
-                order,
-                user,
-                invoiceUrl: payment.invoiceUrl
-            })
+            if(paymentMethod !== PaymentMethod.CREDIT_CARD){
+                // enviar mensagem por email no evento
+                this.eventBus.sendOrderConfirmationEmailEvent({
+                    order,
+                    user,
+                    invoiceUrl: payment.invoiceUrl
+                })
+            }
             
             // retornar url da fatura
             return { invoiceUrl: payment.invoiceUrl }

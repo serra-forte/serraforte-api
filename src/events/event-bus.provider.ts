@@ -11,9 +11,9 @@ export class EventBus implements EventBusBase {
             throw error
         }
     }
-    updateOrderReprovedEvent(data: IOrderRelationsDTO): void {
+    sendOrderConfirmationEmailEvent(data: ISendOrderConfirmationEmail): void {
         try {
-            eventBus.emit('update.order.reproved', data);
+            eventBus.emit('send.order.confirmation', data);
         } catch (error) {
             throw error
         }
@@ -25,16 +25,16 @@ export class EventBus implements EventBusBase {
             throw error
         }
     }
-    updateOrderConfirmedEvent(data: IOrderRelationsDTO): void {
+    updateOrderReprovedEvent(data: IOrderRelationsDTO): void {
         try {
-            eventBus.emit('update.order.confirmed', data);
+            eventBus.emit('update.order.reproved', data);
         } catch (error) {
             throw error
         }
     }
-    sendOrderConfirmationEmailEvent(data: ISendOrderConfirmationEmail): void {
+    updateOrderConfirmedEvent(data: IOrderRelationsDTO): void {
         try {
-            eventBus.emit('send.order.confirmation', data);
+            eventBus.emit('update.order.confirmed', data);
         } catch (error) {
             throw error
         }

@@ -191,15 +191,14 @@ model Order {
   total             Decimal
   status            Status         @default(CREATED)
   items             Item[]
-  createdAt         DateTime?    @default(now()) @map("created_at") @db.Timestamptz()
+  createdAt         DateTime? @default(now()) @map("created_at") @db.Timestamptz()
   payment           Payment?
   delivery          Delivery?
   description       String?
-  // discountCoupon: string;
   cancellations     Cancellation[]
   boxes BoxInOrder[]
   withdrawStore     Boolean?
-  withdrawStoreDate DateTime?
+  withdrawStoreDate DateTime? @map("withdraw_store_date")
 
   cartLabelId String? @map("cart_label_id")
   labelId     String? @map("label_id")

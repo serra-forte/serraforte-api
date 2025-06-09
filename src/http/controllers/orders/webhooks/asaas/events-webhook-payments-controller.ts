@@ -11,7 +11,6 @@ export async function PaymentWebHook(
       event: z.enum(
         [
           'PAYMENT_REPROVED_BY_RISK_ANALYSIS',
-          'PAYMENT_OVERDUE',
           'PAYMENT_CONFIRMED',
           'PAYMENT_RECEIVED',
         ],

@@ -84,8 +84,6 @@ export class CreateOrderBierHeld {
                    }
 
                     const createdOrderBierHeld = await this.bierHeldProvider.createOrder({
-                        send_order_mail: false,
-                        client_mail: order.user.email,
                         order:{
                             client_id: order.user.erpClientId as number,
                             order_value: order.total,

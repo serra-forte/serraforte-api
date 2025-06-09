@@ -45,7 +45,6 @@ export class PaymentWebHookUseCases {
         throw new AppError('Pagamento não encontrado', 404)
       }
 
-
       if (foundPaymentExist.paymentStatus === Status.APPROVED) {
         throw new AppError('Pagamento já foi feito', 400)
       }

@@ -96,7 +96,7 @@ export class PaymentWebHookUseCases {
           endOrder.items.push(...order.items); // spreed no array de items para acumular os items anteriores e os novos
       }
 
-     
+     console.log('log4')
       if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') { 
         this.evetBus.updateOrderReprovedEvent(endOrder)
 
@@ -108,11 +108,15 @@ export class PaymentWebHookUseCases {
         (event === 'PAYMENT_RECEIVED' && paymenAsaas.billingType === 'BOLETO') ||
         (event === 'PAYMENT_CONFIRMED' && paymenAsaas.billingType === 'CREDIT_CARD'))
 		{ 
+      console.log('log1')
 
       this.evetBus.updateOrderConfirmedEvent(endOrder)
 
+       console.log('log2')
+
       this.evetBus.sendOrderApprovedEmailEvent(endOrder)
        
+       console.log('log3')
       const hasErp = await this.remoteConfig.getTemplate('hasErp')
       if (hasErp.isValid) {
         try {

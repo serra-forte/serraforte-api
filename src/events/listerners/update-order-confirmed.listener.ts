@@ -1,7 +1,4 @@
-import { IMailProvider } from "@/providers/MailProvider/interface-mail-provider";
 import { eventBus } from "../event-bus";
-import { ISendOrderConfirmationEmail } from "../interfaces/send-order-confirmation.interface";
-import { MailProvider } from "@/providers/MailProvider/implementations/provider-sendgrid";
 import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";
 import { PrismaPaymentRepository } from "@/repositories/prisma/prisma-payments-repository";

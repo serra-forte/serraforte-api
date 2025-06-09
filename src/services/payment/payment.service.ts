@@ -106,7 +106,7 @@ export class PaymentService implements PaymentServiceBase{
                 throw new AppError('Erro ao criar pagamento com pix', 500)
             }
 
-            await this.updatePaymentOrderId(result.id, data.orderId)
+            await this.updatePaymentOrderId(result, data.orderId)
 
             return result
         }catch(error){
@@ -131,7 +131,7 @@ export class PaymentService implements PaymentServiceBase{
                 throw new AppError('Erro ao criar pagamento com boleto', 500)
             }
 
-            await this.updatePaymentOrderId(result.id, data.orderId)
+            await this.updatePaymentOrderId(result, data.orderId)
 
             return result
         }catch(error){
@@ -163,7 +163,7 @@ export class PaymentService implements PaymentServiceBase{
                 throw new AppError('Erro ao criar pagamento com cartão de crédito', 500)
             }
 
-            await this.updatePaymentOrderId(result.id, data.orderId)
+            await this.updatePaymentOrderId(result, data.orderId)
 
             return result
         }catch(error){
@@ -172,11 +172,14 @@ export class PaymentService implements PaymentServiceBase{
         }
     }
 
-    private async updatePaymentOrderId(asaasPaymentId: string, orderId: string): Promise<void> {
+    private async updatePaymentOrderId(asaasPayment: IAsaasPayment, orderId: string): Promise<void> {
         try{
             const result = await this.paymentRepository.updateByOrderId({
                 orderId,
-                asaasPaymentId
+                asaasPaymentId: asaasPayment.id,
+                invoiceUrl: asaasPayment.invoiceUrl,
+                installmentCount: asaasPayment.installment,
+                installmentValue: asaasPayment.value,
             })
 
             if(!result){

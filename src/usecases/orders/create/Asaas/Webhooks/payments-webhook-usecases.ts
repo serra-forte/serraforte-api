@@ -40,21 +40,18 @@ export class PaymentWebHookUseCases {
   ) {}
 
   async execute({ event, payment:paymenAsaas }: IRequestReceiveEvent): Promise<void> {
-    console.log('log 1')
     let paymenAsaasId = String(paymenAsaas.id)
 
     // [x] buscar pagamento pelo id
     const findPaymentsExist = await this.paymentsRepository.listByAsaasPaymentId(
       paymenAsaasId,
     )
-console.log('log 2')
+
     for(let payment of findPaymentsExist) {
       // buscar pelo id
       const findPaymentExist = await this.paymentsRepository.findById(
         String(payment.id),
       )
-
-      console.log('log 3')
 
       // [x] validar se o pagamento existe
       if (!findPaymentExist) {
@@ -92,7 +89,6 @@ console.log('log 2')
         items: []
       } as unknown as IOrderRelationsDTO;
 
-      console.log('log 4')
       if (event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS') { 
         this.evetBus.updateOrderReprovedEvent(endOrder)
 

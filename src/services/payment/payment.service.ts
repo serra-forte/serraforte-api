@@ -208,7 +208,7 @@ export class PaymentService implements PaymentServiceBase{
             if(result.success !== true){
                 const customerUpdated = await this.asaasProvider.updateCustomer(customer)
             
-                if(customerUpdated){
+                if(!customerUpdated){
                     throw new AppError('Erro ao atualizar o cliente no asaas', 500)
                 }
 

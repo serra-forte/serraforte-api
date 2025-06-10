@@ -6,6 +6,4 @@ import { IUserRelations } from "@/dtos/user-relations.dto";
 
 export abstract class PaymentServiceBase {
     abstract resolvePaymentMethod(data: ICreatePaymentAsaas): Promise<IAsaasPayment>
-    abstract getCustomer(user: IUserRelations): Promise<ICustomerResponse> 
-    abstract createCustomer(data: ICreateCustomer, userId: string): Promise<ICustomerResponse>
 }

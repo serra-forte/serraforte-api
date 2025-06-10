@@ -9,7 +9,7 @@ import { IUserRelations } from "@/dtos/user-relations.dto";
 import { ICardHolder } from "@/interfaces/credit-card.interface";
 import { UserService } from "../user/user.service";
 import { IPaymentsRepository } from "@/repositories/interfaces/interface-payments-repository";
-import { Customer, CustomerSchema } from "./dto/response/customer.dto";
+import { CustomerSchema } from "./dto/response/customer.dto";
 
 export class PaymentService implements PaymentServiceBase{
     constructor(
@@ -18,7 +18,7 @@ export class PaymentService implements PaymentServiceBase{
         private paymentRepository: IPaymentsRepository
     ) {}
     
-    async createCustomer(data: ICreateCustomer, userId: string): Promise<ICustomerResponse> {
+    private async createCustomer(data: ICreateCustomer, userId: string): Promise<ICustomerResponse> {
         try{
             const result = await this.asaasProvider.createCustomer(data)
 
@@ -38,7 +38,7 @@ export class PaymentService implements PaymentServiceBase{
         }
     }
 
-    async getCustomer(user: IUserRelations): Promise<ICustomerResponse> {
+    private async getCustomer(user: IUserRelations): Promise<ICustomerResponse> {
         try{
             const result = await this.asaasProvider.getCustomer(user.asaasCustomerId)
 
@@ -51,46 +51,9 @@ export class PaymentService implements PaymentServiceBase{
                 }, user.id)
             }
 
-            // validar user se tem email,name,phoe e cpf
             const customer = await this.validateCustomer(result)
 
             return customer
-        }catch(error){
-            throw error;
-        }
-    }
-
-    async resolvePaymentMethod(data: ICreatePaymentAsaas): Promise<IAsaasPayment> {
-        try{
-            const customer = await this.getCustomer(data.user)
-            console.log(customer)
-
-            switch(data.billingType){
-                case PaymentMethod.PIX:{
-                    const pix = await this.pix({
-                        ...data,
-                        customer: customer.id
-                    })
-
-                    return pix
-                }
-                case PaymentMethod.BOLETO:{
-                    const boleto = await this.boleto({
-                        ...data,
-                        customer: customer.id
-                    })
-
-                    return boleto
-                }
-                case PaymentMethod.CREDIT_CARD:{
-                    const creditCard = await this.creditCard({
-                        ...data,
-                        customer: customer.id
-                    })
-
-                    return creditCard
-                }
-            }
         }catch(error){
             throw error;
         }
@@ -220,4 +183,40 @@ export class PaymentService implements PaymentServiceBase{
             throw error;
         }
     }   
+
+    async resolvePaymentMethod(data: ICreatePaymentAsaas): Promise<IAsaasPayment> {
+        try{
+            const customer = await this.getCustomer(data.user)
+            console.log(customer)
+
+            switch(data.billingType){
+                case PaymentMethod.PIX:{
+                    const pix = await this.pix({
+                        ...data,
+                        customer: customer.id
+                    })
+
+                    return pix
+                }
+                case PaymentMethod.BOLETO:{
+                    const boleto = await this.boleto({
+                        ...data,
+                        customer: customer.id
+                    })
+
+                    return boleto
+                }
+                case PaymentMethod.CREDIT_CARD:{
+                    const creditCard = await this.creditCard({
+                        ...data,
+                        customer: customer.id
+                    })
+
+                    return creditCard
+                }
+            }
+        }catch(error){
+            throw error;
+        }
+    }
 }

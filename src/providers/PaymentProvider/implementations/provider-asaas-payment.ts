@@ -11,7 +11,7 @@ import 'dotenv/config'
 import { IAsaasPayment } from '@/dtos/asaas-payment.dto'
 
 export class AsaasProvider implements IAsaasProvider {
-  async updateCustomer(data: ICustomerData): Promise<ICustomerResponse> {
+  async updateCustomer(data: ICustomerData): Promise<ICustomerResponse | null> {
     try {
       const responseUpdateCustomer = await axios
         .put(`${process.env.ASAAS_API_URL}/customers/${data.id}`, data, {
@@ -25,7 +25,10 @@ export class AsaasProvider implements IAsaasProvider {
         })
       return responseUpdateCustomer
     } catch (error) {
-      console.log(error)
+       if(error instanceof AxiosError && error.response?.status === 404){
+        return null
+      }
+      
       throw error
     }
   }

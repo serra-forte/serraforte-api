@@ -172,5 +172,5 @@ export interface IAsaasProvider {
   createSubAccountToSplitPayment(accountUser: ICreateSubAccountToSplitPayment): Promise<IResponseCreateSubAccountToSplitPayment | undefined>
   cancelPayment(idAsaasPayment: string): Promise<IResponseDeletedPayment | undefined>
   getCustomer(customerId: string): Promise<ICustomerResponse | null>
-  updateCustomer(data: ICustomerData): Promise<ICustomerResponse>
+  updateCustomer(data: ICustomerData): Promise<ICustomerResponse | null>
 }

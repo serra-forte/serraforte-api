@@ -151,7 +151,8 @@ export class UpdateUserUseCase{
             }
         })
 
-        const contactAttributes = [...destroyContactAttributes,
+        const contactAttributes = [
+            ...destroyContactAttributes,
             { 
                 contact_type: 'email',
                 value: email
@@ -172,10 +173,10 @@ export class UpdateUserUseCase{
             addressAttributes:{
                 street: address?.street as string,
                 number: String(address?.num),
-                neighborhood: address?.neighborhood as string,
+                district: address?.neighborhood as string,
                 city: address?.city as string,
                 state: address?.state as string,
-                zipCode: address?.zipCode as string,
+                zip: address?.zipCode as string,
                 complement: address?.complement,
             }
         })

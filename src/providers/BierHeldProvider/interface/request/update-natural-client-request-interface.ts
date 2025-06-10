@@ -16,10 +16,10 @@ export interface IUpdateNaturalClientRequest {
       street?: string | null;
       number?: string | null;
       complement?: string | null;
-      neighborhood?: string | null;
+      district?: string | null;
       city?: string | null;
       state?: string | null;
-      zipCode?: string | null;
+      zip?: string | null;
     };
   }
   

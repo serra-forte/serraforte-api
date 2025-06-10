@@ -26,7 +26,7 @@ export class PaymentService implements PaymentServiceBase{
                 name: user.name,
                 email: user.email,
                 phone: user.phone?.replace('(+)', '').replace(' ', '') as string,
-                cpfCnpj: user.cpf
+                cpfCnpj: user.cpf.replace('.', '').replace('.', '').replace('-', '')
             })
 
             console.log(customerUpdated)

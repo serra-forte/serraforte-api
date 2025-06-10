@@ -30,6 +30,8 @@ export class UserService implements UserServiceBase{
                 throw new ResourceNotFoundError(USER_NOT_FOUND)
             }
 
+            console.log('user do pedido')
+            console.log(result)
             return result as unknown as IUserRelations
         }catch(error){
             throw error

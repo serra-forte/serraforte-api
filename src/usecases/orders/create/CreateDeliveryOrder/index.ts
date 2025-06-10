@@ -69,7 +69,7 @@ export class CreateDeliveryOrderUseCase {
 
             // Setar ultimo endereço usado no pedido do usuário
             await this.addressRepository.setLastUsedAddress(address.id, user.id)
-
+           
             // Criar pagamento
             const payment = await this.paymentService.resolvePaymentMethod({
                 orderId: order.id,

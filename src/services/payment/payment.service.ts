@@ -59,7 +59,8 @@ export class PaymentService implements PaymentServiceBase{
     async resolvePaymentMethod(data: ICreatePaymentAsaas): Promise<IAsaasPayment> {
         try{
             const customer = await this.getCustomer(data.user)
-
+            console.log(customer)
+            console.log(data)
             switch(data.billingType){
                 case PaymentMethod.PIX:{
                     const pix = await this.pix({

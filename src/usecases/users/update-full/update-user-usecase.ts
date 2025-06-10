@@ -6,6 +6,7 @@ import { IAddressesRepository } from '@/repositories/interfaces/interface-addres
 import { IBierHeldProvider } from '@/providers/BierHeldProvider/bier-held-interface';
 import { IRemoteConfigProvider } from '@/providers/RemoteConfigProvider/interface-remote-config-provider';
 import { IUserRelations } from '@/dtos/user-relations.dto';
+import { IContactAttributes } from '@/providers/BierHeldProvider/interface/request/update-natural-client-request-interface';
 
 interface IRequestUpdateUser {
     id: string,
@@ -135,32 +136,39 @@ export class UpdateUserUseCase{
      const hasErp = await this.remoteConfig.getTemplate('hasErp')
 
     if(hasErp.isValid === true){
-            await this.bierHeldProvider.updateNaturalPerson({
+        const getUserErp = await this.bierHeldProvider.getUser(findUserExists.erpUserId as number)
+
+        if(!getUserErp){
+            throw new AppError('Usuário nao encontrado no ERP', 404)
+        }
+
+        const destroyContactAttributes = getUserErp.contacts_attributes.map((contact) => {
+            return{
+                id: contact.id,
+                contact_type: contact.contact_type,
+                value: contact.value,
+                _destroy: true
+            }
+        })
+
+        const contactAttributes = [...destroyContactAttributes,
+            { 
+                contact_type: 'email',
+                value: email
+            },
+            {
+                contact_type: 'cellphone',
+                value: phone as string
+            }
+        ]
+
+        await this.bierHeldProvider.updateNaturalPerson({
             id: findUserExists?.erpUserId as number,
             fullName: name,
             birtDate: new Date(dateBirth!),
             active: true,
             cpf,
-            contactAttributes: [
-                {
-                    contact_type: 'email',
-                    value: email
-                },
-                {
-                    contact_type: 'cellphone',
-                    value: phone as string
-                },
-                    {
-                    contact_type: 'email',
-                    value: findUserExists.email,
-                    _destroy: true
-                },
-                {
-                    contact_type: 'cellphone',
-                    value: findUserExists.phone as string,
-                    _destroy: true
-                }
-            ],
+            contactAttributes: contactAttributes as IContactAttributes[],
             addressAttributes:{
                 street: address?.street as string,
                 number: String(address?.num),
@@ -203,9 +211,6 @@ export class UpdateUserUseCase{
             })),
           },
         })
-
-        
-       
     
         return {
             user: userUpdated

@@ -6,12 +6,37 @@ import { ICreateNaturalClientResponse } from "../interface/response/create-natur
 import { IUpdateNaturalClientRequest } from "../interface/request/update-natural-client-request-interface";
 import { ICreateOrderRequest } from '../interface/request/create-order-request-interface';
 import { IGetItemResponse } from "../interface/response/get-item-response-interface";
+import { IGetUserResponse } from "../interface/response/get-user-response.interface";
 
 export class BierHeldProvider implements IBierHeldProvider{
     client!: string;
     accessToken!: string;
 
     constructor(){}
+    async getUser(id: number): Promise<IGetUserResponse | null> {
+        try{
+            const path = `${env.BIER_HELD_API_URL}/v2/person_clients/${id}`
+
+            await this.verifyToken()
+
+            const response = await axios.get<IGetUserResponse>(path, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'access-token': this.accessToken,
+                    'client': this.client,
+                    'uid': env.BIER_HELD_CLIENT_ID
+                },
+            })
+            return response.data
+        }catch(error){
+            const errorHandler = await this.errorHandler(error)
+            if(errorHandler === true){
+                return await this.getUser(id)
+            }
+
+            throw errorHandler
+        }
+    }
     
     async getItem(id: number): Promise<IGetItemResponse | null> {
         try{

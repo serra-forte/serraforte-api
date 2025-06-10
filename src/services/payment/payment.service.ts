@@ -40,7 +40,7 @@ export class PaymentService implements PaymentServiceBase{
 
     private async getCustomer(user: IUserRelations): Promise<ICustomerResponse> {
         try{
-            if(!user.asaasCustomerId){
+            if(user.asaasCustomerId){
                 const result = await this.asaasProvider.getCustomer(user.asaasCustomerId)
 
                 if(!result){

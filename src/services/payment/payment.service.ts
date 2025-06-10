@@ -9,6 +9,7 @@ import { IUserRelations } from "@/dtos/user-relations.dto";
 import { ICardHolder } from "@/interfaces/credit-card.interface";
 import { UserService } from "../user/user.service";
 import { IPaymentsRepository } from "@/repositories/interfaces/interface-payments-repository";
+import { CustomerSchema } from "./dto/response/customer.dto";
 
 export class PaymentService implements PaymentServiceBase{
     constructor(
@@ -50,7 +51,10 @@ export class PaymentService implements PaymentServiceBase{
                 }, user.id)
             }
 
-            return result
+            // validar user se tem email,name,phoe e cpf
+            const customer = await this.validateCustomer(result)
+
+            return customer
         }catch(error){
             throw error;
         }
@@ -60,7 +64,7 @@ export class PaymentService implements PaymentServiceBase{
         try{
             const customer = await this.getCustomer(data.user)
             console.log(customer)
-            console.log(data)
+
             switch(data.billingType){
                 case PaymentMethod.PIX:{
                     const pix = await this.pix({
@@ -190,4 +194,15 @@ export class PaymentService implements PaymentServiceBase{
             throw error;
         }
     }
+
+    private async validateCustomer(user: ICustomerResponse): Promise<any> {
+        try{
+            const result = CustomerSchema.parse(user);
+
+            console.log(result)
+        } catch (error) {
+            console.log(error)
+            throw error;
+        }
+    }   
 }

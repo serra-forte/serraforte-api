@@ -150,7 +150,7 @@ export class PaymentService implements PaymentServiceBase{
                 orderId,
                 asaasPaymentId: asaasPayment.id,
                 invoiceUrl: asaasPayment.invoiceUrl,
-                installmentCount: asaasPayment.installment,
+                installmentCount: Number(asaasPayment.installment),
                 installmentValue: asaasPayment.value,
             })
 

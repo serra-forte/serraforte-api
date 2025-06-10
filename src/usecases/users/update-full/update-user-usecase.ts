@@ -5,6 +5,7 @@ import { IUsersRepository } from '@/repositories/interfaces/interface-users-repo
 import { IAddressesRepository } from '@/repositories/interfaces/interface-addresses-repository';
 import { IBierHeldProvider } from '@/providers/BierHeldProvider/bier-held-interface';
 import { IRemoteConfigProvider } from '@/providers/RemoteConfigProvider/interface-remote-config-provider';
+import { IUserRelations } from '@/dtos/user-relations.dto';
 
 interface IRequestUpdateUser {
     id: string,
@@ -32,7 +33,7 @@ interface IRequestUpdateUser {
     }[] | undefined
 }
 interface IResponseUpdateUser {
-    user: User
+    user: IUserRelations
 }
 
 export class UpdateUserUseCase{
@@ -180,6 +181,16 @@ export class UpdateUserUseCase{
                     {
                         contact_type: 'cellphone',
                         value: phone as string
+                    },
+                     {
+                        contact_type: 'email',
+                        value: findUserExists.email,
+                        _destroy: true
+                    },
+                    {
+                        contact_type: 'cellphone',
+                        value: findUserExists.phone as string,
+                        _destroy: true
                     }
                 ],
                 addressAttributes:{

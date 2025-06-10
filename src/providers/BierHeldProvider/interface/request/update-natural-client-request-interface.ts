@@ -7,6 +7,7 @@ export interface IUpdateNaturalClientRequest {
     contactAttributes?: {
         contact_type?: 'email' | 'cellphone';
         value?: string;
+        _destroy?: boolean;
     }[];
     addressAttributes?: {
       street?: string | null;

@@ -209,7 +209,6 @@ export class AsaasProvider implements IAsaasProvider {
 
   async createCustomer(data: ICustomerData) {
     try {
-      console.log(data)
       const responseCreateCustomer = await axios
         .post(`${process.env.ASAAS_API_URL}/customers`, data, {
           headers: {

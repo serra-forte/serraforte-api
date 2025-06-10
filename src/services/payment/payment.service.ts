@@ -51,6 +51,7 @@ export class PaymentService implements PaymentServiceBase{
                 }, user.id)
             }
 
+            console.log(result)
             // validar user se tem email,name,phoe e cpf
             const customer = await this.validateCustomer({
                 cpf: result.cpfCnpj,
@@ -200,10 +201,10 @@ export class PaymentService implements PaymentServiceBase{
         }
     }
 
-    private async validateCustomer(user: Customer): Promise<any> {
+    private async validateCustomer(customer: Customer): Promise<any> {
         try{
             console.log('log1')
-            const result = CustomerSchema.parse(user);
+            const result = CustomerSchema.parse(customer);
             console.log(result)
             console.log('log2')
         } catch (error) {

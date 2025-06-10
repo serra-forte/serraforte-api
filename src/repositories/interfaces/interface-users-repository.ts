@@ -17,7 +17,7 @@ export interface IUsersRepository {
     listAdmins(): Promise<User[]>
     listByShopkeeper(page?: number | null, take?: number | null): Promise<IResponseListUsers>
     listByDeliveryMan(page?: number | null, take?: number | null): Promise<IResponseListUsers>
-    findById(id:string): Promise<User | null>
+    findById(id:string): Promise<IUserRelations | null>
     getUserSecurity(id:string): Promise<User | null>
     findByEmail(email:string): Promise<User | null>
     findByCPF(cpf:string): Promise<User | null>
@@ -26,7 +26,7 @@ export interface IUsersRepository {
 
     activeEmail(id:string, activate?: boolean): Promise<void | null>
     changePassword(id:string, password:string): Promise<void | null>
-    update(data:Prisma.UserUncheckedUpdateInput): Promise<User>
+    update(data:Prisma.UserUncheckedUpdateInput): Promise<IUserRelations>
     updateAsaasCostumerId(id:string, asaasCustomerId:string): Promise<User>
     turnAdmin(id:string): Promise<User | null>
     delete(id:string): Promise<void>

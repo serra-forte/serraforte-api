@@ -5,6 +5,12 @@ import { z } from "zod";
 export async function CreateDeliveryOrder(request: FastifyRequest, reply: FastifyReply){
     try {
         const orderSchemaBody = z.object({
+            user: z.object({
+                name: z.string(),
+                email: z.string(),
+                phone: z.string(),
+                cpf: z.string(),
+            }),
             billingType: z.enum(['PIX', 'BOLETO', 'CREDIT_CARD']),
             freight: z.object({
                 id: z.number(),
@@ -47,6 +53,7 @@ export async function CreateDeliveryOrder(request: FastifyRequest, reply: Fastif
         })
     
         const { 
+            user,
             creditCard,
             creditCardHolderInfo,
             billingType, 
@@ -59,7 +66,10 @@ export async function CreateDeliveryOrder(request: FastifyRequest, reply: Fastif
         const createDeliveryOrderUseCase = await makeCreateDeliveryOrder()
 
         const order = await createDeliveryOrderUseCase.execute({
-            userId: request.user.id,
+            userData: {
+                id: request.user.id,
+               ...user
+            },
             remoteIp: String(request.socket.remoteAddress),
             freight,
             address,

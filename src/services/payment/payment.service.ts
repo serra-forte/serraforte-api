@@ -18,50 +18,6 @@ export class PaymentService implements PaymentServiceBase{
         private paymentRepository: IPaymentsRepository
     ) {}
 
-    private async updateCostumer(user: IUserRelations){
-        try{
-            console.log(user)
-            const customerUpdated = await this.asaasProvider.updateCustomer({
-                id: user.asaasCustomerId,
-                name: user.name,
-                email: user.email,
-                phone: user.phone?.replace('(+)', '').replace(' ', '') as string,
-                cpfCnpj: user.cpf.replace('.', '').replace('.', '').replace('-', '')
-            })
-
-            console.log(customerUpdated)
-        
-            if(!customerUpdated){
-                throw new AppError('Erro ao atualizar o cliente no asaas', 500)
-            }
-
-            return customerUpdated
-        } catch (error) {
-            throw error
-        }
-    }
-
-    private async validateCustomer(customer: ICustomerResponse): Promise<ICustomerResponse | boolean> {
-        try{
-            const result = CustomerSchema.safeParse({
-                id: customer.id,
-                name: customer.name,
-                email: customer.email,
-                phone: customer.phone,
-                cpfCnpj: customer.cpfCnpj
-            });
-
-            if(result.success !== true){
-                console.log('é preciso atualizar o cliente')
-               return false
-            }
-
-            return customer            
-        } catch (error) {
-            throw error;
-        }
-    } 
-
     private async createCustomer(data: ICreateCustomer, userId: string): Promise<ICustomerResponse> {
         try{
             const result = await this.asaasProvider.createCustomer(data)
@@ -84,24 +40,23 @@ export class PaymentService implements PaymentServiceBase{
 
     private async getCustomer(user: IUserRelations): Promise<ICustomerResponse> {
         try{
-            const result = await this.asaasProvider.getCustomer(user.asaasCustomerId)
+            if(!user.asaasCustomerId){
+                const result = await this.asaasProvider.getCustomer(user.asaasCustomerId)
 
-            if(!result){
-                return await this.createCustomer({
+                if(!result){
+                    throw new AppError('Erro ao buscar o cliente', 500)
+                }
+
+                return result
+            }
+
+            const result = await this.createCustomer({
                     name: user.name,
                     email: user.email,
                     cpfCnpj: user.cpf,
                     phone: user.phone?.replace('(+)', '').replace(' ', '') as string
                 }, user.id)
-            }
-
-            const isValidCustomer = await this.validateCustomer(result)
-
-            if(!isValidCustomer){
-                const result = await this.updateCostumer(user)
-
-                return  result
-            }
+           
 
             return result
         }catch(error){

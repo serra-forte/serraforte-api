@@ -450,7 +450,7 @@ export class PrismaUsersRepository implements IUsersRepository{
                 },
                 address: true
             }
-        }) as unknown as User
+        }) as unknown as IUserRelations
 
         return user
     }
@@ -529,7 +529,7 @@ export class PrismaUsersRepository implements IUsersRepository{
                 },
             },
             data
-        }) as unknown as User
+        }) as unknown as IUserRelations
 
         return user
     }

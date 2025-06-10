@@ -24,7 +24,7 @@ export class CreateWithdrawOrderUseCase {
 
 
     async execute({
-        userId,
+        userData,
         remoteIp,
         coupom,
         paymentMethod,
@@ -32,13 +32,13 @@ export class CreateWithdrawOrderUseCase {
     }:IWithdrawOrderRequest): Promise<IOrderResponse> {
         try{
             // Buscar o usuário valido
-            const user = await this.userService.findById(userId)
+            const foundUser = await this.userService.findById(userData)
 
             // Busca os itens do carrinho
-            const getCartItems = await this.shoppingCartService.getItems(user.id)
+            const getCartItems = await this.shoppingCartService.getItems(foundUser.id)
         
             // Buscar total do carrinho
-            const getCartTotal =  await this.shoppingCartService.getTotal(user.id)
+            const getCartTotal =  await this.shoppingCartService.getTotal(foundUser.id)
 
             // Decrementa o estoque
             await this.stockService.decrement(getCartItems)
@@ -53,21 +53,21 @@ export class CreateWithdrawOrderUseCase {
 
             // Criar pedido
             const order = await this.orderService.createWithdrawOrder({
-                userId: user.id,
+                userId: foundUser.id,
                 total,
                 items: getCartItems,
                 discount: this.discount,
                 paymentMethod,
-                shoppingCartId: user.shoppingCart.id
+                shoppingCartId: foundUser.shoppingCart.id
             })
 
             // Criar pagamento
             const payment = await this.paymentService.resolvePaymentMethod({
                 orderId: order.id,
-                user,
+                user: foundUser,
                 billingType: paymentMethod,
                 remoteIp,
-                description: `Pedido #${order.code} - ${user.name}`,
+                description: `Pedido #${order.code} - ${foundUser.name}`,
                 value: total,
                 dueDate: new Date().toISOString(),
                 creditCardData
@@ -77,7 +77,7 @@ export class CreateWithdrawOrderUseCase {
                 // enviar mensagem por email no evento
                 this.eventBus.sendOrderConfirmationEmailEvent({
                     order,
-                    user,
+                    user: foundUser,
                     invoiceUrl: payment.invoiceUrl
                 })
             }

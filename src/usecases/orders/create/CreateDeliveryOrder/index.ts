@@ -26,7 +26,7 @@ export class CreateDeliveryOrderUseCase {
 
 
     async execute({
-        userId,
+        userData,
         remoteIp,
         coupom,
         address,
@@ -36,13 +36,13 @@ export class CreateDeliveryOrderUseCase {
     }:IDeliveryOrderRequest): Promise<IOrderResponse> {
         try{
             // Buscar o usuário valido
-            const user = await this.userService.findById(userId)
+            const foundUser = await this.userService.findById(userData)
 
             // Busca os itens do carrinho
-            const getCartItems = await this.shoppingCartService.getItems(user.id)
+            const getCartItems = await this.shoppingCartService.getItems(foundUser.id)
         
             // Buscar total do carrinho
-            const getCartTotal =  await this.shoppingCartService.getTotal(user.id)
+            const getCartTotal =  await this.shoppingCartService.getTotal(foundUser.id)
 
             // Decrementa o estoque
             await this.stockService.decrement(getCartItems)
@@ -57,26 +57,26 @@ export class CreateDeliveryOrderUseCase {
 
             // Criar pedido
             const order = await this.orderService.createDeliveryOrder({
-                userId: user.id,
+                userId: foundUser.id,
                 total,
                 address,
                 items: getCartItems,
                 freight,
                 discount: this.discount,
                 paymentMethod,
-                shoppingCartId: user.shoppingCart.id
+                shoppingCartId: foundUser.shoppingCart.id
             })
 
             // Setar ultimo endereço usado no pedido do usuário
-            await this.addressRepository.setLastUsedAddress(address.id, user.id)
+            await this.addressRepository.setLastUsedAddress(address.id, foundUser.id)
            
             // Criar pagamento
             const payment = await this.paymentService.resolvePaymentMethod({
                 orderId: order.id,
-                user,
+                user: foundUser,
                 billingType: paymentMethod,
                 remoteIp,
-                description: `Pedido #${order.code} - ${user.name}`,
+                description: `Pedido #${order.code} - ${foundUser.name}`,
                 value: total,
                 dueDate: new Date().toISOString(),
                 creditCardData
@@ -86,7 +86,7 @@ export class CreateDeliveryOrderUseCase {
                 // enviar mensagem por email no evento
                 this.eventBus.sendOrderConfirmationEmailEvent({
                     order,
-                    user,
+                    user: foundUser,
                     invoiceUrl: payment.invoiceUrl
                 })
             }

@@ -6,6 +6,12 @@ import { z } from "zod";
 export async function CreateWithdrawOrder(request: FastifyRequest, reply: FastifyReply){
     try {
         const orderSchemaBody = z.object({
+             user: z.object({
+                name: z.string(),
+                email: z.string(),
+                phone: z.string(),
+                cpf: z.string(),
+            }),
             billingType: z.enum(['PIX', 'BOLETO', 'CREDIT_CARD']),
             coupom: z.object({
                 code: z.string(),
@@ -28,6 +34,7 @@ export async function CreateWithdrawOrder(request: FastifyRequest, reply: Fastif
         })
     
         const { 
+            user,
             creditCardData,
             billingType, 
             coupom
@@ -36,7 +43,10 @@ export async function CreateWithdrawOrder(request: FastifyRequest, reply: Fastif
         const createDeliveryOrderUseCase = await makeCreateWithdrawOrderUseCase()
 
         const order = await createDeliveryOrderUseCase.execute({
-            userId: request.user.id,
+            userData: {
+                id: request.user.id,
+                ...user
+            },
             remoteIp: String(request.socket.remoteAddress),
             paymentMethod: billingType,
             coupom,

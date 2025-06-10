@@ -27,6 +27,8 @@ export class PaymentService implements PaymentServiceBase{
                 phone: user.phone?.replace('(+)', '').replace(' ', '') as string,
                 cpfCnpj: user.cpf
             })
+
+            console.log(customerUpdated)
         
             if(!customerUpdated){
                 throw new AppError('Erro ao atualizar o cliente no asaas', 500)
@@ -95,7 +97,7 @@ export class PaymentService implements PaymentServiceBase{
 
             if(!isValidCustomer){
                 const result = await this.updateCostumer(user)
-                
+
                 return  result
             }
 

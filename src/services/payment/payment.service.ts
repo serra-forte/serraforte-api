@@ -20,6 +20,7 @@ export class PaymentService implements PaymentServiceBase{
 
     private async updateCostumer(user: IUserRelations){
         try{
+            console.log(user)
             const customerUpdated = await this.asaasProvider.updateCustomer({
                 id: user.asaasCustomerId,
                 name: user.name,
@@ -51,6 +52,7 @@ export class PaymentService implements PaymentServiceBase{
             });
 
             if(result.success !== true){
+                console.log('é preciso atualizar o cliente')
                return false
             }
 

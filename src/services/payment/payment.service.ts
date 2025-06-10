@@ -140,7 +140,6 @@ export class PaymentService implements PaymentServiceBase{
 
             return result
         }catch(error){
-            console.log(error)
             throw error;
         }
     }
@@ -166,7 +165,6 @@ export class PaymentService implements PaymentServiceBase{
     async resolvePaymentMethod(data: ICreatePaymentAsaas): Promise<IAsaasPayment> {
         try{
             const customer = await this.getCustomer(data.user)
-            console.log(customer)
 
             switch(data.billingType){
                 case PaymentMethod.PIX:{

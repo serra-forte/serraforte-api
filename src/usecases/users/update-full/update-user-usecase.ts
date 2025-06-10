@@ -132,6 +132,47 @@ export class UpdateUserUseCase{
             }
         }
 
+     const hasErp = await this.remoteConfig.getTemplate('hasErp')
+
+    if(hasErp.isValid === true){
+            await this.bierHeldProvider.updateNaturalPerson({
+            id: findUserExists?.erpUserId as number,
+            fullName: name,
+            birtDate: new Date(dateBirth!),
+            active: true,
+            cpf,
+            contactAttributes: [
+                {
+                    contact_type: 'email',
+                    value: email
+                },
+                {
+                    contact_type: 'cellphone',
+                    value: phone as string
+                },
+                    {
+                    contact_type: 'email',
+                    value: findUserExists.email,
+                    _destroy: true
+                },
+                {
+                    contact_type: 'cellphone',
+                    value: findUserExists.phone as string,
+                    _destroy: true
+                }
+            ],
+            addressAttributes:{
+                street: address?.street as string,
+                number: String(address?.num),
+                neighborhood: address?.neighborhood as string,
+                city: address?.city as string,
+                state: address?.state as string,
+                zipCode: address?.zipCode as string,
+                complement: address?.complement,
+            }
+        })
+    }
+
 
     const userUpdated = await this.usersRepository.update({
         id,
@@ -164,46 +205,7 @@ export class UpdateUserUseCase{
         })
 
         
-        const hasErp = await this.remoteConfig.getTemplate('hasErp')
-
-        if(hasErp.isValid === true){
-                await this.bierHeldProvider.updateNaturalPerson({
-                id: findUserByEmail?.erpUserId as number,
-                fullName: name,
-                birtDate: new Date(dateBirth!),
-                active: true,
-                cpf,
-                contactAttributes: [
-                    {
-                        contact_type: 'email',
-                        value: email
-                    },
-                    {
-                        contact_type: 'cellphone',
-                        value: phone as string
-                    },
-                     {
-                        contact_type: 'email',
-                        value: findUserExists.email,
-                        _destroy: true
-                    },
-                    {
-                        contact_type: 'cellphone',
-                        value: findUserExists.phone as string,
-                        _destroy: true
-                    }
-                ],
-                addressAttributes:{
-                    street: address?.street as string,
-                    number: String(address?.num),
-                    neighborhood: address?.neighborhood as string,
-                    city: address?.city as string,
-                    state: address?.state as string,
-                    zipCode: address?.zipCode as string,
-                    complement: address?.complement,
-                }
-            })
-        }
+       
     
         return {
             user: userUpdated

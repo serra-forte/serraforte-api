@@ -203,14 +203,14 @@ export class PaymentService implements PaymentServiceBase{
 
     private async validateCustomer(customer: Customer): Promise<any> {
         try{
-            console.log('log1')
-            const result = CustomerSchema.parse(customer);
-            console.log(result)
-            console.log('log2')
+            const result = CustomerSchema.safeParse(customer);
+
+            if(result.success !== true){
+                console.log('atualizar usuário na asaas.')
+            }
+           
         } catch (error) {
-            console.log('error validate customer')
-            // console.log(error)
-            // throw error;
+            throw error;
         }
     }   
 }

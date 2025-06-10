@@ -11,7 +11,6 @@ import { PaymentMethod } from "@prisma/client";
 
 export class CreateWithdrawOrderUseCase {
     private discount = 0
-
     constructor(
         private userService: UserServiceBase,
         private stockService: StockServiceBase,

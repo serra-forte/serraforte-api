@@ -17,7 +17,47 @@ export class PaymentService implements PaymentServiceBase{
         private userService: UserService,
         private paymentRepository: IPaymentsRepository
     ) {}
-    
+
+    private async updateCostumer(user: IUserRelations){
+        try{
+            const customerUpdated = await this.asaasProvider.updateCustomer({
+                id: user.asaasCustomerId,
+                name: user.name,
+                email: user.email,
+                phone: user.phone?.replace('(+)', '').replace(' ', '') as string,
+                cpfCnpj: user.cpf
+            })
+        
+            if(!customerUpdated){
+                throw new AppError('Erro ao atualizar o cliente no asaas', 500)
+            }
+
+            return customerUpdated
+        } catch (error) {
+            throw error
+        }
+    }
+
+    private async validateCustomer(customer: ICustomerResponse): Promise<ICustomerResponse | boolean> {
+        try{
+            const result = CustomerSchema.safeParse({
+                id: customer.id,
+                name: customer.name,
+                email: customer.email,
+                phone: customer.phone,
+                cpfCnpj: customer.cpfCnpj
+            });
+
+            if(result.success !== true){
+               return false
+            }
+
+            return customer            
+        } catch (error) {
+            throw error;
+        }
+    } 
+
     private async createCustomer(data: ICreateCustomer, userId: string): Promise<ICustomerResponse> {
         try{
             const result = await this.asaasProvider.createCustomer(data)
@@ -51,9 +91,15 @@ export class PaymentService implements PaymentServiceBase{
                 }, user.id)
             }
 
-            const customer = await this.validateCustomer(result)
+            const isValidCustomer = await this.validateCustomer(result)
 
-            return customer
+            if(!isValidCustomer){
+                const result = await this.updateCostumer(user)
+                
+                return  result
+            }
+
+            return result
         }catch(error){
             throw error;
         }
@@ -157,32 +203,6 @@ export class PaymentService implements PaymentServiceBase{
             throw error;
         }
     }
-
-    private async validateCustomer(customer: ICustomerResponse): Promise<ICustomerResponse> {
-        try{
-            const result = CustomerSchema.safeParse({
-                id: customer.id,
-                name: customer.name,
-                email: customer.email,
-                phone: customer.phone,
-                cpfCnpj: customer.cpfCnpj
-            });
-
-            if(result.success !== true){
-                const customerUpdated = await this.asaasProvider.updateCustomer(customer)
-            
-                if(!customerUpdated){
-                    throw new AppError('Erro ao atualizar o cliente no asaas', 500)
-                }
-
-                return customerUpdated
-            }
-
-            return customer            
-        } catch (error) {
-            throw error;
-        }
-    }   
 
     async resolvePaymentMethod(data: ICreatePaymentAsaas): Promise<IAsaasPayment> {
         try{

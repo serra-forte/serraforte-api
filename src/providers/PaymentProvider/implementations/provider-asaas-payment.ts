@@ -11,6 +11,25 @@ import 'dotenv/config'
 import { IAsaasPayment } from '@/dtos/asaas-payment.dto'
 
 export class AsaasProvider implements IAsaasProvider {
+  async updateCustomer(data: ICustomerData): Promise<ICustomerResponse> {
+    try {
+      const responseUpdateCustomer = await axios
+        .put(`${process.env.ASAAS_API_URL}/customers/${data.id}`, data, {
+          headers: {
+            'Content-Type': 'application/json',
+            access_token: `${process.env.ASAAS_API_KEY}`,
+          },
+        })
+        .then((response) => {
+          return response.data
+        })
+      return responseUpdateCustomer
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
+
   async getCustomer(customerId: string): Promise<ICustomerResponse | null> {
     try{
       const responseCustomer = await axios

@@ -142,8 +142,8 @@ export interface ICustomerResponse {
   dateCreated: string; // formato "YYYY-MM-DD"
   name: string;
   email: string;
-  phone: string;
-  mobilePhone: string;
+  phone?: string;
+  mobilePhone?: string;
   address: string;
   addressNumber: string;
   complement: string;
@@ -172,4 +172,5 @@ export interface IAsaasProvider {
   createSubAccountToSplitPayment(accountUser: ICreateSubAccountToSplitPayment): Promise<IResponseCreateSubAccountToSplitPayment | undefined>
   cancelPayment(idAsaasPayment: string): Promise<IResponseDeletedPayment | undefined>
   getCustomer(customerId: string): Promise<ICustomerResponse | null>
+  updateCustomer(data: ICustomerData): Promise<ICustomerResponse>
 }

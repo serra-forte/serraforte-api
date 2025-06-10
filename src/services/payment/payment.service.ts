@@ -51,14 +51,8 @@ export class PaymentService implements PaymentServiceBase{
                 }, user.id)
             }
 
-            console.log(result)
             // validar user se tem email,name,phoe e cpf
-            const customer = await this.validateCustomer({
-                cpf: result.cpfCnpj,
-                email: result.email,
-                name: result.name,
-                phone: result.phone
-            })
+            const customer = await this.validateCustomer(result)
 
             return customer
         }catch(error){
@@ -201,14 +195,27 @@ export class PaymentService implements PaymentServiceBase{
         }
     }
 
-    private async validateCustomer(customer: Customer): Promise<any> {
+    private async validateCustomer(customer: ICustomerResponse): Promise<ICustomerResponse> {
         try{
-            const result = CustomerSchema.safeParse(customer);
+            const result = CustomerSchema.safeParse({
+                id: customer.id,
+                name: customer.name,
+                email: customer.email,
+                phone: customer.phone,
+                cpfCnpj: customer.cpfCnpj
+            });
 
             if(result.success !== true){
-                console.log('atualizar usuário na asaas.')
+                const customerUpdated = await this.asaasProvider.updateCustomer(customer)
+            
+                if(customerUpdated){
+                    throw new AppError('Erro ao atualizar o cliente no asaas', 500)
+                }
+
+                return customerUpdated
             }
-           
+
+            return customer            
         } catch (error) {
             throw error;
         }

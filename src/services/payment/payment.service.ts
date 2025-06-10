@@ -9,7 +9,7 @@ import { IUserRelations } from "@/dtos/user-relations.dto";
 import { ICardHolder } from "@/interfaces/credit-card.interface";
 import { UserService } from "../user/user.service";
 import { IPaymentsRepository } from "@/repositories/interfaces/interface-payments-repository";
-import { CustomerSchema } from "./dto/response/customer.dto";
+import { Customer, CustomerSchema } from "./dto/response/customer.dto";
 
 export class PaymentService implements PaymentServiceBase{
     constructor(
@@ -52,7 +52,12 @@ export class PaymentService implements PaymentServiceBase{
             }
 
             // validar user se tem email,name,phoe e cpf
-            const customer = await this.validateCustomer(result)
+            const customer = await this.validateCustomer({
+                cpf: result.cpfCnpj,
+                email: result.email,
+                name: result.name,
+                phone: result.phone
+            })
 
             return customer
         }catch(error){
@@ -195,15 +200,16 @@ export class PaymentService implements PaymentServiceBase{
         }
     }
 
-    private async validateCustomer(user: ICustomerResponse): Promise<any> {
+    private async validateCustomer(user: Customer): Promise<any> {
         try{
+            console.log('log1')
             const result = CustomerSchema.parse(user);
-            console.log('validate customer')
             console.log(result)
+            console.log('log2')
         } catch (error) {
             console.log('error validate customer')
-            console.log(error)
-            throw error;
+            // console.log(error)
+            // throw error;
         }
     }   
 }

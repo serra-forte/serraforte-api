@@ -198,9 +198,10 @@ export class PaymentService implements PaymentServiceBase{
     private async validateCustomer(user: ICustomerResponse): Promise<any> {
         try{
             const result = CustomerSchema.parse(user);
-
+            console.log('validate customer')
             console.log(result)
         } catch (error) {
+            console.log('error validate customer')
             console.log(error)
             throw error;
         }

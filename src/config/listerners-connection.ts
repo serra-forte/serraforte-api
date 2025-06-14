@@ -3,6 +3,7 @@ import { SendOrderConfirmedEmailListener } from '@/events/listerners/send-order-
 import { SendOrderReprovedEmailListener } from '@/events/listerners/send-order-reproved-email.listener';
 import { UpdateOrderConfirmedListener } from '@/events/listerners/update-order-confirmed.listener';
 import { UpdateOrderReprovedListener } from '@/events/listerners/update-order-reproved.listener';
+import { UpdateUserNaturalErpListener } from '@/events/listerners/update-user-natural-erp.listener';
 
 export async function connectionListerners() {
     try {
@@ -11,6 +12,7 @@ export async function connectionListerners() {
        new SendOrderConfirmedEmailListener();
        new UpdateOrderConfirmedListener();
        new UpdateOrderReprovedListener();
+       new UpdateUserNaturalErpListener();
 
 
     } catch (error) {

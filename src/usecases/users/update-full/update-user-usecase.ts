@@ -137,6 +137,7 @@ export class UpdateUserUseCase{
      const hasErp = await this.remoteConfig.getTemplate('hasErp')
 
     if(hasErp.isValid === true){
+        console.log('Enviando para ERP')
        this.eventBus.updateUserForErpEvent({
            email,
            erpId: Number(findUserExists.erpUserId as number),

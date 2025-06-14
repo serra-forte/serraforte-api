@@ -7,6 +7,7 @@ import { IBierHeldProvider } from '@/providers/BierHeldProvider/bier-held-interf
 import { IRemoteConfigProvider } from '@/providers/RemoteConfigProvider/interface-remote-config-provider';
 import { IUserRelations } from '@/dtos/user-relations.dto';
 import { IContactAttributes } from '@/providers/BierHeldProvider/interface/request/update-natural-client-request-interface';
+import { EventBusBase } from '@/events/event-bus.base';
 
 interface IRequestUpdateUser {
     id: string,
@@ -41,8 +42,8 @@ export class UpdateUserUseCase{
     constructor(
         private usersRepository: IUsersRepository,
         private addressRepository: IAddressesRepository,
-        private bierHeldProvider: IBierHeldProvider,
-        private remoteConfig: IRemoteConfigProvider
+        private remoteConfig: IRemoteConfigProvider,
+        private eventBus: EventBusBase
     ) {}
 
     async execute({
@@ -136,50 +137,15 @@ export class UpdateUserUseCase{
      const hasErp = await this.remoteConfig.getTemplate('hasErp')
 
     if(hasErp.isValid === true){
-        const getUserErp = await this.bierHeldProvider.getUser(findUserExists.erpUserId as number)
-
-        if(!getUserErp){
-            throw new AppError('Usuário nao encontrado no ERP', 404)
-        }
-
-        const destroyContactAttributes = getUserErp.contacts_attributes.map((contact) => {
-            return{
-                id: contact.id,
-                contact_type: contact.contact_type,
-                value: contact.value,
-                _destroy: true
-            }
-        })
-
-        const contactAttributes = [
-            ...destroyContactAttributes,
-            { 
-                contact_type: 'email',
-                value: email
-            },
-            {
-                contact_type: 'cellphone',
-                value: phone as string
-            }
-        ]
-
-        await this.bierHeldProvider.updateNaturalPerson({
-            id: findUserExists?.erpUserId as number,
-            fullName: name,
-            birtDate: new Date(dateBirth!),
-            active: true,
-            cpf,
-            contactAttributes: contactAttributes as IContactAttributes[],
-            addressAttributes:{
-                street: address?.street as string,
-                number: String(address?.num),
-                district: address?.neighborhood as string,
-                city: address?.city as string,
-                state: address?.state as string,
-                zip: address?.zipCode as string,
-                complement: address?.complement,
-            }
-        })
+       this.eventBus.updateUserForErpEvent({
+           email,
+           erpId: Number(findUserExists.erpUserId as number),
+           name,
+           address,
+           cpf,
+           dateBirth,
+           phone
+       })
     }
 
 

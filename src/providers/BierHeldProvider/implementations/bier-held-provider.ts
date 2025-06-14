@@ -31,7 +31,6 @@ export class BierHeldProvider implements IBierHeldProvider{
 
             return response.data
         }catch(error){
-            console.log(error);
             const errorHandler = await this.errorHandler(error)
             if(errorHandler === true){
                 return await this.getAddress(zipCode)

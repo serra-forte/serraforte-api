@@ -61,7 +61,7 @@ export class UpdateUserUseCase{
         if(!findUserExists){
             throw new AppError('Usuário não encontrado', 404)
         }
-     console.log('UPDAT ERP1')
+
         let emailActive = findUserExists.emailActive;
 
         // buscar usuario pelo email

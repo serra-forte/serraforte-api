@@ -24,7 +24,6 @@ export class CreateDeliveryOrderUseCase {
         private eventBus: EventBusBase
     ) {}
 
-
     async execute({
         userData,
         remoteIp,

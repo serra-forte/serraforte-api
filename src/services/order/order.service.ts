@@ -94,7 +94,6 @@ export class OrderService implements OrderServiceBase{
             throw error
         }
     }
-
     async createWithdrawOrder(data: ICreatePickUpOrderRequest): Promise<IOrderRelationsDTO> {
          try{
             const result = await this.orderRepository.create({

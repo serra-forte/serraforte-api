@@ -9,7 +9,6 @@ import { IUserRelations } from "@/dtos/user-relations.dto";
 import { ICardHolder } from "@/interfaces/credit-card.interface";
 import { UserService } from "../user/user.service";
 import { IPaymentsRepository } from "@/repositories/interfaces/interface-payments-repository";
-import { CustomerSchema } from "./dto/response/customer.dto";
 
 export class PaymentService implements PaymentServiceBase{
     constructor(

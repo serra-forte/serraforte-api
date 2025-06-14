@@ -61,7 +61,7 @@ export class UpdateUserUseCase{
         if(!findUserExists){
             throw new AppError('Usuário não encontrado', 404)
         }
-
+     console.log('UPDAT ERP1')
         let emailActive = findUserExists.emailActive;
 
         // buscar usuario pelo email
@@ -133,9 +133,9 @@ export class UpdateUserUseCase{
                 })
             }
         }
-
+console.log('UPDAT ERP2')
      const hasErp = await this.remoteConfig.getTemplate('hasErp')
-     console.log('UPDAT ERP')
+     console.log('UPDAT ERP3')
 console.log(hasErp)
     if(hasErp.isValid === true){
         console.log('Enviando para ERP')

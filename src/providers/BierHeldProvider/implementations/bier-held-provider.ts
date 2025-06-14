@@ -16,6 +16,7 @@ export class BierHeldProvider implements IBierHeldProvider{
     constructor(){}
     async getAddress(zipCode: string): Promise<IGetAddressResponse> {
         try{
+            console.log('getAddress', zipCode);
             const path = `${env.BIER_HELD_API_URL}/v2/addresses/${zipCode.replace('-', '')}`
 
             await this.verifyToken()
@@ -28,8 +29,11 @@ export class BierHeldProvider implements IBierHeldProvider{
                     'uid': env.BIER_HELD_CLIENT_ID
                 },
             })
+
+            console.log(response.data);
             return response.data
         }catch(error){
+            console.log(error);
             const errorHandler = await this.errorHandler(error)
             if(errorHandler === true){
                 return await this.getAddress(zipCode)

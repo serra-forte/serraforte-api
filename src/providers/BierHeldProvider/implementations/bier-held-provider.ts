@@ -20,7 +20,7 @@ export class BierHeldProvider implements IBierHeldProvider{
 
             await this.verifyToken()
 
-            const response = await axios.post<IGetAddressResponse>(path, {
+            const response = await axios.get<IGetAddressResponse>(path, {
                 headers: {
                     'Content-Type': 'application/json',
                     'access-token': this.accessToken,

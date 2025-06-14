@@ -114,6 +114,8 @@ export class BierHeldProvider implements IBierHeldProvider{
                         number: addressAttributes?.number,
                         complement: addressAttributes?.complement,
                         district: addressAttributes?.district,
+                        nfe_city_name: addressAttributes?.city,
+                        nfe_city_state_acronym: addressAttributes?.state,
                     },
                     birth_date: birtDate,
                     active

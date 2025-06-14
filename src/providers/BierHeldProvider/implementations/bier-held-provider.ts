@@ -16,12 +16,15 @@ export class BierHeldProvider implements IBierHeldProvider{
     constructor(){}
     async getAddress(zipCode: string): Promise<IGetAddressResponse> {
         try{
-            console.log('getAddress', zipCode);
-            const path = `${env.BIER_HELD_API_URL}/v2/addresses/${zipCode.replace('-', '')}`
+            const path = `${env.BIER_HELD_API_URL}/v2/addresses/search_zip`
+
+            const body = {
+                zip: zipCode.replace('-', '')
+            }
 
             await this.verifyToken()
 
-            const response = await axios.get<IGetAddressResponse>(path, {
+            const response = await axios.post<IGetAddressResponse>(path, body, {
                 headers: {
                     'Content-Type': 'application/json',
                     'access-token': this.accessToken,
@@ -30,7 +33,6 @@ export class BierHeldProvider implements IBierHeldProvider{
                 },
             })
 
-            console.log(response.data);
             return response.data
         }catch(error){
             console.log(error);

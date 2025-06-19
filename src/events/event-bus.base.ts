@@ -9,4 +9,5 @@ export abstract class EventBusBase {
     abstract updateOrderConfirmedEvent(data: IOrderRelationsDTO): void
     abstract updateOrderReprovedEvent(data: IOrderRelationsDTO): void
     abstract updateUserForErpEvent(data: IUpdateUserNaturalErp): void
+    abstract updateUserAddressErpEvent(data: IUpdateUserNaturalErp): void
 }

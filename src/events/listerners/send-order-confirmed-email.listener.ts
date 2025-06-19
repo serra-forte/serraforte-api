@@ -48,6 +48,8 @@ export class SendOrderConfirmedEmailListener {
             },
           )
         }
+
+        console.log('[SendOrderConfirmedEmail - API] Email enviado com sucesso')
         }catch(error){
             throw error
         }

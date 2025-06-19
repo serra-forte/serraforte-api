@@ -31,6 +31,8 @@ export class UpdateOrderReprovedListener {
             Status.REPROVED,
             new Date(),
           )
+
+          console.log('[UpdateOrderReproved - API] Pedido atualizado com sucesso')
         }catch(error){
             throw error
         }

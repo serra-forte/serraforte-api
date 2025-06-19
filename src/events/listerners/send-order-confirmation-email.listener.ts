@@ -21,6 +21,8 @@ export class SendOrderConfirmationEmailListener {
                     order: data.order
                 }
             );
+
+            console.log('[SendOrderConfirmationEmail - API] Email enviado com sucesso')
         }catch(error){
             throw error
         }

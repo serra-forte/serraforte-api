@@ -42,6 +42,7 @@ export class UpdateOrderConfirmedListener {
           await this.productRepository.updateSales(product.productId, quantity)
         }
 
+        console.log('[UpdateOrderConfirmed - API] Pedido atualizado com sucesso')
         }catch(error){
             throw error
         }

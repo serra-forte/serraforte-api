@@ -65,10 +65,7 @@ export class CreateDeliveryOrderUseCase {
                 paymentMethod,
                 shoppingCartId: foundUser.shoppingCart.id
             })
-
-            // Setar ultimo endereço usado no pedido do usuário
-            await this.addressRepository.setLastUsedAddress(address.id, foundUser.id)
-           
+       
             // Criar pagamento
             const payment = await this.paymentService.resolvePaymentMethod({
                 orderId: order.id,
@@ -90,7 +87,8 @@ export class CreateDeliveryOrderUseCase {
                 })
             }
 
-            this.eventBus.updateUserForErpEvent({
+            this.eventBus.updateUserAddressErpEvent({
+                id: foundUser.id,
                 erpId: Number(foundUser.erpUserId as number),
                 address,
             })

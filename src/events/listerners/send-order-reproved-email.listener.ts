@@ -46,6 +46,7 @@ export class SendOrderReprovedEmailListener {
               },
             )
           }
+          console.log('[SendOrderReproved - API] Email enviado com sucesso')
         }catch(error){
             throw error
         }

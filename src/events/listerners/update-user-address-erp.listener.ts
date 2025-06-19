@@ -3,15 +3,18 @@ import { IBierHeldProvider } from "@/providers/BierHeldProvider/bier-held-interf
 import { BierHeldProvider } from "@/providers/BierHeldProvider/implementations/bier-held-provider";
 import { AppError } from "@/usecases/errors/app-error";
 import { IUpdateUserNaturalErp } from "../interfaces/update-user-erp.interface";
-import { IContactAttributes } from "@/providers/BierHeldProvider/interface/request/update-natural-client-request-interface";
+import { IAddressesRepository } from "@/repositories/interfaces/interface-addresses-repository";
+import { PrismaAddressesRepository } from "@/repositories/prisma/prisma-addresses-repository";
 
-export class UpdateUserNaturalErpListener {
+export class UpdateUserAddressErpListener {
     private bierHeldProvider: IBierHeldProvider
+    private addressRepository: IAddressesRepository
 
     constructor() {
         this.bierHeldProvider = new BierHeldProvider()
+        this.addressRepository = new PrismaAddressesRepository()
 
-        eventBus.on('update.user.erp', this.execute.bind(this));
+        eventBus.on('update.user.address.erp', this.execute.bind(this));
     }
 
     private async execute(user: IUpdateUserNaturalErp) {
@@ -22,34 +25,14 @@ export class UpdateUserNaturalErpListener {
                 throw new AppError('Usuário nao encontrado no ERP', 404)
             }
 
-            const destroyContactAttributes = getUserErp.contacts_attributes.map((contact) => {
-                return{
-                    id: contact.id,
-                    contact_type: contact.contact_type,
-                    value: contact.value,
-                    _destroy: true
-                }
-            })
-
-            const contactAttributes = [
-                ...destroyContactAttributes,
-                { 
-                    contact_type: 'email',
-                    value: user.email
-                },
-                {
-                    contact_type: 'cellphone',
-                    value: user.phone as string
-                }
-            ]
+            if(user.address){
+            // Setar ultimo endereço usado no pedido do usuário
+            await this.addressRepository.setLastUsedAddress(user.address.id, user.id)
+            }
 
             await this.bierHeldProvider.updateNaturalPerson({
                 id: user.erpId,
-                fullName: user.name,
-                birtDate: new Date(user.dateBirth!),
                 active: true,
-                cpf: user.cpf as string,
-                contactAttributes: contactAttributes as IContactAttributes[],
                 addressAttributes:{
                     street: user.address?.street as string,
                     number: String(user.address?.num),
@@ -60,7 +43,8 @@ export class UpdateUserNaturalErpListener {
                     complement: user.address?.complement,
                 }
             })
-            console.log('[UpdateUserInfo - ERP] Usuário atualizado com sucesso')
+
+            console.log('[UpdateUserAddress - ERP] Usuário atualizado com sucesso')
         }catch(error){
             throw error
         }

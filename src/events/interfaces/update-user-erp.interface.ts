@@ -1,18 +1,12 @@
+import { IAddressDto } from "./address.dto";
+
 export interface IUpdateUserNaturalErp {
+    id: string,
     erpId: number,
     name?: string | null,
     email?: string | null,
     phone?: string | null,
     dateBirth?: Date | null,
     cpf?: string | null,
-    address?: {
-        street?: string | null,
-        num?: number | null,
-        neighborhood?: string | null,
-        city?: string | null,
-        state?: string | null,
-        zipCode?: string | null,
-        complement?: string | null,
-        reference?: string | null,
-    } | null
+    address?: IAddressDto | null,
 }

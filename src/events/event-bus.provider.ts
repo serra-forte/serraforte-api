@@ -5,6 +5,13 @@ import { ISendOrderConfirmationEmail } from './interfaces/send-order-confirmatio
 import { IUpdateUserNaturalErp } from './interfaces/update-user-erp.interface';
 
 export class EventBus implements EventBusBase {
+    updateUserAddressErpEvent(data: IUpdateUserNaturalErp): void {
+        try {
+            eventBus.emit('update.user.address.erp', data);
+        } catch (error) {
+            throw error
+        }
+    }
     updateUserForErpEvent(data: IUpdateUserNaturalErp): void {
         try {
             eventBus.emit('update.user.erp', data);

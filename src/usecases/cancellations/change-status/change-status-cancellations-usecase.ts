@@ -1,5 +1,6 @@
 import { IAsaasProvider } from "@/providers/PaymentProvider/interface-asaas-payment";
 import { ICancellationRepository } from "@/repositories/interfaces/interface-cancellations-repository"
+import { IOrderRepository } from "@/repositories/interfaces/interface-order-repository";
 import { IPaymentsRepository } from "@/repositories/interfaces/interface-payments-repository";
 import { IProductsRepository } from "@/repositories/interfaces/interface-products-repository";
 import { AppError } from "@/usecases/errors/app-error"
@@ -15,7 +16,8 @@ export class ChangeStatusCancellationUseCase {
         private cancellationRepository: ICancellationRepository,
         private paymentRepository: IPaymentsRepository,
         private productsRepository: IProductsRepository,
-        private asaasProvider: IAsaasProvider   
+        private asaasProvider: IAsaasProvider,
+        private orderRepository: IOrderRepository   
         ) {}
 
     async execute({
@@ -32,6 +34,9 @@ export class ChangeStatusCancellationUseCase {
         
         // se status for aprovado
         if(status === Status.APPROVED){
+            // atualizar o status do pedido
+            await this.orderRepository.updateStatus(findCancellationExist.order.id, Status.CANCELED)
+
             // alterar status do cancelamento
             await this.cancellationRepository.changeStatus(cancellationId, Status.REFUNDED)
 

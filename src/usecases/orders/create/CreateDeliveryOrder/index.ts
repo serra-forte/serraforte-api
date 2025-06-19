@@ -89,6 +89,11 @@ export class CreateDeliveryOrderUseCase {
                     invoiceUrl: payment.invoiceUrl
                 })
             }
+
+            this.eventBus.updateUserForErpEvent({
+                erpId: Number(foundUser.erpUserId as number),
+                address,
+            })
             
             // retornar url da fatura
             return { invoiceUrl: payment.invoiceUrl }

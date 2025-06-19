@@ -67,7 +67,7 @@ export async function usersRoutes(fastifyApp: FastifyInstance) {
     fastifyApp.put('/:id',  UpdateUser)
 
     // listar todos os users por shopkeeper
-    fastifyApp.get('/shopkeeper', {onRequest: [verifyTokenJWT, verifyUserRole('SUPER')]}, ListByShopkeeper )
+    fastifyApp.get('/shopkeeper', {onRequest: [verifyTokenJWT, verifyUserRole('SUPER', "ADMIN")]}, ListByShopkeeper )
 
     // listar todos os users por deliveryman
     fastifyApp.get('/deliveryman', {onRequest: [verifyTokenJWT, verifyUserRole('SUPER', "SHOPKEEPER")]}, ListByDeliveryMan)

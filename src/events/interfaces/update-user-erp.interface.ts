@@ -1,7 +1,7 @@
 export interface IUpdateUserNaturalErp {
     erpId: number,
-    name: string,
-    email: string,
+    name?: string | null,
+    email?: string | null,
     phone?: string | null,
     dateBirth?: Date | null,
     cpf?: string | null,

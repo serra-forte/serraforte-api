@@ -2,6 +2,7 @@ import { Address, Role, ShoppingCart } from "@prisma/client";
 
 export interface IUserRelations {
     id: string;
+    erpUserId: number;
     asaasCustomerId: string;
     name: string;
     email: string;

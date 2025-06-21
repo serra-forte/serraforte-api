@@ -112,7 +112,7 @@ export class NodeCronProvider implements INodeCronProvider {
     async checkPaymentAfter24Hours() {
         // Agendar a tarefa cron para ser executada a cada minuto
         // (minuto, hora, dia do mês, mês e dia da semana)
-        cron.schedule('* /5 * * *', async () => {
+        cron.schedule('* * * * *', async () => {
             try {
                 console.log('Checkando pedidos sem pagamento a 24 horas.. . .');
                

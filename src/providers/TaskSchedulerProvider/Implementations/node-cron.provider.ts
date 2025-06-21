@@ -156,7 +156,7 @@ export class NodeCronProvider implements INodeCronProvider {
                     await this.paymentRepository.updateStatus(order.payment.id, Status.EXPIRED);
 
                     // cancelar fatura na asaas
-                    await this.asaasProvider.cancelPayment(order.payment.asaasPaymentId as string)
+                    // await this.asaasProvider.cancelPayment(order.payment.asaasPaymentId as string)
 
                     // [x] adicioanr descrição no pedido para informar que o pagamento foi reprovado
                     await this.orderRepository.addDescription(order.id, 'Reprovado por falta de pagamento') 
@@ -166,33 +166,33 @@ export class NodeCronProvider implements INodeCronProvider {
                     const templatePathUserReproved =
                     './views/emails/admin-payment-reproved.hbs'
 
-                    // [x] disparar envio de email de pagamento recebido do usuário com nota fiscal(invoice)
-                    await this.mailProvider.sendEmail(
-                        order.user.email,
-                        order.user.name,
-                        'Pagamento Expirado',
-                        order.payment.invoiceUrl,
-                        templatePathUserReproved,
-                        {
-                            order,
-                        },
-                    )
+                    // // [x] disparar envio de email de pagamento recebido do usuário com nota fiscal(invoice)
+                    // await this.mailProvider.sendEmail(
+                    //     order.user.email,
+                    //     order.user.name,
+                    //     'Pagamento Expirado',
+                    //     order.payment.invoiceUrl,
+                    //     templatePathUserReproved,
+                    //     {
+                    //         order,
+                    //     },
+                    // )
 
 
-                    // ENVIAR EMAIL PARA ADMIN DO SISTEMA AVISANDO QUE O PAGAMENTO FOI REPROVADO
-                    // [x] for para buscar users administradores e enviar email de pagamento reprovado
-                    for (const admin of listUsersAdmin) {
-                        await this.mailProvider.sendEmail(
-                        admin.email,
-                        admin.name,
-                        `Pagamento Expirado`,
-                        order.payment.invoiceUrl,
-                        templatePathUserReproved,
-                        {
-                            order,
-                        },
-                        )
-                    }
+                    // // ENVIAR EMAIL PARA ADMIN DO SISTEMA AVISANDO QUE O PAGAMENTO FOI REPROVADO
+                    // // [x] for para buscar users administradores e enviar email de pagamento reprovado
+                    // for (const admin of listUsersAdmin) {
+                    //     await this.mailProvider.sendEmail(
+                    //     admin.email,
+                    //     admin.name,
+                    //     `Pagamento Expirado`,
+                    //     order.payment.invoiceUrl,
+                    //     templatePathUserReproved,
+                    //     {
+                    //         order,
+                    //     },
+                    //     )
+                    // }
 
                     console.log('[Cron Job - CheckPayment24Hours]Pagamento expirado com sucesso')
                 }

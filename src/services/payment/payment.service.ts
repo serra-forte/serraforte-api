@@ -65,6 +65,7 @@ export class PaymentService implements PaymentServiceBase{
 
     private async pix(data: ICreatePaymentAsaas): Promise<IAsaasPayment> {
         try{
+            console.log(data)
             const result = await this.asaasProvider.createPayment({
                 billingType: PaymentMethod.PIX,
                 dueDate: data.dueDate,
@@ -163,6 +164,7 @@ export class PaymentService implements PaymentServiceBase{
 
     async resolvePaymentMethod(data: ICreatePaymentAsaas): Promise<IAsaasPayment> {
         try{
+            console.log(data)
             const customer = await this.getCustomer(data.user)
 
             switch(data.billingType){

@@ -59,6 +59,7 @@ export class CreateWithdrawOrderUseCase {
                 paymentMethod,
                 shoppingCartId: foundUser.shoppingCart.id
             })
+            console.log(total)
 
             // Criar pagamento
             const payment = await this.paymentService.resolvePaymentMethod({

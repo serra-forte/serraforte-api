@@ -130,15 +130,15 @@ export class NodeCronProvider implements INodeCronProvider {
                 
                 // for para percorrer os pedidos
                 for(let order of orders){
-                    console.log(order.createdAt)
                     // criar data limite em utc para comparar com a data de criação do pedido
                     const getLimitDateToPayment = this.dayjsProvider.getLimitToPayment(order.createdAt)
-                            console.log(getLimitDateToPayment)
+                    const dateNow = this.dayjsProvider.dateNow()
                     // validar se a data de criação ultrapassou a data limite de pagamento
-                    const checkLimitDateToCancel = this.dayjsProvider.compareIfAfter(order.createdAt, getLimitDateToPayment)
+                    const checkLimitDateToCancel = this.dayjsProvider.compareIfAfter(getLimitDateToPayment, dateNow)
+
                     console.log(checkLimitDateToCancel)
                     // validar se a data de criação ultrapassou a data limite de pagamento
-                    if(checkLimitDateToCancel){
+                    if(!checkLimitDateToCancel){
                         console.log('log 1')
                          // for para percorrer os itens de cada pedido
                         for(let item of order.items){

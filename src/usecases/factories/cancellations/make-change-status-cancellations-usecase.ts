@@ -1,4 +1,3 @@
-import { DayjsDateProvider } from "@/providers/DateProvider/implementations/provider-dayjs";
 import { AsaasProvider } from "@/providers/PaymentProvider/implementations/provider-asaas-payment";
 import { PrismaCancellationRepository } from "@/repositories/prisma/prisma-cancellation-repository";
 import { PrismaOrderRepository } from "@/repositories/prisma/prisma-orders-repository";

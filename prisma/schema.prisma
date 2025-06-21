@@ -129,8 +129,8 @@ model Product {
 
 model Image {
   id       String  @id @unique @default(uuid())
-  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   String
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId   String?
   name     String
   hashName String? @unique
   url      String
@@ -164,7 +164,7 @@ model CartItem {
   price     Decimal?
   mainImage String?
 
-  user   User?   @relation(fields: [userId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId String?
 
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -184,8 +184,8 @@ model Order {
   erpOrderId Int?         @map("erp_order_id") @unique
   invoiceIdErp     Int?         @map("invoice_id_erp")
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String? @map("user_id")
   
 
   total             Decimal
@@ -203,6 +203,7 @@ model Order {
   cartLabelId String? @map("cart_label_id")
   labelId     String? @map("label_id")
   labelUrl    String? @map("label_url")
+  active      Boolean? @default(true)
 
   @@map("orders")
 }
@@ -210,14 +211,14 @@ model Order {
 model Item {
   id String @id @unique @default(uuid())
 
-  users  User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  users  User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId String? @map("user_id")
 
   order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId String @map("order_id")
 
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String  @map("product_id")
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId String?  @map("product_id")
 
   name      String?
   quantity  Decimal
@@ -265,8 +266,8 @@ model Payment {
   id             String  @id @unique @default(uuid())
   asaasPaymentId String? @unique
 
-  users  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @map("user_id")
+  users  User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String? @map("user_id")
 
   orders  Order  @relation(fields: [orderId], references: [id])
   orderId String @unique
@@ -287,7 +288,7 @@ model Payment {
 
 model Address {
   id     String  @id @unique @default(uuid())
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId String?
 
   delivery   Delivery? @relation(fields: [deliveryId], references: [id])
@@ -317,7 +318,7 @@ model Delivery {
   order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId String @unique @map("order_id")
 
-  deliveryMan User?   @relation(fields: [userId], references: [id])
+  deliveryMan User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId      String?
 
   freights Freight[]
@@ -342,8 +343,8 @@ model Cancellation {
   order   Order  @relation(fields: [orderId], references: [id])
   orderId String @unique
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
 
   shopkeeperId   String?
   shopkeeperName String?
@@ -363,8 +364,8 @@ model Cancellation {
 model CancellationMessage {
   id String @id @unique @default(uuid())
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
 
   cancellation   Cancellation @relation(fields: [cancellationId], references: [id])
   cancellationId String
@@ -379,8 +380,8 @@ model CancellationMessage {
 model DiscountCoupon {
   id String @id @unique @default(uuid())
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
 
   name       String
   code       String   @unique
@@ -409,8 +410,8 @@ model Notification {
 model Review {
   id String @id @unique @default(uuid())
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
 
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String

@@ -39,7 +39,7 @@ export class UpdateOrderConfirmedListener {
          
         for(let product of order.items) {
           const quantity = Number(product.quantity)
-          await this.productRepository.updateSales(product.productId, quantity)
+          await this.productRepository.updateSales(product.productId as string, quantity)
         }
 
         console.log('[UpdateOrderConfirmed - API] Pedido atualizado com sucesso')

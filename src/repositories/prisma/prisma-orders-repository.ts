@@ -4,7 +4,20 @@ import { prisma } from "@/lib/prisma";
 import { IOrderRelationsDTO } from "@/dtos/order-relations.dto";
 
 export class PrismaOrderRepository implements IOrderRepository {
+    async hasActiveOrder(userId: string): Promise<boolean> {
+        const order = await prisma.order.findFirst({
+            where: {
+                active: true,
+                userId
+            }
+        })
 
+        if (order) {
+            return true
+        }
+
+        return false
+    }
     async addBierHeldOrderId(id: string, erpOrderId: number, invoiceId: number): Promise<void> {
         await prisma.order.update({
             where: { id },
@@ -830,11 +843,26 @@ export class PrismaOrderRepository implements IOrderRepository {
         return true
     }
     async updateStatus(id: string, status: Status){
-        await prisma.order.update({
-            where: {id},
-            data: {
-                status
-            }
-        })
+        if(
+            status === Status.CANCELED || 
+            status === Status.REPROVED || 
+            status === Status.DONE || 
+            status === Status.REFUNDED ||
+            status === Status.EXPIRED
+        ){
+             await prisma.order.update({
+                    where: {id},
+                    data: {
+                        active: false
+                    }
+                })
+        }else{
+            await prisma.order.update({
+                where: {id},
+                data: {
+                    status
+                }
+            })
+        }
     }
 }

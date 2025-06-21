@@ -35,4 +35,5 @@ export interface IOrderRepository {
     addDescription(id: string, description: string): Promise<void>
     confirmWithdrawed(id: string, date: string): Promise<void>
     addBierHeldOrderId(id: string, erpOrderId: number, invoiceId: number): Promise<void>
+    hasActiveOrder(userId: string): Promise<boolean>
 }

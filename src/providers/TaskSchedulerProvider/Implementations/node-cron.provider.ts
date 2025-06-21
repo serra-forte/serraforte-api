@@ -25,6 +25,7 @@ import { IBierHeldProvider } from "@/providers/BierHeldProvider/bier-held-interf
 import { BierHeldProvider } from "@/providers/BierHeldProvider/implementations/bier-held-provider";
 import { IRemoteConfigProvider } from "@/providers/RemoteConfigProvider/interface-remote-config-provider";
 import { RemoteConfigProviderFirebase } from "@/providers/RemoteConfigProvider/implementations/provider-remote-config";
+import { AppError } from "@/usecases/errors/app-error";
 
 export interface IBoxPriceRange{
     startRange: number
@@ -119,17 +120,18 @@ export class NodeCronProvider implements INodeCronProvider {
                 // buscar pedidos sem pagamento a 24 horas
                 const orders = await this.orderRepository.listByPaymentWithoutPaying24Hours();
 
-                // buscar entregador existente
-                const listDeliveryMan = await this.userRepository.listByDeliveryMan(1, 1)
+                // const listDeliveryMan = await this.userRepository.listByDeliveryMan(1, 1)
 
                 // [x] buscar todos os usuarios administradores
                 const listUsersAdmin = await this.userRepository.listAdmins()
 
                 // validar se o entregador existe
-                const uniqueDeliveryMan = listDeliveryMan.users[0] as User
+                // const uniqueDeliveryMan = listDeliveryMan.users[0] as User
                 
+                console.log(orders)
                 // for para percorrer os pedidos
                 for(let order of orders){
+                    console.log('log 0')
                     // criar data limite em utc para comparar com a data de criação do pedido
                     const getLimitDateToPayment = this.dayjsProvider.getLimitToPayment(order.createdAt)
                             
@@ -138,6 +140,7 @@ export class NodeCronProvider implements INodeCronProvider {
 
                     // validar se a data de criação ultrapassou a data limite de pagamento
                     if(checkLimitDateToCancel){
+                        console.log('log 1')
                          // for para percorrer os itens de cada pedido
                         for(let item of order.items){
                             const endOrder: IOrderRelationsDTO = {
@@ -150,27 +153,31 @@ export class NodeCronProvider implements INodeCronProvider {
                                 items: [] // Inicializa items como array vazio
                               } as unknown as IOrderRelationsDTO;
 
-                            let existDeliveryMan = false
-                            let listShopkeeper = []
+                            // let existDeliveryMan = false
+                            // let listShopkeeper = []
                             let total = Number(order.total);  // Certifica que 'total' é um número
                             endOrder.total += total;          // Acumula o total
                             endOrder.items.push(...order.items); // spreed no array de items para acumular os items anteriores e os novos
                     
                             // pegar shopkeepers pelo item do pedido
-                            const findShopkeeper = await this.userRepository.findById(order.items[0].userId as string)
+                            const findShopkeeper = await this.userRepository.findShopkeeper()
 
-                            // validar se o shopkeeper existe
-                            if(findShopkeeper){
-                                listShopkeeper.push(findShopkeeper)
+                            if(!findShopkeeper){
+                                throw new AppError('Lojista nao encontrado', 404)
                             }
 
-                            if(!order.withdrawStore){
-                                existDeliveryMan = true
-                            }
+                            // // validar se o shopkeeper existe
+                            // if(findShopkeeper){
+                            //     listShopkeeper.push(findShopkeeper)
+                            // }
+
+                            // if(!order.withdrawStore){
+                            //     existDeliveryMan = true
+                            // }
                             
-                            if(existDeliveryMan){
-                                endOrder.total += Number(uniqueDeliveryMan.paymentFee)
-                            }
+                            // if(existDeliveryMan){
+                            //     endOrder.total += Number(uniqueDeliveryMan.paymentFee)
+                            // }
 
                             const quantity = Number(item.quantity)
 
@@ -214,20 +221,6 @@ export class NodeCronProvider implements INodeCronProvider {
                                 admin.email,
                                 admin.name,
                                 `Pagamento Expirado`,
-                                order.payment.invoiceUrl,
-                                templatePathUserReproved,
-                                {
-                                    order: endOrder,
-                                },
-                                )
-                            }
-
-                            // [x] for para buscar users Lojistas e enviar email de pagamento aprovado
-                            for (const shopkeeper of listShopkeeper) {
-                                await this.mailProvider.sendEmail(
-                                shopkeeper.email,
-                                shopkeeper.name,
-                                `Pagamento Aprovado`,
                                 order.payment.invoiceUrl,
                                 templatePathUserReproved,
                                 {

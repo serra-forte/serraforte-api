@@ -112,7 +112,7 @@ export class NodeCronProvider implements INodeCronProvider {
     async checkPaymentAfter24Hours() {
         // Agendar a tarefa cron para ser executada a cada minuto
         // (minuto, hora, dia do mês, mês e dia da semana)
-        cron.schedule('0 0 * * *', async () => {
+        cron.schedule('* /5 * * *', async () => {
             try {
                 console.log('Checkando pedidos sem pagamento a 24 horas.. . .');
                
@@ -175,7 +175,7 @@ export class NodeCronProvider implements INodeCronProvider {
                             const quantity = Number(item.quantity)
 
                             // atualizar estoque com a quantidade de itens selecionado pelo usuário
-                            this.productRepository.incrementQuantity(item.productId, quantity);
+                            this.productRepository.incrementQuantity(item.productId as string, quantity);
 
                             // atualizar o status do pedido para expirado
                             await this.orderRepository.updateStatus(order.id, Status.EXPIRED);

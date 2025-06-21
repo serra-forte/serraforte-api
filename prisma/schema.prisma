@@ -179,8 +179,8 @@ model CartItem {
 model Order {
   id             String       @id @unique @default(uuid())
   code           Int      @unique @default(autoincrement())
-  shoppingCart   ShoppingCart @relation(fields: [shoppingCartId], references: [id])
-  shoppingCartId String       @map("shopping_cart_id")
+  shoppingCart   ShoppingCart? @relation(fields: [shoppingCartId], references: [id], onDelete: SetNull)
+  shoppingCartId String?       @map("shopping_cart_id")
   erpOrderId Int?         @map("erp_order_id") @unique
   invoiceIdErp     Int?         @map("invoice_id_erp")
 

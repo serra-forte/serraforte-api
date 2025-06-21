@@ -38,7 +38,7 @@ export class DeleteUserUseCase{
         const hasOpenOrder = await this.orderRepository.hasActiveOrder(findUserExist.id)
 
         if(hasOpenOrder){
-            throw new AppError('Existem pedidos viculados ao usuário', 400)
+            throw new AppError('Erro ao deletar o usuário, existem pedidos em aberto', 400)
         }
 
         await this.usersRepository.delete(findUserExist.id)

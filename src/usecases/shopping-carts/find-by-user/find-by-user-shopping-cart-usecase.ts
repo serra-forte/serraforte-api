@@ -46,6 +46,9 @@ export class FindShoppingCartUseCase {
 
         findShoppingCartExists.total = total
 
+        // atualizar total do carrinho
+        await this.shoppingCartsRepository.updateTotal(findShoppingCartExists.id, total)
+
         // retornar carrinho
         return findShoppingCartExists
     }
